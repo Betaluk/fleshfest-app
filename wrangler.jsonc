@@ -1,0 +1,21 @@
+{
+    "name": "flashfest",
+    "main": ".open-next/worker.js",
+    "compatibility_date": "2024-09-23",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "flashfest-db",
+            "database_id": "ef6cd5de-b9de-40ab-8a67-f7e43a1424d8"
+        }
+    ],
+    "r2_buckets": [
+        {
+            "binding": "BUCKET_FOTOS",
+            "bucket_name": "flashfest-fotos"
+        }
+    ]
+}
