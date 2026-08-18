@@ -4,27 +4,41 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb, Env } from "@/db";
 
-// Ensinamos ao TypeScript que o cofre da Cloudflare contém essas senhas
 interface CloudflareEnv extends Env {
-  AUTH_GOOGLE_ID: string;
-  AUTH_GOOGLE_SECRET: string;
-  AUTH_SECRET: string;
+  AUTH_GOOGLE_ID?: string;
+  AUTH_GOOGLE_SECRET?: string;
+  AUTH_SECRET?: string;
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth(async () => {
-  // Puxamos o contexto nativo (env), que é onde a Cloudflare guarda os segredos de produção
-  const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: CloudflareEnv };
-  const db = getDb(env);
+  let cloudflareEnv: CloudflareEnv | undefined;
+
+  try {
+    const ctx = await getCloudflareContext({ async: true });
+    cloudflareEnv = ctx.env as CloudflareEnv;
+  } catch (e) {
+    console.error("Erro ao obter contexto Cloudflare:", e);
+  }
+
+  // Pega as variáveis do contexto da Cloudflare ou do process.env
+  const googleId = cloudflareEnv?.AUTH_GOOGLE_ID || process.env.AUTH_GOOGLE_ID;
+  const googleSecret = cloudflareEnv?.AUTH_GOOGLE_SECRET || process.env.AUTH_GOOGLE_SECRET;
+  const authSecret = cloudflareEnv?.AUTH_SECRET || process.env.AUTH_SECRET || "FlashFestSuperSecretKey2026!@#";
+
+  const db = cloudflareEnv ? getDb(cloudflareEnv) : null;
 
   return {
-    adapter: DrizzleAdapter(db),
+    adapter: db ? DrizzleAdapter(db) : undefined,
     providers: [
       Google({
-        clientId: env.AUTH_GOOGLE_ID,      // Agora puxamos direto do cofre!
-        clientSecret: env.AUTH_GOOGLE_SECRET, // Agora puxamos direto do cofre!
+        clientId: googleId || "",
+        clientSecret: googleSecret || "",
       }),
     ],
-    secret: env.AUTH_SECRET, // Senha de criptografia puxada do cofre
+    secret: authSecret,
     trustHost: true,
+    session: {
+      strategy: "jwt", // Usa JWT na Edge/Cloudflare para garantir estabilidade
+    },
   };
 });
