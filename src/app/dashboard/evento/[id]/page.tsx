@@ -39,8 +39,14 @@ export default async function GerenciarEventoPage({
   // Limite fixo simulando o plano escolhido
   const limiteFotos = 500; 
 
-  // URL pública da câmera (usaremos localhost para o teste local)
-  const urlCamera = `http://localhost:8787/e/${id}`;
+  // --- MÁGICA DA URL DINÂMICA AQUI ---
+  const baseUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:8787' 
+    : 'https://flashfest.lucasregesbarros.workers.dev';
+
+  // URL pública da câmera agora aponta para o lugar certo de forma inteligente
+  const urlCamera = `${baseUrl}/e/${id}`;
+  // -----------------------------------
 
   return (
     <div className="space-y-8 mt-4">

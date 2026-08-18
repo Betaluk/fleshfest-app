@@ -32,13 +32,19 @@ export default async function TelaoPage({
     .where(and(eq(fotos.eventoId, id), eq(fotos.status, 'aprovada')))
     .orderBy(desc(fotos.dataCaptura));
 
-  // TRUQUE: Troca o domínio de produção pela nossa API local para a imagem carregar
+  // TRUQUE: Troca o domínio pela nossa API para a imagem carregar perfeitamente no R2
   const fotosTratadas = fotosAprovadas.map(foto => ({
     ...foto,
     urlImagem: foto.urlImagem.replace('https://fotos.flashfest.com', '/api/fotos')
   }));
 
-  const urlCamera = `http://localhost:8787/e/${id}`;
+  // --- MÁGICA DA URL DINÂMICA AQUI ---
+  const baseUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:8787' 
+    : 'https://flashfest.lucasregesbarros.workers.dev';
+
+  const urlCamera = `${baseUrl}/e/${id}`;
+  // -----------------------------------
 
   return <Slideshow fotos={fotosTratadas} urlCamera={urlCamera} />;
 }
