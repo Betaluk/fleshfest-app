@@ -20,7 +20,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async () => {
     console.error("Erro ao obter contexto Cloudflare:", e);
   }
 
-  // Pega as variáveis do contexto da Cloudflare ou do process.env
   const googleId = cloudflareEnv?.AUTH_GOOGLE_ID || process.env.AUTH_GOOGLE_ID;
   const googleSecret = cloudflareEnv?.AUTH_GOOGLE_SECRET || process.env.AUTH_GOOGLE_SECRET;
   const authSecret = cloudflareEnv?.AUTH_SECRET || process.env.AUTH_SECRET || "FlashFestSuperSecretKey2026!@#";
@@ -38,7 +37,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async () => {
     secret: authSecret,
     trustHost: true,
     session: {
-      strategy: "jwt", // Usa JWT na Edge/Cloudflare para garantir estabilidade
+      strategy: "jwt", 
     },
+    // --- A MÁGICA ESTÁ AQUI: Ensinando o Auth.js a repassar o ID ---
+    callbacks: {
+      jwt({ token, user }) {
+        // Se for o momento do login, injeta o ID no token
+        if (user) {
+          token.id = user.id;
+        }
+        return token;
+      },
+      session({ session, token }) {
+        // Transfere o ID do token para a sessão que o Dashboard vai usar
+        if (session.user && token.id) {
+          session.user.id = token.id as string;
+        }
+        return session;
+      }
+    }
+    // ----------------------------------------------------------------
   };
 });
