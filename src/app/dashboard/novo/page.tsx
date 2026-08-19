@@ -48,7 +48,7 @@ export default async function NovoEventoPage() {
 
     // --- CURA 1: INICIAMOS O STRIPE COM O MOTOR COMPATÍVEL COM A CLOUDFLARE ---
     const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-      apiVersion: '2024-06-20', // O Stripe exige uma versão declarada agora
+      apiVersion: '2026-07-29.dahlia', // O Stripe exige uma versão declarada agora
       httpClient: Stripe.createFetchHttpClient(), // A MÁGICA: Força o uso do Fetch API
     });
 
