@@ -1,12 +1,13 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDb, Env } from '@/db';
-import { eventos } from '@/db/schema';
+import { eventos, fotos } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { auth } from '@/auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import Stripe from 'stripe';
+import BotaoExcluir from './BotaoExcluir'; // Importamos o nosso novo botão super inteligente!
 
 export const dynamic = 'force-dynamic';
 
@@ -17,18 +18,17 @@ export default async function DashboardPage() {
     redirect('/');
   }
 
+  // Adicionamos qualquer tipo (any) ao BUCKET_FOTOS para garantir que o TypeScript aceita a limpeza
   const { env } = (await getCloudflareContext({ async: true })) as unknown as { 
-    env: Env & { STRIPE_SECRET_KEY: string } 
+    env: Env & { STRIPE_SECRET_KEY: string, BUCKET_FOTOS: any } 
   };
   const db = getDb(env);
 
-  // Busca os eventos do usuário logado
   const meusEventos = await db.select()
     .from(eventos)
     .where(eq(eventos.usuarioId, session.user.id))
     .orderBy(desc(eventos.dataEvento));
 
-  // AÇÃO DE SERVIDOR: Retomar pagamento
   async function pagarEvento(formData: FormData) {
     'use server';
     const eventoId = formData.get('eventoId') as string;
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price: 'price_1U6EnXRsvoZpGZFTbYxCJVol', // <--- SEU PRICE ID DO STRIPE
+        price: 'price_1U6EnXRsvoZpGZFTbYxCJVol', // <--- MANTENHA O SEU PRICE ID AQUI
         quantity: 1,
       }],
       mode: 'payment',
@@ -59,20 +59,34 @@ export default async function DashboardPage() {
     redirect(checkoutSession.url!);
   }
 
-  // AÇÃO DE SERVIDOR: Deletar evento (funciona tanto para pendentes quanto para ativos)
+  // --- A NOVA LÓGICA DE EXCLUSÃO (Limpeza Total) ---
   async function deletarEvento(formData: FormData) {
     'use server';
     const eventoId = formData.get('eventoId') as string;
     if (!eventoId) return;
 
-    const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
+    const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { BUCKET_FOTOS: any } };
     const db = getDb(env);
     const session = await auth();
 
     if (session?.user?.id) {
+      // 1. Busca todas as fotos desta festa na base de dados
+      const fotosParaDeletar = await db.select().from(fotos).where(eq(fotos.eventoId, eventoId));
+
+      // 2. Apaga fisicamente os ficheiros pesados no R2 da Cloudflare
+      for (const foto of fotosParaDeletar) {
+        // Extrai o nome do ficheiro do final da URL (ex: 'meuarquivo.jpg')
+        const chaveFicheiro = foto.urlImagem.split('/').pop();
+        if (chaveFicheiro) {
+          await env.BUCKET_FOTOS.delete(chaveFicheiro);
+        }
+      }
+
+      // 3. Agora sim, apaga o evento (e as fotos do D1 em cascata, se configurado)
       await db.delete(eventos).where(
         and(eq(eventos.id, eventoId), eq(eventos.usuarioId, session.user.id))
       );
+      
       revalidatePath('/dashboard');
     }
   }
@@ -120,7 +134,6 @@ export default async function DashboardPage() {
 
                 <div className="space-y-2 mt-auto">
                   {isPago ? (
-                    // SE ESTIVER PAGO: Botão de Gerenciar
                     <Link 
                       href={`/dashboard/evento/${evento.id}`} 
                       className="w-full block text-center bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2 rounded-lg transition"
@@ -128,7 +141,6 @@ export default async function DashboardPage() {
                       Gerenciar Evento
                     </Link>
                   ) : (
-                    // SE ESTIVER PENDENTE: Botão de Pagar
                     <form action={pagarEvento} className="w-full">
                       <input type="hidden" name="eventoId" value={evento.id} />
                       <button type="submit" className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-lg transition">
@@ -137,7 +149,6 @@ export default async function DashboardPage() {
                     </form>
                   )}
 
-                  {/* BARRA DE AÇÕES INFERIOR: EDITAR E EXCLUIR (LIXO) */}
                   <div className="flex gap-2 pt-2 border-t border-zinc-800/80">
                     <Link
                       href={`/dashboard/evento/${evento.id}/editar`}
@@ -146,19 +157,14 @@ export default async function DashboardPage() {
                       ✏️ Editar
                     </Link>
 
+                    {/* AQUI ESTÁ A NOSSA NOVA MAGIA! */}
                     <form action={deletarEvento}>
                       <input type="hidden" name="eventoId" value={evento.id} />
-                      <button 
-                        type="submit" 
-                        className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded text-sm transition" 
-                        title="Excluir Evento"
-                      >
-                        🗑️ Excluir
-                      </button>
+                      <BotaoExcluir isPago={isPago} nomeEvento={evento.nomeEvento} />
                     </form>
+
                   </div>
                 </div>
-
               </div>
             );
           })}
