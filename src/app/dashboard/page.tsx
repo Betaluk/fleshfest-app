@@ -22,13 +22,13 @@ export default async function DashboardPage() {
   };
   const db = getDb(env);
 
-  // Busca todos os eventos do utilizador logado, ordenados do mais recente para o mais antigo
+  // Busca os eventos do usuário logado
   const meusEventos = await db.select()
     .from(eventos)
     .where(eq(eventos.usuarioId, session.user.id))
     .orderBy(desc(eventos.dataEvento));
 
-  // --- ACÃO DE SERVIDOR: RETOMAR PAGAMENTO ---
+  // AÇÃO DE SERVIDOR: Retomar pagamento
   async function pagarEvento(formData: FormData) {
     'use server';
     const eventoId = formData.get('eventoId') as string;
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price: 'price_1U6EnXRsvoZpGZFTbYxCJVol', // <--- SUBSTITUA PELO SEU PRICE ID DO STRIPE
+        price: 'price_1U6EnXRsvoZpGZFTbYxCJVol', // <--- SEU PRICE ID DO STRIPE
         quantity: 1,
       }],
       mode: 'payment',
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
     redirect(checkoutSession.url!);
   }
 
-  // --- ACÃO DE SERVIDOR: DELETAR EVENTO ---
+  // AÇÃO DE SERVIDOR: Deletar evento (funciona tanto para pendentes quanto para ativos)
   async function deletarEvento(formData: FormData) {
     'use server';
     const eventoId = formData.get('eventoId') as string;
@@ -69,7 +69,6 @@ export default async function DashboardPage() {
     const db = getDb(env);
     const session = await auth();
 
-    // Deleta garantindo que o evento pertence a este utilizador (Segurança)
     if (session?.user?.id) {
       await db.delete(eventos).where(
         and(eq(eventos.id, eventoId), eq(eventos.usuarioId, session.user.id))
@@ -83,7 +82,7 @@ export default async function DashboardPage() {
       <div className="flex justify-between items-center border-b border-zinc-800 pb-6">
         <div>
           <h2 className="text-3xl font-bold text-white">Meus Eventos</h2>
-          <p className="text-zinc-400 mt-1">Gira as suas festas e telões ativos.</p>
+          <p className="text-zinc-400 mt-1">Gerencie suas festas e telões ativos.</p>
         </div>
         <Link href="/dashboard/novo" className="bg-emerald-500 text-zinc-950 px-6 py-2 rounded-md font-bold hover:bg-emerald-400 transition">
           + Criar Evento
@@ -100,7 +99,7 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {meusEventos.map((evento) => {
             const isPago = evento.statusPagamento === 'pago';
-            const dataFormatada = new Date(evento.dataEvento).toLocaleDateString('pt-PT');
+            const dataFormatada = new Date(evento.dataEvento).toLocaleDateString('pt-BR');
 
             return (
               <div key={evento.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col justify-between">
@@ -119,32 +118,47 @@ export default async function DashboardPage() {
                   </div>
                 </div>
 
-                {isPago ? (
-                  // SE ESTIVER PAGO: Mostra apenas o botão de Gerenciar
-                  <Link 
-                    href={`/dashboard/evento/${evento.id}`} 
-                    className="w-full block text-center bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2 rounded-lg transition"
-                  >
-                    Gerenciar Evento
-                  </Link>
-                ) : (
-                  // SE ESTIVER PENDENTE: Mostra o botão de Pagar e a opção de Excluir
-                  <div className="flex gap-2 mt-auto">
-                    <form action={pagarEvento} className="flex-1">
+                <div className="space-y-2 mt-auto">
+                  {isPago ? (
+                    // SE ESTIVER PAGO: Botão de Gerenciar
+                    <Link 
+                      href={`/dashboard/evento/${evento.id}`} 
+                      className="w-full block text-center bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2 rounded-lg transition"
+                    >
+                      Gerenciar Evento
+                    </Link>
+                  ) : (
+                    // SE ESTIVER PENDENTE: Botão de Pagar
+                    <form action={pagarEvento} className="w-full">
                       <input type="hidden" name="eventoId" value={evento.id} />
                       <button type="submit" className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-lg transition">
                         💳 Pagar Agora
                       </button>
                     </form>
-                    
+                  )}
+
+                  {/* BARRA DE AÇÕES INFERIOR: EDITAR E EXCLUIR (LIXO) */}
+                  <div className="flex gap-2 pt-2 border-t border-zinc-800/80">
+                    <Link
+                      href={`/dashboard/evento/${evento.id}/editar`}
+                      className="flex-1 flex items-center justify-center gap-1 bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 py-1.5 rounded text-sm transition"
+                    >
+                      ✏️ Editar
+                    </Link>
+
                     <form action={deletarEvento}>
                       <input type="hidden" name="eventoId" value={evento.id} />
-                      <button type="submit" className="h-full px-4 flex items-center justify-center bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg transition" title="Excluir Evento">
-                        🗑️
+                      <button 
+                        type="submit" 
+                        className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded text-sm transition" 
+                        title="Excluir Evento"
+                      >
+                        🗑️ Excluir
                       </button>
                     </form>
                   </div>
-                )}
+                </div>
+
               </div>
             );
           })}
