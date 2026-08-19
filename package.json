@@ -25,7 +25,8 @@
     "next-auth": "^5.0.0-beta.32",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.7",
-    "react-dom": "^19.1.7"
+    "react-dom": "^19.1.7",
+    "stripe": "^22.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
