@@ -22,19 +22,19 @@ export default function BotaoExcluir({
     return () => clearTimeout(timer);
   }, [modalAberto, contador]);
 
-  // Função que decide o que fazer ao clicar no Lixo
+  // Função que decide o que fazer ao clicar no Lixo principal
   const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault(); // Impede o formulário de ser enviado instantaneamente
+    e.preventDefault(); 
     
     if (!isPago) {
-      // Eventos Pendentes: Confirmação simples do navegador
+      // Eventos Pendentes
       if (window.confirm(`Tem certeza que deseja excluir o evento pendente "${nomeEvento}"?`)) {
         setCarregando(true);
         const form = e.currentTarget.closest('form');
         if (form) form.requestSubmit();
       }
     } else {
-      // Eventos Pagos: Abre o Modal de Segurança e inicia os 5 segundos
+      // Eventos Pagos
       setContador(5);
       setModalAberto(true);
     }
@@ -42,7 +42,6 @@ export default function BotaoExcluir({
 
   return (
     <>
-      {/* O Botão da Lixeira normal */}
       <button
         type="button"
         onClick={handleClick}
@@ -76,16 +75,22 @@ export default function BotaoExcluir({
                 type="button"
                 onClick={() => setModalAberto(false)}
                 className="flex-1 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium rounded-lg transition"
+                disabled={carregando}
               >
                 Cancelar
               </button>
 
-              {/* O verdadeiro botão de "Submit" está escondido aqui dentro! */}
+              {/* A CORREÇÃO ESTÁ AQUI: Botão modificado para enviar manualmente */}
               <button
-                type="submit"
+                type="button" // Mudamos de "submit" para "button"
                 disabled={contador > 0 || carregando}
-                onClick={() => setCarregando(true)}
-                className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                onClick={(e) => {
+                  setCarregando(true);
+                  // Disparamos o formulário manualmente via JavaScript
+                  const form = e.currentTarget.closest('form');
+                  if (form) form.requestSubmit();
+                }}
+                className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition disabled:opacity-50 flex items-center justify-center"
               >
                 {contador > 0 ? `Aguarde (${contador}s)` : 'Sim, Excluir Festa'}
               </button>
