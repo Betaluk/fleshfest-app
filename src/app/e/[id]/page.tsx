@@ -1,121 +1,54 @@
-'use client';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { getDb, Env } from '@/db';
+import { eventos } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import CameraClient from './CameraClient'; // Importa a câmera que criamos no Passo 1
 
-import { useState, use } from 'react';
-import { Camera, Send, RefreshCcw } from 'lucide-react';
-import imageCompression from 'browser-image-compression';
+export const dynamic = 'force-dynamic';
 
-export default function ConvidadoPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default async function PageConvidadoWrapper({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-  const [fotoUrl, setFotoUrl] = useState<string | null>(null);
-  const [arquivoOriginal, setArquivoOriginal] = useState<File | null>(null);
-  const [processando, setProcessando] = useState(false);
+  // Conecta ao banco de dados na nuvem
+  const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
+  const db = getDb(env);
 
-  const capturarFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setArquivoOriginal(file);
-      const url = URL.createObjectURL(file);
-      setFotoUrl(url);
-    }
-  };
+  const evento = await db.select().from(eventos).where(eq(eventos.id, id)).get();
 
-  const enviarFoto = async () => {
-    if (!arquivoOriginal) return;
-
-    setProcessando(true);
-
-    try {
-      // 1. Comprime a imagem no celular
-      const options = {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-      const fotoComprimida = await imageCompression(arquivoOriginal, options);
-
-      // 2. Empacota a foto e o ID do evento para enviar
-      const formData = new FormData();
-      formData.append('foto', fotoComprimida, arquivoOriginal.name);
-      formData.append('eventoId', id);
-
-      // 3. Faz a chamada real para a nossa API (Backend)
-      const resposta = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const dados = (await resposta.json()) as { mensagem?: string; erro?: string };
-
-      if (resposta.ok) {
-        alert('🎉 ' + dados.mensagem);
-        // Limpa a tela para o convidado tirar a próxima foto
-        setFotoUrl(null);
-        setArquivoOriginal(null);
-      } else {
-        alert('Erro: ' + dados.erro);
-      }
-
-    } catch (error) {
-      console.error("Erro ao enviar a imagem:", error);
-      alert("Houve um erro de conexão. Tente novamente.");
-    } finally {
-      setProcessando(false);
-    }
-  };
-
-  return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-50 flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md flex flex-col items-center gap-8 border border-zinc-800 p-8 rounded-2xl bg-zinc-900 shadow-xl">
-        
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-2">FlashFest</h1>
-          <p className="text-zinc-400 text-sm">Deixe sua lembrança para os noivos!</p>
-        </div>
-
-        {!fotoUrl ? (
-          <label className="flex flex-col items-center justify-center w-48 h-48 bg-emerald-600 hover:bg-emerald-500 rounded-full cursor-pointer transition-all shadow-lg shadow-emerald-900/50 hover:scale-105 active:scale-95">
-            <Camera size={48} className="text-white mb-2" />
-            <span className="text-white font-semibold">Tirar Foto</span>
-            
-            <input 
-              type="file" 
-              accept="image/*" 
-              capture="environment" 
-              className="hidden" 
-              onChange={capturarFoto}
-            />
-          </label>
-        ) : (
-          <div className="flex flex-col items-center w-full gap-6">
-            <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border-2 border-zinc-700 shadow-inner bg-black">
-              <img src={fotoUrl} alt="Sua foto" className="object-contain w-full h-full" />
-            </div>
-            
-            <div className="flex w-full gap-4">
-              <button 
-                onClick={() => {
-                  setFotoUrl(null);
-                  setArquivoOriginal(null);
-                }}
-                disabled={processando}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium transition-colors disabled:opacity-50"
-              >
-                <RefreshCcw size={20} />
-                Refazer
-              </button>
-              <button 
-                onClick={enviarFoto}
-                disabled={processando}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition-colors shadow-lg shadow-emerald-900/20 disabled:opacity-50"
-              >
-                <Send size={20} />
-                {processando ? "Enviando..." : "Enviar"}
-              </button>
-            </div>
-          </div>
-        )}
+  if (!evento) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center text-white">
+        <h1 className="text-2xl font-bold mb-2">Evento não encontrado</h1>
       </div>
-    </main>
-  );
+    );
+  }
+
+  // --- O SEGURANÇA NA PORTA (TIME-GATE) ---
+  const dataHoje = new Date();
+  const dataFesta = new Date(evento.dataEvento);
+  
+  // Zeramos as horas para comparar apenas os dias exatos
+  dataHoje.setHours(0, 0, 0, 0);
+  dataFesta.setHours(0, 0, 0, 0);
+
+  // Se a data de hoje for MENOR que a data da festa, mostra a tela de bloqueio
+  if (dataHoje < dataFesta) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
+        <div className="text-6xl mb-6">⏳</div>
+        <h1 className="text-2xl font-bold text-white mb-2">A festa ainda não começou!</h1>
+        <p className="text-zinc-400 max-w-sm">
+          Guarde a sua energia! A captura de fotos para <strong>{evento.nomeEvento}</strong> só será liberada no dia {dataFesta.toLocaleDateString('pt-BR')}.
+        </p>
+      </div>
+    );
+  }
+  // ----------------------------------------
+
+  // Se a data for igual ou maior, liberamos o componente da câmera!
+  return <CameraClient id={id} nomeEvento={evento.nomeEvento} />;
 }
