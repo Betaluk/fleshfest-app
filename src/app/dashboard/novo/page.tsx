@@ -23,7 +23,6 @@ export default async function NovoEventoPage() {
         throw new Error("Utilizador não autenticado");
     }
 
-    // Expandimos o Env para o TypeScript saber que a chave do Stripe existe no cofre
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { STRIPE_SECRET_KEY: string } };
     const db = getDb(env);
 
@@ -43,27 +42,18 @@ export default async function NovoEventoPage() {
     }).onConflictDoNothing();
     
     const novoId = crypto.randomUUID();
-
-    // 1. O EVENTO NASCE COMO "PENDENTE"
-    await db.insert(eventos).values({
-      id: novoId,
-      usuarioId: sessionAction.user.id, 
-      planoId: 'plano-falso',           
-      nomeEvento: nome,
-      dataEvento: new Date(data),
-      muralAtivo: true,
-      modoModeracao: 'auto',
-      statusPagamento: 'pendente' 
-    });
-
-    // 2. INICIA A LIGAÇÃO AO STRIPE
-    const stripe = new Stripe(env.STRIPE_SECRET_KEY);
-
     const baseUrl = process.env.NODE_ENV === 'development' 
       ? 'http://localhost:8787' 
-      : 'https://flashfest.lucasregesbarros.workers.dev'; // Atualize com o seu domínio se necessário
+      : 'https://flashfest.lucasregesbarros.workers.dev'; 
 
-    // 3. CRIA A SESSÃO DE PAGAMENTO
+    // --- CURA 1: INICIAMOS O STRIPE COM O MOTOR COMPATÍVEL COM A CLOUDFLARE ---
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-06-20', // O Stripe exige uma versão declarada agora
+      httpClient: Stripe.createFetchHttpClient(), // A MÁGICA: Força o uso do Fetch API
+    });
+
+    // --- CURA 2: PEDIMOS A SESSÃO AO STRIPE PRIMEIRO ---
+    // Se o Stripe falhar, o código para aqui e o evento não é gravado no banco!
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -75,11 +65,23 @@ export default async function NovoEventoPage() {
       mode: 'payment',
       success_url: `${baseUrl}/dashboard?sucesso=true`,
       cancel_url: `${baseUrl}/dashboard`,
-      client_reference_id: novoId, // O Stripe vai guardar o ID da festa para nos devolver depois!
-      allow_promotion_codes: true, // A MÁGICA: Ativa a caixa para aplicar os 100% de desconto!
+      client_reference_id: novoId, 
+      allow_promotion_codes: true, 
     });
 
-    // 4. REDIRECIONA O CLIENTE PARA A PÁGINA DO STRIPE
+    // --- SÓ DEPOIS DO STRIPE DAR O SINAL VERDE É QUE GRAVAMOS NO BANCO ---
+    await db.insert(eventos).values({
+      id: novoId,
+      usuarioId: sessionAction.user.id, 
+      planoId: 'plano-falso',           
+      nomeEvento: nome,
+      dataEvento: new Date(data),
+      muralAtivo: true,
+      modoModeracao: 'auto',
+      statusPagamento: 'pendente' 
+    });
+
+    // Redireciona o cliente para a página do Stripe
     redirect(checkoutSession.url!);
   }
 
