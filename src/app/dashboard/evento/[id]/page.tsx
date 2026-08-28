@@ -6,6 +6,7 @@ import Link from 'next/link';
 import QRCodeCard from './QRCodeCard';
 import BotaoDownloadZip from './BotaoDownloadZip';
 import { gerarUrlAssinada } from '@/lib/seguranca';
+import BotaoBaixarPDF from './BotaoBaixarPDF';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,6 +108,9 @@ export default async function GerenciarEventoPage({
           <p className="text-sm text-zinc-500 mt-6 text-center leading-relaxed">
             Imprima este código e coloque nas mesas para os convidados escanearem e abrirem a câmera.
           </p>
+          <div className="w-full border-t border-zinc-800 mt-6 pt-4">
+            <BotaoBaixarPDF url={urlCamera} nomeEvento={evento.nomeEvento} />
+          </div>
         </div>
 
         {/* CONTROLES E BOTÕES */}
