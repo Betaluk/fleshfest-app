@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { signIn } from '@/auth';
 
 export default function Home() {
+  async function fazerLogin() {
+    'use server';
+    await signIn('google', { redirectTo: '/dashboard' });
+  }
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-50 font-sans selection:bg-emerald-500/30">
       
@@ -10,33 +15,37 @@ export default function Home() {
           <div className="font-bold text-2xl tracking-tighter text-white">
             Flash<span className="text-emerald-400">Fest</span>
           </div>
-          <Link 
-            href="/dashboard" 
-            className="text-sm font-medium bg-white text-black px-5 py-2 rounded-full hover:bg-zinc-200 transition"
-          >
-            Entrar / Criar Evento
-          </Link>
+          <form action={fazerLogin}>
+            <Link 
+              href="/dashboard" 
+              className="text-sm font-medium bg-white text-black px-5 py-2 rounded-full hover:bg-zinc-200 transition"
+            >
+              Entrar / Criar Evento
+            </Link>
+          </form>  
         </div>
       </nav>
 
       {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-6 py-24 text-center mt-8">
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
-          O telão interativo da sua <br className="hidden md:block" />
+          O telão interativo do seu <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-            festa inesquecível.
+            evento inesquecível.
           </span>
         </h1>
         <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10">
           Transforme os seus convidados nos fotógrafos oficiais do evento. 
           Eles escaneiam o QR Code, tiram a foto e ela aparece instantaneamente no telão da festa!
         </p>
-        <Link 
-          href="/dashboard" 
-          className="inline-block bg-emerald-500 text-zinc-950 text-lg font-bold px-8 py-4 rounded-full hover:bg-emerald-400 transition transform hover:scale-105"
-        >
-          Começar Gratuitamente
-        </Link>
+        <form action={fazerLogin}>
+          <Link 
+            href="/dashboard" 
+            className="inline-block bg-emerald-500 text-zinc-950 text-lg font-bold px-8 py-4 rounded-full hover:bg-emerald-400 transition transform hover:scale-105"
+          >
+            Começar Agora
+          </Link>
+        </form>
       </section>
 
       {/* Como Funciona */}

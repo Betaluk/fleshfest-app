@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     // 5. UPLOAD PARA A CLOUDFLARE R2
     // Gera um nome único para o arquivo
     const extensao = arquivo.name.split('.').pop() || 'jpg';
-    const nomeFicheiroUnico = `${eventoId}/${Date.now()}-${crypto.randomUUID()}.${extensao}`;
+    const nomeFicheiroUnico = `${eventoId}_${Date.now()}-${crypto.randomUUID()}.${extensao}`;
     const arrayBuffer = await arquivo.arrayBuffer();
 
     await env.BUCKET_FOTOS.put(nomeFicheiroUnico, arrayBuffer, {
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
 
     // Como bloqueamos o balde público, a URL que salvamos no banco agora é a nossa Rota Segura local!
     const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.lucasregesbarros.workers.dev';
-    const urlSeguraAcesso = `${baseUrl}/api/fotos/${nomeFicheiroUnico.split('/').pop()}`;
+    const urlSeguraAcesso = `${baseUrl}/api/fotos/${nomeFicheiroUnico}`;
 
     // 6. SALVA O REGISTRO NO D1
     // Se o evento estiver configurado como 'auto', a foto já nasce 'aprovada'
