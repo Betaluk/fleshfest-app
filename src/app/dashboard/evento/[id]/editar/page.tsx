@@ -24,7 +24,6 @@ export default async function EditarEventoPage({
   const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
   const db = getDb(env);
 
-  // Busca os dados atuais do evento
   const evento = await db
     .select()
     .from(eventos)
@@ -42,17 +41,16 @@ export default async function EditarEventoPage({
     );
   }
 
-  // Formata a data para preencher o input type="date" (YYYY-MM-DD)
   const dataIso = new Date(evento.dataEvento).toISOString().split('T')[0];
 
-  // AÇÃO DE SERVIDOR: Salvar as alterações
   async function atualizarEvento(formData: FormData) {
     'use server';
 
     const nome = formData.get('nome') as string;
     const data = formData.get('data') as string;
+    const modoModeracao = formData.get('modoModeracao') as 'auto' | 'manual';
 
-    if (!nome || !data) return;
+    if (!nome || !data || !modoModeracao) return;
 
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
     const db = getDb(env);
@@ -64,12 +62,13 @@ export default async function EditarEventoPage({
         .set({
           nomeEvento: nome,
           dataEvento: new Date(data),
+          modoModeracao: modoModeracao,
         })
         .where(and(eq(eventos.id, id), eq(eventos.usuarioId, session.user.id)));
 
       revalidatePath('/dashboard');
       revalidatePath(`/dashboard/evento/${id}`);
-      redirect('/dashboard');
+      redirect(`/dashboard/evento/${id}`); // Redireciona de volta para o painel da festa
     }
   }
 
@@ -106,8 +105,32 @@ export default async function EditarEventoPage({
           />
         </div>
 
+        {/* NOVA SEÇÃO: Controle de Moderação */}
+        <div className="pt-2">
+          <label className="block text-sm font-medium text-zinc-300 mb-3">
+            Modo de Exibição no Telão
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.modoModeracao === 'auto' ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+              <div className="flex items-center gap-2">
+                <input type="radio" name="modoModeracao" value="auto" defaultChecked={evento.modoModeracao === 'auto'} className="text-emerald-500 bg-zinc-900 border-zinc-700" />
+                <span className="font-bold text-white">Automático</span>
+              </div>
+              <span className="text-sm text-zinc-400 pl-6">Fotos vão direto para o telão assim que tiradas.</span>
+            </label>
+
+            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.modoModeracao === 'manual' ? 'border-amber-500 bg-amber-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+              <div className="flex items-center gap-2">
+                <input type="radio" name="modoModeracao" value="manual" defaultChecked={evento.modoModeracao === 'manual'} className="text-amber-500 bg-zinc-900 border-zinc-700" />
+                <span className="font-bold text-white">Manual</span>
+              </div>
+              <span className="text-sm text-zinc-400 pl-6">Você precisará aprovar as fotos antes de aparecerem.</span>
+            </label>
+          </div>
+        </div>
+
         <div className="pt-4 flex justify-end space-x-4 border-t border-zinc-800 mt-6">
-          <Link href="/dashboard" className="px-4 py-2 text-zinc-400 hover:text-white transition">
+          <Link href={`/dashboard/evento/${id}`} className="px-4 py-2 text-zinc-400 hover:text-white transition">
             Cancelar
           </Link>
           <button
