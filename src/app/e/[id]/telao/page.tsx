@@ -3,6 +3,7 @@ import { getDb, Env } from '@/db';
 import { eventos, fotos } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import Slideshow from './Slideshow';
+import { gerarUrlAssinada } from '@/lib/seguranca';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +14,7 @@ export default async function TelaoPage({
 }) {
   const { id } = await params;
 
-  const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
+  const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { IMAGE_SECRET: string } };
   const db = getDb(env);
 
   const evento = await db.select().from(eventos).where(eq(eventos.id, id)).get();
@@ -33,9 +34,15 @@ export default async function TelaoPage({
     .orderBy(desc(fotos.dataCaptura));
 
   // TRUQUE: Troca o domínio pela nossa API para a imagem carregar perfeitamente no R2
-  const fotosTratadas = fotosAprovadas.map(foto => ({
-    ...foto,
-    urlImagem: foto.urlImagem.replace('https://fotos.flashfest.com', '/api/fotos')
+  const fotosTratadas = await Promise.all(fotosAprovadas.map(async (foto) => {
+    const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
+    // Assina a URL para durar 12 horas
+    const urlSegura = await gerarUrlAssinada(chaveFicheiro, env.IMAGE_SECRET, 12);
+    
+    return {
+      ...foto,
+      urlImagem: urlSegura
+    };
   }));
 
   // --- MÁGICA DA URL DINÂMICA AQUI ---

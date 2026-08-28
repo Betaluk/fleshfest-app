@@ -5,6 +5,7 @@ import { eq, count, and } from 'drizzle-orm';
 import Link from 'next/link';
 import QRCodeCard from './QRCodeCard';
 import BotaoDownloadZip from './BotaoDownloadZip';
+import { gerarUrlAssinada } from '@/lib/seguranca'; // Importação do nosso motor de segurança
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +16,10 @@ export default async function GerenciarEventoPage({
 }) {
   const { id } = await params;
 
-  const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
+  // Atualizamos o tipo do Env para incluir a nossa nova chave secreta
+  const { env } = (await getCloudflareContext({ async: true })) as unknown as { 
+    env: Env & { IMAGE_SECRET: string } 
+  };
   const db = getDb(env);
 
   const evento = await db.select().from(eventos).where(eq(eventos.id, id)).get();
@@ -39,10 +43,18 @@ export default async function GerenciarEventoPage({
     .from(fotos)
     .where(and(eq(fotos.eventoId, id), eq(fotos.status, 'aprovada')));
 
-  // Prepara as URLs passando pela nossa API local (mesmo truque do Telão)
-  const fotosUrls = fotosAprovadas.map(foto => 
-    foto.urlImagem.replace('https://fotos.flashfest.com', '/api/fotos')
+  // --- MÁGICA DA SEGURANÇA AQUI ---
+  // Mapeia todas as fotos gerando uma assinatura única e temporária (12 horas) para cada uma
+  const fotosUrls = await Promise.all(
+    fotosAprovadas.map(async (foto) => {
+      // Extrai apenas o nome do arquivo final da URL (ex: meuarquivo.jpg)
+      const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
+      
+      // Passa pelo nosso motor de criptografia
+      return await gerarUrlAssinada(chaveFicheiro, env.IMAGE_SECRET, 12);
+    })
   );
+  // ---------------------------------
 
   const limiteFotos = 500; 
 
@@ -57,7 +69,7 @@ export default async function GerenciarEventoPage({
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-zinc-800 pb-6 gap-4">
         <div>
           <h2 className="text-3xl font-bold text-white">{evento.nomeEvento}</h2>
-          <p className="text-zinc-400 mt-1">Data: {new Date(evento.dataEvento).toLocaleDateString('pt-PT')}</p>
+          <p className="text-zinc-400 mt-1">Data: {new Date(evento.dataEvento).toLocaleDateString('pt-BR')}</p>
         </div>
         <Link href="/dashboard" className="px-5 py-2 bg-zinc-800 text-white font-medium rounded-lg hover:bg-zinc-700 transition text-center">
           Voltar ao Painel
@@ -70,7 +82,7 @@ export default async function GerenciarEventoPage({
           <h3 className="text-lg font-semibold text-white mb-6">QR Code da Festa</h3>
           <QRCodeCard url={urlCamera} />
           <p className="text-sm text-zinc-500 mt-6 text-center leading-relaxed">
-            Imprima este código e coloque nas mesas para os convidados escanearem e abrirem a câmara.
+            Imprima este código e coloque nas mesas para os convidados escanearem e abrirem a câmera.
           </p>
         </div>
 
@@ -91,7 +103,6 @@ export default async function GerenciarEventoPage({
             </div>
           </div>
 
-          {/* GRELHA ALTERADA PARA 3 COLUNAS */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             
             <Link
@@ -113,7 +124,6 @@ export default async function GerenciarEventoPage({
               <span className="text-sm text-zinc-400 mt-1">Aprovar ou rejeitar</span>
             </Link>
 
-            {/* O NOVO BOTÃO DE DOWNLOAD */}
             <BotaoDownloadZip fotosUrls={fotosUrls} nomeEvento={evento.nomeEvento} />
             
           </div>
