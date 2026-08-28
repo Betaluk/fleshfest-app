@@ -15,14 +15,14 @@ export default function Home() {
           <div className="font-bold text-2xl tracking-tighter text-white">
             Flash<span className="text-emerald-400">Fest</span>
           </div>
-          <form action={fazerLogin}>
-            <Link 
-              href="/dashboard" 
-              className="text-sm font-medium bg-white text-black px-5 py-2 rounded-full hover:bg-zinc-200 transition"
-            >
-              Entrar / Criar Evento
-            </Link>
-          </form>  
+            <form action={fazerLogin}>
+              <button 
+                type="submit"
+                className="text-sm font-medium bg-white text-black px-5 py-2 rounded-full hover:bg-zinc-200 transition"
+              >
+                Entrar / Criar Evento
+              </button>
+            </form>  
         </div>
       </nav>
 
@@ -39,13 +39,13 @@ export default function Home() {
           Eles escaneiam o QR Code, tiram a foto e ela aparece instantaneamente no telão da festa!
         </p>
         <form action={fazerLogin}>
-          <Link 
-            href="/dashboard" 
+          <button 
+            type="submit"
             className="inline-block bg-emerald-500 text-zinc-950 text-lg font-bold px-8 py-4 rounded-full hover:bg-emerald-400 transition transform hover:scale-105"
           >
             Começar Agora
-          </Link>
-        </form>
+          </button>
+      </form>
       </section>
 
       {/* Como Funciona */}
