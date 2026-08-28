@@ -45,7 +45,16 @@ export default async function TelaoPage({
     };
   }));
 
-  // --- MÁGICA DA URL DINÂMICA AQUI ---
+  // =================================================================
+  // NOVA LÓGICA: Desbloqueando a Logo segura para o telão
+  let urlLogoSegura = null;
+  if (evento?.urlLogo) {
+    const chaveLogo = evento.urlLogo.split('/').pop() || '';
+    urlLogoSegura = await gerarUrlAssinada(chaveLogo, env.IMAGE_SECRET, 12);
+  }
+  // =================================================================
+
+  // --- MÁGICA DA URL DINÂMICA (Fazemos isso ANTES do return) ---
   const baseUrl = process.env.NODE_ENV === 'development' 
     ? 'http://localhost:8787' 
     : 'https://flashfest.lucasregesbarros.workers.dev';
@@ -53,5 +62,24 @@ export default async function TelaoPage({
   const urlCamera = `${baseUrl}/e/${id}`;
   // -----------------------------------
 
-  return <Slideshow fotos={fotosTratadas} urlCamera={urlCamera} />;
+  // O RETURN ÚNICO QUE ENVOLVE TUDO: O Slideshow e a Logo!
+  return (
+    <main className="relative w-full h-screen bg-black overflow-hidden">
+      
+      {/* 1. O fundo com as fotos animadas */}
+      <Slideshow fotos={fotosTratadas} urlCamera={urlCamera} />
+      
+      {/* 2. O Monograma flutuando no canto inferior direito por cima das fotos */}
+      {urlLogoSegura && (
+        <div className="absolute bottom-10 right-10 z-50 pointer-events-none">
+          <img 
+            src={urlLogoSegura} 
+            alt="Monograma" 
+            className="max-h-40 max-w-[300px] object-contain drop-shadow-2xl opacity-90"
+          />
+        </div>
+      )}
+
+    </main>
+  );
 }

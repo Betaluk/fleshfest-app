@@ -49,20 +49,39 @@ export default async function EditarEventoPage({
     const nome = formData.get('nome') as string;
     const data = formData.get('data') as string;
     const modoModeracao = formData.get('modoModeracao') as 'auto' | 'manual';
+    const logo = formData.get('logo') as File | null;
 
     if (!nome || !data || !modoModeracao) return;
 
-    const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
+    // Atualizamos o tipo do Env para incluir o BUCKET_FOTOS
+    const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { BUCKET_FOTOS: any } };
     const db = getDb(env);
     const session = await auth();
 
     if (session?.user?.id) {
+      let novaUrlLogo = evento?.urlLogo || null; // Mantém a existente por padrão
+
+      // Se o usuário selecionou um arquivo novo
+      if (logo && logo.size > 0) {
+        const ext = logo.name.split('.').pop() || 'png';
+        const nomeFicheiro = `logo_${id}_${Date.now()}.${ext}`;
+        const buffer = await logo.arrayBuffer();
+        
+        await env.BUCKET_FOTOS.put(nomeFicheiro, buffer, {
+          httpMetadata: { contentType: logo.type },
+        });
+
+        const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.lucasregesbarros.workers.dev';
+        novaUrlLogo = `${baseUrl}/api/fotos/${nomeFicheiro}`;
+      }
+
       await db
         .update(eventos)
         .set({
           nomeEvento: nome,
           dataEvento: new Date(data),
           modoModeracao: modoModeracao,
+          urlLogo: novaUrlLogo,
         })
         .where(and(eq(eventos.id, id), eq(eventos.usuarioId, session.user.id)));
 
@@ -105,7 +124,7 @@ export default async function EditarEventoPage({
           />
         </div>
 
-        {/* NOVA SEÇÃO: Controle de Moderação */}
+        {/* SEÇÃO: Controle de Moderação */}
         <div className="pt-2">
           <label className="block text-sm font-medium text-zinc-300 mb-3">
             Modo de Exibição no Telão
@@ -126,6 +145,20 @@ export default async function EditarEventoPage({
               </div>
               <span className="text-sm text-zinc-400 pl-6">Você precisará aprovar as fotos antes de aparecerem.</span>
             </label>
+          </div>
+        </div>
+
+        {/* --- A MAGIA DO MONOGRAMA AQUI --- */}
+        <div className="pt-2">
+          <label className="block text-sm font-medium text-zinc-300 mb-2">Monograma / Marca d'Água (Opcional)</label>
+          <div className="bg-zinc-950 border border-zinc-800 rounded-md p-4 flex flex-col gap-4">
+            {evento.urlLogo && (
+              <div className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm rounded">
+                ✅ Logo atual já configurada! Envie outra se desejar substituir.
+              </div>
+            )}
+            <input type="file" name="logo" accept="image/png" className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 transition" />
+            <p className="text-xs text-zinc-500">Envie uma imagem com fundo transparente (.PNG) para aparecer no canto inferior direito do telão.</p>
           </div>
         </div>
 

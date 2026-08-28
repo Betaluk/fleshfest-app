@@ -27,6 +27,7 @@ export const eventos = sqliteTable('eventos', {
   muralAtivo: integer('mural_ativo', { mode: 'boolean' }).notNull().default(true),
   modoModeracao: text('modo_moderacao').notNull(), // 'auto' ou 'manual'
   statusPagamento: text('status_pagamento').notNull(), // 'pendente' ou 'pago'
+  urlLogo: text('url_logo'),
 });
 
 // 4. Tabela: Fotos
