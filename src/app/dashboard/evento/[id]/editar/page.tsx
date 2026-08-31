@@ -71,7 +71,7 @@ export default async function EditarEventoPage({
           httpMetadata: { contentType: logo.type },
         });
 
-        const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.lucasregesbarros.workers.dev';
+        const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.com.br';
         novaUrlLogo = `${baseUrl}/api/fotos/${nomeFicheiro}`;
       }
 

@@ -57,7 +57,7 @@ export default async function TelaoPage({
   // --- MÁGICA DA URL DINÂMICA (Fazemos isso ANTES do return) ---
   const baseUrl = process.env.NODE_ENV === 'development' 
     ? 'http://localhost:8787' 
-    : 'https://flashfest.lucasregesbarros.workers.dev';
+    : 'https://flashfest.com.br';
 
   const urlCamera = `${baseUrl}/e/${id}`;
   // -----------------------------------

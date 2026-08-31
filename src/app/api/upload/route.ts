@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     });
 
     // Como bloqueamos o balde público, a URL que salvamos no banco agora é a nossa Rota Segura local!
-    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.lucasregesbarros.workers.dev';
+    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.com.br';
     const urlSeguraAcesso = `${baseUrl}/api/fotos/${nomeFicheiroUnico}`;
 
     // 6. SALVA O REGISTRO NO D1

@@ -66,7 +66,7 @@ export default async function GerenciarEventoPage({
   // 5. Variáveis de Roteamento
   const baseUrl = process.env.NODE_ENV === 'development' 
     ? 'http://localhost:8787' 
-    : 'https://flashfest.lucasregesbarros.workers.dev';
+    : 'https://flashfest.com.br';
   const urlCamera = `${baseUrl}/e/${id}`;
 
   return (
