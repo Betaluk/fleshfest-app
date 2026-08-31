@@ -132,25 +132,36 @@ export default async function GerenciarEventoPage({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* BOTÃO DO TELÃO */}
             <Link
-              href={`/e/${id}/telao`}
-              target="_blank"
-              className="flex flex-col items-center justify-center bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl p-8 transition group"
+              href={estaExpirado ? '#' : `/e/${id}/telao`}
+              target={estaExpirado ? '_self' : '_blank'}
+              className={`flex flex-col items-center justify-center border border-zinc-700 rounded-xl p-8 transition group ${
+                estaExpirado 
+                  ? 'bg-zinc-900/50 opacity-50 pointer-events-none cursor-not-allowed' 
+                  : 'bg-zinc-800 hover:bg-zinc-700'
+              }`}
             >
               <span className="text-4xl mb-3 group-hover:scale-110 transition-transform">📺</span>
               <span className="font-bold text-white text-lg">Abrir Telão</span>
               <span className="text-sm text-zinc-400 mt-1">Inicia o Slideshow</span>
             </Link>
 
+            {/* BOTÃO DE MODERAÇÃO */}
             <Link
-                href={`/dashboard/evento/${id}/moderacao`}
-                className="flex flex-col items-center justify-center bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-xl p-8 transition group"
+              href={estaExpirado ? '#' : `/dashboard/evento/${id}/moderacao`}
+              className={`flex flex-col items-center justify-center border border-zinc-700 rounded-xl p-8 transition group ${
+                estaExpirado 
+                  ? 'bg-zinc-950/50 opacity-50 pointer-events-none cursor-not-allowed' 
+                  : 'bg-zinc-900 hover:bg-zinc-800'
+              }`}
             >
               <span className="text-4xl mb-3 group-hover:scale-110 transition-transform">🛡️</span>
               <span className="font-bold text-white text-lg">Moderação</span>
               <span className="text-sm text-zinc-400 mt-1">Aprovar ou rejeitar</span>
             </Link>
 
+            {/* BOTÃO DE DOWNLOAD (Já contém a lógica de bloqueio interno) */}
             <BotaoDownloadZip fotosUrls={fotosUrls} nomeEvento={evento.nomeEvento} />
           </div>
         </div>
