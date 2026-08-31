@@ -58,7 +58,6 @@ export default async function DashboardPage() {
 
     redirect(checkoutSession.url!);
   }
-
   // --- A NOVA LÓGICA DE EXCLUSÃO (Limpeza Total) ---
   async function deletarEvento(formData: FormData) {
     'use server';
@@ -70,19 +69,37 @@ export default async function DashboardPage() {
     const session = await auth();
 
     if (session?.user?.id) {
+      // 0. Busca o evento para sabermos se ele tem uma Logo
+      const evento = await db
+        .select()
+        .from(eventos)
+        .where(and(eq(eventos.id, eventoId), eq(eventos.usuarioId, session.user.id)))
+        .get();
+
+      if (!evento) return;
+
       // 1. Busca todas as fotos desta festa na base de dados
       const fotosParaDeletar = await db.select().from(fotos).where(eq(fotos.eventoId, eventoId));
 
-      // 2. Apaga fisicamente os ficheiros pesados no R2 da Cloudflare
+      // 2. Apaga fisicamente os ficheiros (Fotos) no R2 da Cloudflare
       for (const foto of fotosParaDeletar) {
-        // Extrai o nome do ficheiro do final da URL (ex: 'meuarquivo.jpg')
         const chaveFicheiro = foto.urlImagem.split('/').pop();
         if (chaveFicheiro) {
           await env.BUCKET_FOTOS.delete(chaveFicheiro);
         }
       }
 
-      // 3. Agora sim, apaga o evento (e as fotos do D1 em cascata, se configurado)
+      // 2.1 Apaga a Logo fisicamente no R2 (se houver)
+      if (evento.urlLogo) {
+        const chaveLogo = evento.urlLogo.split('/').pop();
+        if (chaveLogo) {
+          await env.BUCKET_FOTOS.delete(chaveLogo);
+        }
+      }
+
+      // 3. LIMPEZA NO BANCO DE DADOS (A ordem é vital: primeiro as fotos, depois o evento)
+      await db.delete(fotos).where(eq(fotos.eventoId, eventoId)); // <- ESTA É A LINHA QUE FALTAVA!
+      
       await db.delete(eventos).where(
         and(eq(eventos.id, eventoId), eq(eventos.usuarioId, session.user.id))
       );
