@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDb, Env } from '@/db';
 import { eventos, fotos } from '@/db/schema';
 import { eq, count } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
 
 // --- RATE LIMITING (Anti-Spam em Memória) ---
 // Como a Cloudflare Edge é extremamente rápida, usamos um Map na memória do Worker
@@ -52,6 +53,23 @@ export async function POST(request: Request) {
 
     // Verifica se o evento existe e está ativo
     const evento = await db.select().from(eventos).where(eq(eventos.id, eventoId)).get();
+    // --- NOVA LÓGICA: Bloqueio de Upload Expirado ---
+    // 1. Garante ao TypeScript que o evento existe
+    if (!evento) {
+      return NextResponse.json({ error: 'Evento não encontrado.' }, { status: 404 });
+    }
+
+    // 2. NOVA LÓGICA: Bloqueio de Upload Expirado
+    const dataLimite = new Date(evento.dataEvento);
+    dataLimite.setDate(dataLimite.getDate() + 2); // Regra de 48h
+    const hoje = new Date();
+
+    if (hoje > dataLimite) {
+      return NextResponse.json(
+        { error: 'Este evento já foi encerrado e não aceita mais fotos.' },
+        { status: 403 }
+      );
+    }
     
     if (!evento || evento.statusPagamento !== 'pago') {
       return Response.json({ erro: 'Evento inválido ou inativo.' }, { status: 403 });
