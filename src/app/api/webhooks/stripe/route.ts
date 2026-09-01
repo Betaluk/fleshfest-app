@@ -13,8 +13,10 @@ export async function POST(req: Request) {
       env: Env & { STRIPE_SECRET_KEY: string, STRIPE_WEBHOOK_SECRET: string } 
     };
 
+    // --- A CURA 1: Forçar o Stripe a usar o Fetch API da Cloudflare ---
     const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-07-29.dahlia', // Mantemos a versão que o seu projeto já utiliza
+      apiVersion: '2026-07-29.dahlia', 
+      httpClient: Stripe.createFetchHttpClient(), 
     });
 
     const body = await req.text();
@@ -24,23 +26,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Falta assinatura do Webhook' }, { status: 400 });
     }
 
-    // O "Segurança" verificando se a mensagem veio mesmo da Stripe
-    const event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
+    // --- A CURA 2: Usar constructEventAsync (compatível com a criptografia da Edge) ---
+    const event = await stripe.webhooks.constructEventAsync(body, signature, env.STRIPE_WEBHOOK_SECRET);
 
-    // Se o pagamento foi concluído com sucesso...
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
       const eventoId = session.client_reference_id;
       
       if (eventoId) {
-        // Truque Mestre: Busca na Stripe qual foi o produto exato (Price ID) que o cliente acabou de pagar
+        // Agora essa chamada de rede vai funcionar perfeitamente
         const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
         const priceIdPago = lineItems.data[0]?.price?.id;
 
         if (priceIdPago) {
           const db = getDb(env);
           
-          // Libera o evento e atrela ele às regras de limite do plano escolhido!
           await db.update(eventos)
             .set({ 
               statusPagamento: 'pago',
