@@ -32,7 +32,8 @@ export default async function DashboardPage() {
   async function pagarEvento(formData: FormData) {
     'use server';
     const eventoId = formData.get('eventoId') as string;
-    if (!eventoId) return;
+    const priceId = formData.get('priceId') as string; // Agora recebemos o ID exato
+    if (!eventoId || !priceId) return;
 
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { STRIPE_SECRET_KEY: string } };
     
@@ -41,12 +42,12 @@ export default async function DashboardPage() {
       httpClient: Stripe.createFetchHttpClient(),
     });
 
-    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.lucasregesbarros.workers.dev'; 
+    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://flashfest.com.br'; 
 
     const checkoutSession = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card'], // Se ativou PIX na Stripe, pode adicionar 'pix' aqui depois
       line_items: [{
-        price: 'price_1U6EnXRsvoZpGZFTbYxCJVol', // <--- MANTENHA O SEU PRICE ID AQUI
+        price: priceId, // ID injetado dinamicamente
         quantity: 1,
       }],
       mode: 'payment',
@@ -108,6 +109,13 @@ export default async function DashboardPage() {
     }
   }
 
+  const planosDisponiveis = [
+    { id: 'price_1UAyWLRwdoo1gIwbBa6BWaRO', nome: 'Start', preco: 'R$ 49', fotos: '500', dias: '2' },
+    { id: 'price_1UAyaMRwdoo1gIwbrstbMrBs', nome: 'Pro', preco: 'R$ 99', fotos: '2.000', dias: '7' },
+    { id: 'price_1UAycQRwdoo1gIwbdiKOZRgI', nome: 'VIP', preco: 'R$ 149', fotos: '5.000', dias: '30' },
+    { id: 'price_1UAyehRwdoo1gIwbfDGSzFSl', nome: 'VIP+', preco: 'R$ 199', fotos: '10.000', dias: '30' }
+  ];
+
   return (
     <div className="space-y-8 mt-4">
       <div className="flex justify-between items-center border-b border-zinc-800 pb-6">
@@ -158,12 +166,27 @@ export default async function DashboardPage() {
                       Gerenciar Evento
                     </Link>
                   ) : (
-                    <form action={pagarEvento} className="w-full">
-                      <input type="hidden" name="eventoId" value={evento.id} />
-                      <button type="submit" className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-lg transition">
-                        💳 Pagar Agora
-                      </button>
-                    </form>
+                    <div className="w-full mt-2">
+                      <p className="text-sm text-zinc-400 mb-3 font-medium">Escolha um plano para ativar:</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {planosDisponiveis.map((plano) => (
+                          <form key={plano.id} action={pagarEvento} className="w-full">
+                            <input type="hidden" name="eventoId" value={evento.id} />
+                            <input type="hidden" name="priceId" value={plano.id} />
+                            <button 
+                              type="submit" 
+                              className="w-full text-left p-3 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 hover:border-emerald-500 transition group flex flex-col"
+                            >
+                              <div className="flex justify-between items-center w-full mb-1">
+                                <span className="font-bold text-white text-sm">{plano.nome}</span>
+                                <span className="text-emerald-400 font-bold text-sm">{plano.preco}</span>
+                              </div>
+                              <span className="text-xs text-zinc-400">{plano.fotos} fotos • {plano.dias} dias</span>
+                            </button>
+                          </form>
+                        ))}
+                      </div>
+                    </div>
                   )}
 
                   <div className="flex gap-2 pt-2 border-t border-zinc-800/80">

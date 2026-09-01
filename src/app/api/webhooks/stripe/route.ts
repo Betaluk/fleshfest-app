@@ -1,62 +1,59 @@
+import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDb, Env } from '@/db';
 import { eventos } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import Stripe from 'stripe';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
-    // 1. Puxa as senhas do cofre da Cloudflare
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { 
       env: Env & { STRIPE_SECRET_KEY: string, STRIPE_WEBHOOK_SECRET: string } 
     };
 
-    // 2. Prepara o Stripe com as configurações da Cloudflare
     const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-07-29.dahlia', 
-      httpClient: Stripe.createFetchHttpClient(),
+      apiVersion: '2026-07-29.dahlia', // Mantemos a versão que o seu projeto já utiliza
     });
 
-    // 3. Verifica a Assinatura (para termos certeza de que quem chamou foi o Stripe e não um hacker)
-    const signature = req.headers.get('stripe-signature');
-    if (!signature) {
-      return new Response('Assinatura ausente', { status: 400 });
-    }
-
     const body = await req.text();
-    let event: Stripe.Event;
+    const signature = req.headers.get('stripe-signature');
 
-    try {
-      event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
-    } catch (err: any) {
-      console.error(`Erro de Assinatura do Webhook: ${err.message}`);
-      return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    if (!signature) {
+      return NextResponse.json({ error: 'Falta assinatura do Webhook' }, { status: 400 });
     }
 
-    // 4. Se o pagamento foi concluído, libertamos a festa!
+    // O "Segurança" verificando se a mensagem veio mesmo da Stripe
+    const event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
+
+    // Se o pagamento foi concluído com sucesso...
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
-      
-      // Apanhamos o ID da festa que enviámos antes
       const eventoId = session.client_reference_id;
-
+      
       if (eventoId) {
-        const db = getDb(env);
-        
-        // Atualiza o estado no D1 para 'pago'
-        await db.update(eventos)
-          .set({ statusPagamento: 'pago' })
-          .where(eq(eventos.id, eventoId));
+        // Truque Mestre: Busca na Stripe qual foi o produto exato (Price ID) que o cliente acabou de pagar
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+        const priceIdPago = lineItems.data[0]?.price?.id;
+
+        if (priceIdPago) {
+          const db = getDb(env);
           
-        console.log(`Festa ${eventoId} libertada com sucesso!`);
+          // Libera o evento e atrela ele às regras de limite do plano escolhido!
+          await db.update(eventos)
+            .set({ 
+              statusPagamento: 'pago',
+              planoId: priceIdPago 
+            })
+            .where(eq(eventos.id, eventoId));
+        }
       }
     }
 
-    // 5. Diz ao Stripe: "Mensagem recebida, obrigado!"
-    return new Response(JSON.stringify({ recebido: true }), { status: 200 });
-
-  } catch (error) {
-    console.error("Erro interno no Webhook:", error);
-    return new Response("Erro interno do servidor", { status: 500 });
+    return NextResponse.json({ received: true }, { status: 200 });
+  } catch (error: any) {
+    console.error('Erro no webhook:', error);
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }
