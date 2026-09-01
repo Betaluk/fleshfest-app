@@ -4,7 +4,6 @@ import { eventos, planos, usuarios } from '@/db/schema';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/auth';
-import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +22,7 @@ export default async function NovoEventoPage() {
         throw new Error("Utilizador não autenticado");
     }
 
-    const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { STRIPE_SECRET_KEY: string } };
+    const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
     const db = getDb(env);
 
     await db.insert(planos).values({
@@ -42,38 +41,13 @@ export default async function NovoEventoPage() {
     }).onConflictDoNothing();
     
     const novoId = crypto.randomUUID();
-    const baseUrl = process.env.NODE_ENV === 'development' 
-      ? 'http://localhost:8787' 
-      : 'https://flashfest.lucasregesbarros.workers.dev'; 
 
-    // --- CURA 1: INICIAMOS O STRIPE COM O MOTOR COMPATÍVEL COM A CLOUDFLARE ---
-    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-07-29.dahlia', // O Stripe exige uma versão declarada agora
-      httpClient: Stripe.createFetchHttpClient(), // A MÁGICA: Força o uso do Fetch API
-    });
-
-    // --- CURA 2: PEDIMOS A SESSÃO AO STRIPE PRIMEIRO ---
-    // Se o Stripe falhar, o código para aqui e o evento não é gravado no banco!
-    const checkoutSession = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: 'price_1U6EnXRsvoZpGZFTbYxCJVol', // <--- SUBSTITUA PELO SEU PRICE ID (price_...)
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${baseUrl}/dashboard?sucesso=true`,
-      cancel_url: `${baseUrl}/dashboard`,
-      client_reference_id: novoId, 
-      allow_promotion_codes: true, 
-    });
-
-    // --- SÓ DEPOIS DO STRIPE DAR O SINAL VERDE É QUE GRAVAMOS NO BANCO ---
+    // --- GRAVAMOS O EVENTO NO BANCO ---
+    // Ele entra como "pendente" e com o "plano-falso" até o cliente pagar
     await db.insert(eventos).values({
       id: novoId,
       usuarioId: sessionAction.user.id, 
-      planoId: 'plano-falso',           
+      planoId: 'plano-falso',          
       nomeEvento: nome,
       dataEvento: new Date(data),
       muralAtivo: true,
@@ -81,8 +55,8 @@ export default async function NovoEventoPage() {
       statusPagamento: 'pendente' 
     });
 
-    // Redireciona o cliente para a página do Stripe
-    redirect(checkoutSession.url!);
+    // Redireciona o cliente direto para o painel onde a Vitrine de Planos está aguardando
+    redirect('/dashboard');
   }
 
   return (
@@ -122,7 +96,7 @@ export default async function NovoEventoPage() {
             type="submit"
             className="bg-emerald-500 text-zinc-950 px-6 py-2 rounded-md font-bold hover:bg-emerald-400 transition"
           >
-            Ir para Pagamento
+            Criar Evento
           </button>
         </div>
       </form>
