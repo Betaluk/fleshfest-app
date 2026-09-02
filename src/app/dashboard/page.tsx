@@ -116,6 +116,15 @@ export default async function DashboardPage() {
     { id: 'price_1UAyehRwdoo1gIwbfDGSzFSl', nome: 'VIP+', preco: 'R$ 199', fotos: '10.000', dias: '30' }
   ];
 
+  // TRADUTOR DE PLANOS: Converte o ID da Stripe no nome bonito para a tela
+  const nomesDosPlanos: Record<string, string> = {
+    'plano-falso': 'Pendente',
+    'price_1UAyWLRwdoo1gIwbBa6BWaRO': 'Start',
+    'price_1UAyaMRwdoo1gIwbrstbMrBs': 'Pro',
+    'price_1UAycQRwdoo1gIwbdiKOZRgI': 'VIP',
+    'price_1UAyehRwdoo1gIwbfDGSzFSl': 'VIP+'
+  };
+
   return (
     <div className="space-y-8 mt-4">
       <div className="flex justify-between items-center border-b border-zinc-800 pb-6">
@@ -139,6 +148,8 @@ export default async function DashboardPage() {
           {meusEventos.map((evento) => {
             const isPago = evento.statusPagamento === 'pago';
             const dataFormatada = new Date(evento.dataEvento).toLocaleDateString('pt-BR');
+            // Pega o nome traduzido do nosso dicionário
+            const nomePlanoExibido = nomesDosPlanos[evento.planoId] || 'Desconhecido';
 
             return (
               <div key={evento.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col justify-between">
@@ -153,7 +164,7 @@ export default async function DashboardPage() {
                   </div>
                   <div className="text-sm text-zinc-400 mb-6">
                     <p>📅 Data: {dataFormatada}</p>
-                    <p>📸 Plano: {evento.planoId === 'plano-falso' ? 'Padrão' : evento.planoId}</p>
+                    <p>📸 Plano: {nomePlanoExibido}</p>
                   </div>
                 </div>
 
