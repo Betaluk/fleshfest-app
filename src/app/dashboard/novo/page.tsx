@@ -88,17 +88,22 @@ export default async function NovoEventoPage() {
             className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600 [color-scheme:dark]"
           />
         </div>
-        <div className="pt-4 flex justify-end space-x-4 border-t border-zinc-800 mt-6">
-          <Link href="/dashboard" className="px-4 py-2 text-zinc-400 hover:text-white transition">
-            Cancelar
-          </Link>
-          <button
-            type="submit"
-            className="bg-emerald-500 text-zinc-950 px-6 py-2 rounded-md font-bold hover:bg-emerald-400 transition"
-          >
-            Criar Evento
-          </button>
-          <p className="text-xs text-zinc-500 text-center mt-4 w-full">
+        {/* ÁREA DOS BOTÕES E CONSENTIMENTO */}
+        <div className="pt-6 border-t border-zinc-800 mt-6">
+          {/* 1. Os botões ficam na própria linha deles, alinhados à direita */}
+          <div className="flex justify-end space-x-4 mb-4">
+            <Link href="/dashboard" className="px-4 py-2 text-zinc-400 hover:text-white transition">
+              Cancelar
+            </Link>
+            <button
+              type="submit"
+              className="bg-emerald-500 text-zinc-950 px-6 py-2 rounded-md font-bold hover:bg-emerald-400 transition"
+            >
+              Criar Evento
+            </button>
+          </div>
+          {/* 2. O texto fica livre em baixo, centralizado */}
+          <p className="text-xs text-zinc-500 text-center w-full">
             Ao criar um evento, você concorda com nossos{' '}
             <Link href="/termos" target="_blank" className="underline hover:text-zinc-300">Termos de Uso</Link>
             {' '}e{' '}
