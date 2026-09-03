@@ -59,12 +59,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Evento não encontrado.' }, { status: 404 });
     }
 
+    const isDemo = evento.id === 'e0f9535f-d7b3-465d-8b61-b3fb70722656';
+
     // 2. NOVA LÓGICA: Bloqueio de Upload Expirado
     const dataLimite = new Date(evento.dataEvento);
     dataLimite.setDate(dataLimite.getDate() + 2); // Regra de 48h
     const hoje = new Date();
 
-    if (hoje > dataLimite) {
+    if (hoje > dataLimite && !isDemo) {
       return NextResponse.json(
         { error: 'Este evento já foi encerrado e não aceita mais fotos.' },
         { status: 403 }

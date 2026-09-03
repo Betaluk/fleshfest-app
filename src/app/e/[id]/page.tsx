@@ -26,12 +26,13 @@ export default async function PageConvidadoWrapper({
       </div>
     );
   }
+  const isDemo = evento.id === 'e0f9535f-d7b3-465d-8b61-b3fb70722656';
   // --- NOVA LÓGICA: Bloqueio de Evento Expirado ---
   const dataLimite = new Date(evento.dataEvento);
   dataLimite.setDate(dataLimite.getDate() + 2); // Soma 2 dias (48h) à data da festa
   const hoje = new Date();
 
-  if (hoje > dataLimite) {
+  if (hoje > dataLimite && !isDemo) {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
         <div className="text-6xl mb-6">🔒</div>
@@ -53,7 +54,7 @@ export default async function PageConvidadoWrapper({
   dataFesta.setHours(0, 0, 0, 0);
 
   // Se a data de hoje for MENOR que a data da festa, mostra a tela de bloqueio
-  if (dataHoje < dataFesta) {
+  if (dataHoje < dataFesta && !isDemo) {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
         <div className="text-6xl mb-6">⏳</div>
