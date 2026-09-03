@@ -108,9 +108,7 @@ export default async function LandingPage() {
                   NOTA: Assim que você criar um evento de teste na sua conta real, 
                   basta salvar a imagem do QR Code gerado pelo sistema e substituir essa DIV abaixo por uma tag <img /> 
                 */}
-                <div className="w-48 h-48 bg-zinc-100 rounded-xl flex items-center justify-center border-2 border-dashed border-zinc-300 text-center p-4">
-                  <span className="text-zinc-500 font-bold text-sm">Insira o QR Code do seu<br/>Evento Teste Aqui</span>
-                </div>
+                <img src="/demo-qr.png" alt="QR Code Test Drive" className="w-48 h-48 rounded-lg" />
               </div>
             </div>
           </div>
