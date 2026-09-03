@@ -98,6 +98,12 @@ export default async function NovoEventoPage() {
           >
             Criar Evento
           </button>
+          <p className="text-xs text-zinc-500 text-center mt-4 w-full">
+            Ao criar um evento, você concorda com nossos{' '}
+            <Link href="/termos" target="_blank" className="underline hover:text-zinc-300">Termos de Uso</Link>
+            {' '}e{' '}
+            <Link href="/privacidade" target="_blank" className="underline hover:text-zinc-300">Política de Privacidade</Link>.
+          </p>
         </div>
       </form>
     </div>
