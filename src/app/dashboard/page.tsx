@@ -200,16 +200,18 @@ export default async function DashboardPage() {
                     </div>
                   )}
 
-                  <div className="flex gap-2 pt-2 border-t border-zinc-800/80">
-                    <Link
-                      href={`/dashboard/evento/${evento.id}/editar`}
-                      className="flex-1 flex items-center justify-center gap-1 bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 py-1.5 rounded text-sm transition"
-                    >
-                      ✏️ Editar
-                    </Link>
-
-                    {/* AQUI ESTÁ A NOSSA NOVA MAGIA! */}
-                    <form action={deletarEvento}>
+                  <div className="flex gap-2 pt-2 border-t border-zinc-800/80">                    
+                    {/* A PROTEÇÃO: O botão de Editar só aparece se isPago for verdadeiro */}
+                    {isPago && (
+                      <Link
+                        href={`/dashboard/evento/${evento.id}/editar`}
+                        className="flex-1 flex items-center justify-center gap-1 bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 py-1.5 rounded text-sm transition"
+                      >
+                        ✏️ Editar
+                      </Link>
+                    )}
+                    {/* O formulário de exclusão ganha a classe w-full quando fica sozinho na linha */}
+                    <form action={deletarEvento} className={!isPago ? "w-full" : ""}>
                       <input type="hidden" name="eventoId" value={evento.id} />
                       <BotaoExcluir isPago={isPago} nomeEvento={evento.nomeEvento} />
                     </form>

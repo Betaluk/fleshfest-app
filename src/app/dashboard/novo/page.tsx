@@ -14,6 +14,7 @@ export default async function NovoEventoPage() {
 
     const nome = formData.get('nome') as string;
     const data = formData.get('data') as string;
+    const modoModeracao = formData.get('modoModeracao') as string;
 
     if (!nome || !data) return;
 
@@ -51,7 +52,7 @@ export default async function NovoEventoPage() {
       nomeEvento: nome,
       dataEvento: new Date(data),
       muralAtivo: true,
-      modoModeracao: 'auto',
+      modoModeracao: modoModeracao || 'auto',
       statusPagamento: 'pendente' 
     });
 
@@ -87,6 +88,19 @@ export default async function NovoEventoPage() {
             required
             className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600 [color-scheme:dark]"
           />
+        </div>
+        <div>
+          <label htmlFor="modoModeracao" className="block text-sm font-medium text-zinc-300 mb-2">
+            Modo de Exibição no Telão
+          </label>
+          <select
+            id="modoModeracao"
+            name="modoModeracao"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600"
+          >
+            <option value="auto">Automático (Fotos vão direto para o telão)</option>
+            <option value="manual">Manual (Aprovar fotos no celular antes)</option>
+          </select>
         </div>
         {/* ÁREA DOS BOTÕES E CONSENTIMENTO */}
         <div className="pt-6 border-t border-zinc-800 mt-6">

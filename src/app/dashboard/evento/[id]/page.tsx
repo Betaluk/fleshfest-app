@@ -7,6 +7,7 @@ import QRCodeCard from './QRCodeCard';
 import BotaoDownloadZip from './BotaoDownloadZip';
 import { gerarUrlAssinada } from '@/lib/seguranca';
 import BotaoBaixarPDF from './BotaoBaixarPDF';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,6 +33,10 @@ export default async function GerenciarEventoPage({
         <Link href="/dashboard" className="text-emerald-400 hover:underline">Voltar para o painel</Link>
       </div>
     );
+  }
+  // A TRAVA DE SEGURANÇA: Se não estiver pago, manda de volta para a vitrine!
+  if (evento.statusPagamento !== 'pago') {
+    redirect('/dashboard');
   }
 
   // 2. Busca o Plano vinculado para saber o Limite de Fotos e os Dias de Expiração

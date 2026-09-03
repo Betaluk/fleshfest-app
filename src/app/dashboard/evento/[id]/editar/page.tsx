@@ -40,6 +40,10 @@ export default async function EditarEventoPage({
       </div>
     );
   }
+  // A TRAVA DE SEGURANÇA: Se não estiver pago, manda de volta para a vitrine!
+  if (evento.statusPagamento !== 'pago') {
+    redirect('/dashboard');
+  }
 
   const dataIso = new Date(evento.dataEvento).toISOString().split('T')[0];
 
