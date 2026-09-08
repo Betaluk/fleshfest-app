@@ -101,8 +101,8 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
                   loading="lazy"
                 />
                 
-                {/* Overlay com Botão de Download (Aparece no Hover) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-4">
+                {/* Overlay com Botão de Download (Sempre visível no celular; aparece no Hover no Desktop) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-3 md:p-4">
                   <BotaoDownload url={foto.urlImagem} />
                 </div>
               </div>
