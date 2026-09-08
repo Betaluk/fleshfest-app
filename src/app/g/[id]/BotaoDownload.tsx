@@ -9,7 +9,12 @@ export default function BotaoDownload({ url }: { url: string }) {
     try {
       setBaixando(true);
       // Busca a imagem e transforma em Blob para forçar o download no navegador
-      const resposta = await fetch(url);
+      // Adicionamos '?download=true' para forçar o navegador a ignorar o cache da tag <img>
+      // E explicitamos o modo 'cors'
+      const resposta = await fetch(`${url}?download=true`, { 
+        mode: 'cors',
+        cache: 'no-cache'
+      });
       const blob = await resposta.blob();
       const urlBlob = window.URL.createObjectURL(blob);
       
