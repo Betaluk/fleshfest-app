@@ -168,6 +168,23 @@ export default async function GerenciarEventoPage({
 
             {/* BOTÃO DE DOWNLOAD (Já contém a lógica de bloqueio interno) */}
             <BotaoDownloadZip fotosUrls={fotosUrls} nomeEvento={evento.nomeEvento} />
+            {/* CARTÃO DA GALERIA PÚBLICA */}
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col justify-between">
+              <div>
+                <div className="text-3xl mb-3">🔗</div>
+                <h3 className="text-xl font-bold text-white mb-2">Galeria Pública</h3>
+                <p className="text-sm text-zinc-400 mb-6">
+                  O link oficial para os convidados verem e baixarem as fotos no dia seguinte.
+                </p>
+              </div>
+              <Link 
+                href={`/g/${evento.id}`} 
+                target="_blank"
+                className="w-full block text-center bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2.5 rounded-lg transition border border-zinc-700"
+              >
+                Abrir e Compartilhar
+              </Link>
+            </div>
           </div>
         </div>
       </div>
