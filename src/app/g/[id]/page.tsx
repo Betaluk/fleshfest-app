@@ -4,6 +4,7 @@ import { eventos, fotos, planos } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import Link from 'next/link';
 import BotaoDownload from './BotaoDownload';
+import BotoesCompartilhamento from './BotoesCompartilhamento';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,20 +59,22 @@ export default async function GaleriaPublica({ params }: { params: { id: string 
     .orderBy(desc(fotos.id)); // Exibe as mais recentes primeiro
 
   const dataFormatada = new Date(evento.dataEvento).toLocaleDateString('pt-BR');
+  // Monta a URL completa baseada no ambiente
+  const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://flashfest.com.br';
+  const urlGaleria = `${baseUrl}/g/${evento.id}`;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white font-sans pb-32">
-      
       {/* CABEÇALHO */}
       <header className="border-b border-white/10 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div>
+        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="text-center sm:text-left w-full sm:w-auto">
             <h1 className="text-2xl font-bold tracking-tight">{evento.nomeEvento}</h1>
             <p className="text-zinc-400 text-sm">Realizado em {dataFormatada} • {fotosGaleria.length} fotos</p>
           </div>
-          <div className="text-xl font-bold tracking-tighter opacity-50">
-            Flash<span className="text-emerald-500">Fest</span>
-          </div>
+          
+          {/* A INJEÇÃO DOS BOTÕES */}
+          <BotoesCompartilhamento url={urlGaleria} nomeEvento={evento.nomeEvento} />
         </div>
       </header>
 
