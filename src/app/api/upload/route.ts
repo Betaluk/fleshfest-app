@@ -102,9 +102,10 @@ export async function POST(request: Request) {
     });
 
     // Como bloqueamos o balde público, a URL que salvamos no banco agora é a nossa Rota Segura local!
-    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://galeria.flashfest.com.br';
-    const urlSeguraAcesso = `${baseUrl}/api/fotos/${nomeFicheiroUnico}`;
-
+    //const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://galeria.flashfest.com.br';
+    const urlSeguraAcesso = process.env.NODE_ENV === 'development' 
+      ? `http://localhost:8787/api/fotos/${nomeFicheiroUnico}`
+      : `https://galeria.flashfest.com.br/${nomeFicheiroUnico}`; // Certifique-se de que este é o subdomínio exato que configurou
     // 6. SALVA O REGISTRO NO D1
     // Se o evento estiver configurado como 'auto', a foto já nasce 'aprovada'
     const statusInicial = evento.modoModeracao === 'auto' ? 'aprovada' : 'pendente';
