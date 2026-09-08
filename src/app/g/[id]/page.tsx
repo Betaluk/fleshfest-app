@@ -8,12 +8,17 @@ import BotoesCompartilhamento from './BotoesCompartilhamento';
 
 export const dynamic = 'force-dynamic';
 
-export default async function GaleriaPublica({ params }: { params: { id: string } }) {
+// 1. Atualizamos a tipagem do params para Promise
+export default async function GaleriaPublica({ params }: { params: Promise<{ id: string }> }) {
+  
+  // 2. Extraímos o ID "aguardando" a Promise se resolver
+  const { id } = await params;
+
   const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env };
   const db = getDb(env);
 
-  // 1. Busca o Evento e o Plano
-  const evento = await db.select().from(eventos).where(eq(eventos.id, params.id)).get();
+  // 3. Buscamos no banco usando a constante 'id' limpa
+  const evento = await db.select().from(eventos).where(eq(eventos.id, id)).get();
   
   if (!evento) {
     return (
