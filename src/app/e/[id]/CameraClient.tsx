@@ -64,7 +64,7 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
         <div className="text-center">
           {/* Agora o nome real da festa vai aparecer na tela do convidado! */}
           <h1 className="text-2xl font-bold text-emerald-400 mb-2">{nomeEvento}</h1>
-          <p className="text-zinc-400 text-sm">Deixe sua lembrança para os noivos!</p>
+          <p className="text-zinc-400 text-sm">Deixe sua lembrança do evento!</p>
         </div>
 
         {!fotoUrl ? (
