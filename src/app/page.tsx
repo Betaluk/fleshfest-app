@@ -60,7 +60,7 @@ export default async function LandingPage() {
             Transforme o seu evento <br className="hidden md:block" /> em uma experiência interativa.
           </h1>
           
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-lg md:text-xl text-zinc-300 max-w-2xl mx-auto mb-10 leading-relaxed">
             Um telão ao vivo, QR Codes instantâneos e fotos salvas em alta qualidade. 
             Esqueça as hashtags confusas. Seus convidados escaneiam, tiram a foto e ela aparece no telão na mesma hora.
           </p>
@@ -69,17 +69,19 @@ export default async function LandingPage() {
             {isLogado ? (
               <Link 
                 href="/dashboard" 
-                className="px-8 py-4 bg-white text-zinc-950 rounded-full font-bold text-lg hover:scale-105 hover:bg-emerald-400 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(52,211,153,0.4)]"
+                className="group flex items-center gap-2 px-8 py-4 bg-white text-zinc-950 rounded-full font-bold text-lg hover:scale-105 hover:bg-emerald-400 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(52,211,153,0.4)]"
               >
                 Acessar meu Painel
+                <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
               </Link>
             ) : (
               <form action={fazerLogin}>
                 <button 
                   type="submit" 
-                  className="px-8 py-4 bg-white text-zinc-950 rounded-full font-bold text-lg hover:scale-105 hover:bg-emerald-400 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(52,211,153,0.4)]"
+                  className="group flex items-center gap-2 px-8 py-4 bg-white text-zinc-950 rounded-full font-bold text-lg hover:scale-105 hover:bg-emerald-400 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(52,211,153,0.4)]"
                 >
                   Criar Conta Gratuitamente
+                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
                 </button>
               </form>
             )}
@@ -103,7 +105,7 @@ export default async function LandingPage() {
               </div>
             </div>
             <div className="w-full md:w-auto flex justify-center relative z-10">
-              <div className="bg-white p-4 rounded-3xl shadow-[0_0_50px_-15px_rgba(52,211,153,0.3)] transform rotate-2 hover:rotate-0 transition duration-300">
+              <div className="bg-white p-4 rounded-3xl shadow-[0_0_50px_-15px_rgba(52,211,153,0.3)] transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300">
                 {/* 
                   NOTA: Assim que você criar um evento de teste na sua conta real, 
                   basta salvar a imagem do QR Code gerado pelo sistema e substituir essa DIV abaixo por uma tag <img /> 
@@ -119,20 +121,29 @@ export default async function LandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 tracking-tight">Tudo que você precisa, <span className="text-zinc-500">zero complicação.</span></h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-zinc-900/50 backdrop-blur-sm border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 transition">
-              <div className="text-3xl mb-4">📺</div>
-              <h3 className="text-xl font-bold text-white mb-2">Telão Dinâmico</h3>
-              <p className="text-zinc-400 leading-relaxed">Um slideshow cinematográfico que se atualiza em tempo real enquanto os convidados tiram as fotos. Com a sua logo flutuando perfeitamente.</p>
+            <div className="group bg-zinc-900/50 backdrop-blur-sm border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 hover:bg-zinc-900/80 transition-all duration-300 hover:shadow-[0_0_30px_-10px_rgba(52,211,153,0.15)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="text-emerald-500/20 text-6xl">📺</span>
+              </div>
+              <div className="text-3xl mb-4 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📺</div>
+              <h3 className="text-xl font-bold text-white mb-2 relative z-10">Telão Dinâmico</h3>
+              <p className="text-zinc-400 leading-relaxed relative z-10">Um slideshow cinematográfico que se atualiza em tempo real enquanto os convidados tiram as fotos. Com a sua logo flutuando perfeitamente.</p>
             </div>
-            <div className="bg-zinc-900/50 backdrop-blur-sm border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 transition">
-              <div className="text-3xl mb-4">🛡️</div>
-              <h3 className="text-xl font-bold text-white mb-2">Moderação Total</h3>
-              <p className="text-zinc-400 leading-relaxed">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto antes que ela apareça no telão.</p>
+            <div className="group bg-zinc-900/50 backdrop-blur-sm border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 hover:bg-zinc-900/80 transition-all duration-300 hover:shadow-[0_0_30px_-10px_rgba(52,211,153,0.15)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="text-emerald-500/20 text-6xl">🛡️</span>
+              </div>
+              <div className="text-3xl mb-4 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">🛡️</div>
+              <h3 className="text-xl font-bold text-white mb-2 relative z-10">Moderação Total</h3>
+              <p className="text-zinc-400 leading-relaxed relative z-10">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto antes que ela apareça no telão.</p>
             </div>
-            <div className="bg-zinc-900/50 backdrop-blur-sm border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 transition">
-              <div className="text-3xl mb-4">🖨️</div>
-              <h3 className="text-xl font-bold text-white mb-2">Placas e QR Codes</h3>
-              <p className="text-zinc-400 leading-relaxed">Crie o evento e o sistema gera automaticamente os QR Codes e um PDF pronto para imprimir e colocar nas mesas dos convidados.</p>
+            <div className="group bg-zinc-900/50 backdrop-blur-sm border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 hover:bg-zinc-900/80 transition-all duration-300 hover:shadow-[0_0_30px_-10px_rgba(52,211,153,0.15)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="text-emerald-500/20 text-6xl">🖨️</span>
+              </div>
+              <div className="text-3xl mb-4 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">🖨️</div>
+              <h3 className="text-xl font-bold text-white mb-2 relative z-10">Placas e QR Codes</h3>
+              <p className="text-zinc-400 leading-relaxed relative z-10">Crie o evento e o sistema gera automaticamente os QR Codes e um PDF pronto para imprimir e colocar nas mesas dos convidados.</p>
             </div>
           </div>
         </section>
@@ -148,10 +159,10 @@ export default async function LandingPage() {
             {planos.map((plano) => (
               <div 
                 key={plano.nome} 
-                className={`snap-center shrink-0 w-[85vw] sm:w-[320px] md:w-auto flex flex-col justify-between p-8 rounded-3xl border ${
+                className={`snap-center shrink-0 w-[85vw] sm:w-[320px] md:w-auto flex flex-col p-8 rounded-3xl border transition-all duration-300 hover:border-zinc-700 ${
                   plano.destaque 
-                    ? 'bg-zinc-900 border-emerald-500/50 shadow-[0_0_30px_-15px_rgba(52,211,153,0.3)] relative transform md:-translate-y-2' 
-                    : 'bg-zinc-900/30 border-white/5'
+                    ? 'bg-zinc-900 border-emerald-500/50 shadow-[0_0_30px_-15px_rgba(52,211,153,0.3)] relative transform md:-translate-y-2 hover:-translate-y-3'
+                    : 'bg-zinc-800/40 border-white/5 hover:bg-zinc-800/60'
                 }`}
               >
                 {plano.destaque && (
@@ -188,7 +199,7 @@ export default async function LandingPage() {
                   </div>
                 </div>
 
-                <div className="mt-10">
+                <div className="mt-auto pt-10">
                   {isLogado ? (
                     <Link 
                       href="/dashboard" 
@@ -225,7 +236,7 @@ export default async function LandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 tracking-tight">Dúvidas Frequentes</h2>
           
           <div className="space-y-4">
-            <details className="group bg-zinc-900/30 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-colors cursor-pointer">
+            <details className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-all duration-300 cursor-pointer">
               <summary className="flex items-center justify-between list-none font-semibold text-lg text-white outline-none">
                 <span>Os convidados precisam baixar algum aplicativo?</span>
                 <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
@@ -235,7 +246,7 @@ export default async function LandingPage() {
               </p>
             </details>
             
-            <details className="group bg-zinc-900/30 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-colors cursor-pointer">
+            <details className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-all duration-300 cursor-pointer">
               <summary className="flex items-center justify-between list-none font-semibold text-lg text-white outline-none">
                 <span>E se a internet do salão de festas for ruim?</span>
                 <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
@@ -245,7 +256,7 @@ export default async function LandingPage() {
               </p>
             </details>
 
-            <details className="group bg-zinc-900/30 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-colors cursor-pointer">
+            <details className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-all duration-300 cursor-pointer">
               <summary className="flex items-center justify-between list-none font-semibold text-lg text-white outline-none">
                 <span>Qualquer pessoa pode ver as fotos do meu evento?</span>
                 <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
@@ -255,7 +266,7 @@ export default async function LandingPage() {
               </p>
             </details>
 
-            <details className="group bg-zinc-900/30 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-colors cursor-pointer">
+            <details className="group bg-zinc-900/30 hover:bg-zinc-900/50 border border-white/5 rounded-2xl p-6 open:bg-zinc-900/80 transition-all duration-300 cursor-pointer">
               <summary className="flex items-center justify-between list-none font-semibold text-lg text-white outline-none">
                 <span>Como funciona o telão na prática?</span>
                 <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
