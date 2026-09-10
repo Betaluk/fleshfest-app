@@ -21,8 +21,9 @@ export default async function PageConvidadoWrapper({
 
   if (!evento) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center text-white">
-        <h1 className="text-2xl font-bold mb-2">Evento não encontrado</h1>
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center text-white bg-gradient-to-br from-zinc-950 to-black">
+        <h1 className="text-3xl font-extrabold mb-2 tracking-tight">Evento não encontrado</h1>
+        <p className="text-zinc-500">Verifique o link e tente novamente.</p>
       </div>
     );
   }
@@ -34,12 +35,17 @@ export default async function PageConvidadoWrapper({
 
   if (hoje > dataLimite && !isDemo) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
-        <div className="text-6xl mb-6">🔒</div>
-        <h1 className="text-2xl font-bold text-white mb-2">Evento Encerrado</h1>
-        <p className="text-zinc-400 max-w-md">
-          A captação de fotos para este evento já foi finalizada pelo sistema. Obrigado por participar!
-        </p>
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center bg-[url('/bg-noise.png')] bg-repeat relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-zinc-950/80 to-transparent"></div>
+        <div className="relative z-10 p-10 backdrop-blur-md bg-black/40 border border-white/10 rounded-3xl max-w-lg shadow-2xl flex flex-col items-center">
+          <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-8 border border-white/10 shadow-inner">
+            <span className="text-5xl filter drop-shadow-lg">🔒</span>
+          </div>
+          <h1 className="text-4xl font-extrabold text-white mb-4 tracking-tight">Evento Encerrado</h1>
+          <p className="text-zinc-400 text-lg leading-relaxed">
+            A captação de fotos para este evento já foi finalizada. Obrigado por participar e compartilhar momentos inesquecíveis!
+          </p>
+        </div>
       </div>
     );
   }
@@ -56,12 +62,17 @@ export default async function PageConvidadoWrapper({
   // Se a data de hoje for MENOR que a data da festa, mostra a tela de bloqueio
   if (dataHoje < dataFesta && !isDemo) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
-        <div className="text-6xl mb-6">⏳</div>
-        <h1 className="text-2xl font-bold text-white mb-2">A festa ainda não começou!</h1>
-        <p className="text-zinc-400 max-w-sm">
-          Guarde a sua energia! A captura de fotos para <strong>{evento.nomeEvento}</strong> só será liberada no dia {dataFesta.toLocaleDateString('pt-BR')}.
-        </p>
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-zinc-950/0 to-transparent opacity-50"></div>
+        <div className="relative z-10 p-10 backdrop-blur-xl bg-black/40 border border-white/10 rounded-3xl max-w-lg shadow-2xl flex flex-col items-center">
+          <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-8 border border-white/10 shadow-inner animate-pulse">
+            <span className="text-5xl filter drop-shadow-lg">⏳</span>
+          </div>
+          <h1 className="text-4xl font-extrabold text-white mb-4 tracking-tight">A festa ainda não começou!</h1>
+          <p className="text-zinc-400 text-lg leading-relaxed">
+            Guarde a sua energia! A captura de fotos para <strong className="text-white">{evento.nomeEvento}</strong> só será liberada no dia <span className="text-emerald-400 font-semibold">{dataFesta.toLocaleDateString('pt-BR')}</span>.
+          </p>
+        </div>
       </div>
     );
   }
