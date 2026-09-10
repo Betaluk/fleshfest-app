@@ -126,22 +126,28 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="space-y-8 mt-4">
-      <div className="flex justify-between items-center border-b border-zinc-800 pb-6">
+    <div className="space-y-10 mt-8 mb-12">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/5 pb-8 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-white">Meus Eventos</h2>
-          <p className="text-zinc-400 mt-1">Gerencie suas festas e telões ativos.</p>
+          <h2 className="text-4xl font-extrabold tracking-tight text-white mb-2">Meus Eventos</h2>
+          <p className="text-zinc-400 text-lg">Gerencie suas festas e controle seus telões ativos.</p>
         </div>
-        <Link href="/dashboard/novo" className="bg-emerald-500 text-zinc-950 px-6 py-2 rounded-md font-bold hover:bg-emerald-400 transition">
-          + Criar Evento
+        <Link href="/dashboard/novo" className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-zinc-200 transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)] gap-2">
+          <span>+</span>
+          Criar Novo Evento
         </Link>
       </div>
 
       {meusEventos.length === 0 ? (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
-          <div className="text-5xl mb-4">🎉</div>
-          <h3 className="text-xl font-bold text-white mb-2">Nenhuma festa por aqui!</h3>
-          <p className="text-zinc-400 mb-6">Crie o seu primeiro evento e comece a recolher memórias.</p>
+        <div className="bg-zinc-900/40 border border-white/10 rounded-2xl p-16 text-center backdrop-blur-xl flex flex-col items-center">
+          <div className="text-6xl mb-6 bg-white/5 w-24 h-24 flex items-center justify-center rounded-full border border-white/10 shadow-lg">🎉</div>
+          <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Nenhuma festa por aqui!</h3>
+          <p className="text-zinc-400 max-w-md mx-auto mb-8 text-lg">
+            Parece que você ainda não criou nenhum evento. Crie o seu primeiro evento e comece a recolher memórias inesquecíveis.
+          </p>
+          <Link href="/dashboard/novo" className="px-8 py-3 rounded-full bg-emerald-500 text-zinc-950 font-bold hover:bg-emerald-400 transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)]">
+            Criar Meu Primeiro Evento
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -152,47 +158,63 @@ export default async function DashboardPage() {
             const nomePlanoExibido = nomesDosPlanos[evento.planoId] || 'Desconhecido';
 
             return (
-              <div key={evento.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-xl font-bold text-white leading-tight">{evento.nomeEvento}</h3>
+              <div key={evento.id} className="group relative bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 flex flex-col justify-between hover:border-white/20 transition-all hover:shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start mb-6">
+                    <h3 className="text-2xl font-bold text-white leading-tight tracking-tight line-clamp-2 pr-2">{evento.nomeEvento}</h3>
                     {isPago ? (
-                      <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded">ATIVO</span>
+                      <span className="shrink-0 px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">ATIVO</span>
                     ) : (
-                      <span className="px-2 py-1 bg-amber-500/20 text-amber-400 text-xs font-bold rounded">PENDENTE</span>
+                      <span className="shrink-0 px-3 py-1 bg-amber-500/10 text-amber-400 text-xs font-bold rounded-full border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]">PENDENTE</span>
                     )}
                   </div>
-                  <div className="text-sm text-zinc-400 mb-6">
-                    <p>📅 Data: {dataFormatada}</p>
-                    <p>📸 Plano: {nomePlanoExibido}</p>
+
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center gap-3 text-zinc-300 bg-black/20 p-3 rounded-lg border border-white/5">
+                      <span className="text-xl">📅</span>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Data do Evento</span>
+                        <span className="font-semibold text-white">{dataFormatada}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-zinc-300 bg-black/20 p-3 rounded-lg border border-white/5">
+                      <span className="text-xl">✨</span>
+                      <div className="flex flex-col">
+                        <span className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Plano Escolhido</span>
+                        <span className="font-semibold text-white">{nomePlanoExibido}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2 mt-auto">
+                <div className="space-y-4 mt-auto relative z-10">
                   {isPago ? (
                     <Link 
                       href={`/dashboard/evento/${evento.id}`} 
-                      className="w-full block text-center bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2 rounded-lg transition"
+                      className="w-full flex items-center justify-center gap-2 bg-white text-black hover:bg-zinc-200 font-bold py-3 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      Gerenciar Evento
+                      <span>Gerenciar Evento</span>
+                      <span className="text-xl">→</span>
                     </Link>
                   ) : (
-                    <div className="w-full mt-2">
-                      <p className="text-sm text-zinc-400 mb-3 font-medium">Escolha um plano para ativar:</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="w-full bg-black/40 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
+                      <p className="text-sm text-zinc-400 mb-4 font-medium text-center">Ative seu evento para começar:</p>
+                      <div className="grid grid-cols-1 gap-2">
                         {planosDisponiveis.map((plano) => (
                           <form key={plano.id} action={pagarEvento} className="w-full">
                             <input type="hidden" name="eventoId" value={evento.id} />
                             <input type="hidden" name="priceId" value={plano.id} />
                             <button 
                               type="submit" 
-                              className="w-full text-left p-3 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 hover:border-emerald-500 transition group flex flex-col"
+                              className="w-full text-left p-3 rounded-lg border border-white/10 bg-white/5 hover:bg-emerald-500/10 hover:border-emerald-500/50 transition-all group flex flex-col relative overflow-hidden"
                             >
-                              <div className="flex justify-between items-center w-full mb-1">
-                                <span className="font-bold text-white text-sm">{plano.nome}</span>
-                                <span className="text-emerald-400 font-bold text-sm">{plano.preco}</span>
+                              <div className="flex justify-between items-center w-full mb-1 relative z-10">
+                                <span className="font-bold text-white text-base group-hover:text-emerald-400 transition-colors">{plano.nome}</span>
+                                <span className="text-white font-bold text-base">{plano.preco}</span>
                               </div>
-                              <span className="text-xs text-zinc-400">{plano.fotos} fotos • {plano.dias} dias</span>
+                              <span className="text-xs text-zinc-400 relative z-10">{plano.fotos} fotos • {plano.dias} dias</span>
                             </button>
                           </form>
                         ))}
@@ -200,20 +222,23 @@ export default async function DashboardPage() {
                     </div>
                   )}
 
-                  <div className="flex gap-2 pt-2 border-t border-zinc-800/80">                    
+                  <div className="flex gap-3 pt-4 border-t border-white/10">
                     {/* A PROTEÇÃO: O botão de Editar só aparece se isPago for verdadeiro */}
                     {isPago && (
                       <Link
                         href={`/dashboard/evento/${evento.id}/editar`}
-                        className="flex-1 flex items-center justify-center gap-1 bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 py-1.5 rounded text-sm transition"
+                        className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-zinc-300 py-2.5 rounded-xl text-sm font-medium transition-all"
                       >
-                        ✏️ Editar
+                        <span className="text-lg">✏️</span>
+                        Editar
                       </Link>
                     )}
                     {/* O formulário de exclusão ganha a classe w-full quando fica sozinho na linha */}
-                    <form action={deletarEvento} className={!isPago ? "w-full" : ""}>
+                    <form action={deletarEvento} className={!isPago ? "w-full" : "flex-1"}>
                       <input type="hidden" name="eventoId" value={evento.id} />
-                      <BotaoExcluir isPago={isPago} nomeEvento={evento.nomeEvento} />
+                      <div className="h-full">
+                        <BotaoExcluir isPago={isPago} nomeEvento={evento.nomeEvento} />
+                      </div>
                     </form>
 
                   </div>
