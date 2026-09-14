@@ -39,20 +39,34 @@ export default function Slideshow({ fotos, urlCamera }: { fotos: any[], urlCamer
   return (
     <div className="relative h-screen w-full bg-black overflow-hidden flex items-center justify-center">
       
-      {/* Imagem Atual com Transição Suave (Fade) */}
+      {/* Imagem Atual e Mensagem com Transição Suave (Fade) */}
       {fotos.map((foto, index) => (
-        <img
+        <div
           key={foto.id}
-          src={foto.urlImagem}
-          alt="Fotografia do evento"
-          className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-1000 ${
-            index === indexAtual ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
+            index === indexAtual ? 'opacity-100 z-10' : 'opacity-0 z-0'
           }`}
-        />
+        >
+          <img
+            src={foto.urlImagem}
+            alt="Fotografia do evento"
+            className="w-full h-full object-contain"
+          />
+          
+          {/* --- A CAIXA DA MENSAGEM DO GUESTBOOK --- */}
+          {foto.mensagem && (
+            <div className="absolute bottom-16 left-0 right-0 flex justify-center pointer-events-none px-4">
+              <div className="bg-black/60 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-full max-w-3xl text-center shadow-2xl">
+                <p className="text-2xl font-medium tracking-wide">"{foto.mensagem}"</p>
+              </div>
+            </div>
+          )}
+          {/* ---------------------------------------- */}
+        </div>
       ))}
 
-      {/* QR Code Fixo no Canto Inferior Direito */}
-      <div className="absolute bottom-8 right-8 bg-white/10 backdrop-blur-md p-4 rounded-2xl flex flex-col items-center border border-white/20 shadow-2xl">
+      {/* QR Code Fixo no Canto Inferior Direito (z-20 garante que fique acima de tudo) */}
+      <div className="absolute bottom-8 right-8 bg-white/10 backdrop-blur-md p-4 rounded-2xl flex flex-col items-center border border-white/20 shadow-2xl z-20">
         <div className="bg-white p-2 rounded-lg mb-2">
           <QRCodeSVG value={urlCamera} size={120} />
         </div>

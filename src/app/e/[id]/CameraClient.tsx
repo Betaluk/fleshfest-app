@@ -8,6 +8,7 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
   const [fotoUrl, setFotoUrl] = useState<string | null>(null);
   const [arquivoOriginal, setArquivoOriginal] = useState<File | null>(null);
   const [processando, setProcessando] = useState(false);
+  const [mensagem, setMensagem] = useState('');
 
   const capturarFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,6 +35,7 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
       const formData = new FormData();
       formData.append('foto', fotoComprimida, arquivoOriginal.name);
       formData.append('eventoId', id);
+      if (mensagem.trim()) formData.append('mensagem', mensagem.trim());
 
       const resposta = await fetch('/api/upload', {
         method: 'POST',
@@ -46,6 +48,7 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
         alert('🎉 ' + dados.mensagem);
         setFotoUrl(null);
         setArquivoOriginal(null);
+        setMensagem(''); // Limpa o campo de mensagem após o envio
       } else {
         alert('Erro: ' + dados.erro);
       }
@@ -93,28 +96,44 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
             </label>
           </div>
         ) : (
-          <div className="flex flex-col items-center w-full gap-8 animate-in fade-in zoom-in duration-300">
+          <div className="flex flex-col items-center w-full gap-6 animate-in fade-in zoom-in duration-300">
             <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black/50 backdrop-blur-sm group">
               <img src={fotoUrl} alt="Sua foto" className="object-contain w-full h-full" />
               {processando && (
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center gap-4 text-emerald-400 font-medium">
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center gap-4 text-emerald-400 font-medium z-50">
                   <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
                   <span className="animate-pulse text-lg">Enviando para o telão...</span>
                 </div>
               )}
             </div>
             
+            {/* --- NOVO CAMPO DE MENSAGEM --- */}
+            <div className="w-full animate-in slide-in-from-bottom-4 duration-500">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">Deixe uma mensagem (opcional)</label>
+              <textarea 
+                value={mensagem}
+                onChange={(e) => setMensagem(e.target.value)}
+                maxLength={120}
+                placeholder="Felicidades aos noivos! 🎉"
+                disabled={processando}
+                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:border-transparent resize-none h-24 backdrop-blur-md transition-all disabled:opacity-50"
+              />
+              <div className="text-right text-xs text-zinc-500 mt-1">{mensagem.length}/120</div>
+            </div>
+            {/* ------------------------------ */}
+            
             <div className="flex w-full gap-4">
               <button 
                 onClick={() => {
                   setFotoUrl(null);
                   setArquivoOriginal(null);
+                  setMensagem(''); // Limpa a mensagem ao decidir refazer a foto
                 }}
                 disabled={processando}
                 className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
               >
                 <RefreshCcw size={22} className={processando ? "animate-spin" : ""} />
-                Tentar de novo
+                Refazer
               </button>
               <button 
                 onClick={enviarFoto}

@@ -41,6 +41,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const arquivo = formData.get('foto') as File;
     const eventoId = formData.get('eventoId') as string;
+    const mensagemForm = formData.get('mensagem') as string | null;
 
     if (!arquivo || !eventoId) {
       return Response.json({ erro: 'Dados incompletos' }, { status: 400 });
@@ -114,6 +115,7 @@ export async function POST(request: Request) {
       id: crypto.randomUUID(),
       eventoId: eventoId,
       urlImagem: urlSeguraAcesso,
+      mensagem: mensagemForm,
       status: statusInicial,
       dataCaptura: new Date()
     });

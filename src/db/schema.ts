@@ -36,6 +36,7 @@ export const fotos = sqliteTable('fotos', {
   eventoId: text('evento_id').notNull().references(() => eventos.id),
   urlImagem: text('url_imagem').notNull(),
   nomeConvidado: text('nome_convidado'),
+  mensagem: text('mensagem'),
   status: text('status').notNull(), // 'pendente', 'aprovada', 'rejeitada'
   dataCaptura: integer('data_captura', { mode: 'timestamp' }).notNull(),
 });
