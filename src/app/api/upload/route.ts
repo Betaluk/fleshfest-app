@@ -5,22 +5,17 @@ import { eq, count } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 // --- RATE LIMITING (Anti-Spam em Memória) ---
-// Como a Cloudflare Edge é extremamente rápida, usamos um Map na memória do Worker
-// para rastrear quantos envios cada IP fez recentemente.
 const rateLimitMap = new Map<string, { quantidade: number; ultimoEnvio: number }>();
 const JANELA_TEMPO_MS = 60 * 1000; // 1 minuto
-const LIMITE_POR_MINUTO = 10; // Máximo de 10 fotos por minuto por IP
+const LIMITE_POR_MINUTO = 10; // Máximo de 10 envios por minuto por IP
 
 export async function POST(request: Request) {
   try {
     // 1. VERIFICAÇÃO DE RATE LIMITING (Anti-Spam)
-    // A Cloudflare injeta o IP real do usuário neste cabeçalho
     const ipConvidado = request.headers.get('cf-connecting-ip') || 'ip-desconhecido';
     const agora = Date.now();
-    
     const historicoIp = rateLimitMap.get(ipConvidado) || { quantidade: 0, ultimoEnvio: agora };
 
-    // Se já passou 1 minuto desde o último envio contabilizado, zera a contagem
     if (agora - historicoIp.ultimoEnvio > JANELA_TEMPO_MS) {
       historicoIp.quantidade = 1;
       historicoIp.ultimoEnvio = agora;
@@ -28,73 +23,77 @@ export async function POST(request: Request) {
       historicoIp.quantidade++;
       if (historicoIp.quantidade > LIMITE_POR_MINUTO) {
         console.warn(`[ANTI-SPAM] IP bloqueado temporariamente: ${ipConvidado}`);
-        return Response.json(
-          { erro: 'Você está enviando fotos rápido demais. Aguarde um minuto e tente novamente.' },
+        return NextResponse.json(
+          { erro: 'Você está enviando mídia rápido demais. Aguarde um minuto e tente novamente.' },
           { status: 429 }
         );
       }
     }
     rateLimitMap.set(ipConvidado, historicoIp);
 
-
-    // 2. PROCESSAMENTO DO FORMULÁRIO
+    // 2. PROCESSAMENTO DO FORMULÁRIO (Agora Híbrido)
     const formData = await request.formData();
-    const arquivo = formData.get('foto') as File;
+    const arquivo = formData.get('foto') as File; // Mantemos a chave 'foto' para retrocompatibilidade
     const eventoId = formData.get('eventoId') as string;
     const mensagemForm = formData.get('mensagem') as string | null;
+    
+    // --- LÊ A NOVA FLAG DE MÍDIA ---
+    const tipoMedia = formData.get('tipoMedia') as string || 'imagem'; 
 
     if (!arquivo || !eventoId) {
-      return Response.json({ erro: 'Dados incompletos' }, { status: 400 });
+      return NextResponse.json({ erro: 'Dados incompletos' }, { status: 400 });
+    }
+
+    // Trava de segurança backend adaptável: 25MB para Vídeos, 5MB para Imagens
+    const tamanhoMaximo = tipoMedia === 'video' ? 25 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (arquivo.size > tamanhoMaximo) {
+      return NextResponse.json({ erro: 'O arquivo excedeu o limite máximo permitido.' }, { status: 400 });
     }
 
     // 3. CONEXÃO COM O BANCO DE DADOS
-    // Usamos "any" provisoriamente no BUCKET_FOTOS para evitar erros de tipagem
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { BUCKET_FOTOS: any } };
     const db = getDb(env);
 
-    // Verifica se o evento existe e está ativo
     const evento = await db.select().from(eventos).where(eq(eventos.id, eventoId)).get();
-    // --- NOVA LÓGICA: Bloqueio de Upload Expirado ---
-    // 1. Garante ao TypeScript que o evento existe
+    
     if (!evento) {
       return NextResponse.json({ error: 'Evento não encontrado.' }, { status: 404 });
     }
 
     const isDemo = evento.id === 'e0f9535f-d7b3-465d-8b61-b3fb70722656';
 
-    // 2. NOVA LÓGICA: Bloqueio de Upload Expirado
+    // Bloqueio de Upload Expirado
     const dataLimite = new Date(evento.dataEvento);
     dataLimite.setDate(dataLimite.getDate() + 2); // Regra de 48h
     const hoje = new Date();
 
     if (hoje > dataLimite && !isDemo) {
       return NextResponse.json(
-        { error: 'Este evento já foi encerrado e não aceita mais fotos.' },
+        { error: 'Este evento já foi encerrado e não aceita mais mídias.' },
         { status: 403 }
       );
     }
     
-    if (!evento || evento.statusPagamento !== 'pago') {
-      return Response.json({ erro: 'Evento inválido ou inativo.' }, { status: 403 });
+    if (evento.statusPagamento !== 'pago') {
+      return NextResponse.json({ erro: 'Evento inválido ou inativo.' }, { status: 403 });
     }
 
-
-    // 4. TRAVA DO LIMITE DE FOTOS DO PLANO (Regra de Negócio)
-    const limiteFotosDoPlano = 500; // Como estamos usando o "plano-falso", o limite fixo é 500
-    
+    // 4. TRAVA DO LIMITE DE FOTOS DO PLANO
+    const limiteFotosDoPlano = 500; 
     const contagemResult = await db.select({ valor: count() }).from(fotos).where(eq(fotos.eventoId, eventoId)).get();
     const totalFotosAtuais = contagemResult?.valor || 0;
 
     if (totalFotosAtuais >= limiteFotosDoPlano) {
-      return Response.json(
-        { erro: 'O limite máximo de fotos desta festa já foi atingido! Nenhuma foto a mais pode ser enviada.' },
+      return NextResponse.json(
+        { erro: 'O limite máximo de lembranças desta festa já foi atingido!' },
         { status: 403 }
       );
     }
 
     // 5. UPLOAD PARA A CLOUDFLARE R2
-    // Gera um nome único para o arquivo
-    const extensao = arquivo.name.split('.').pop() || 'jpg';
+    let extensao = arquivo.name.split('.').pop() || 'jpg';
+    if (tipoMedia === 'video' && (!extensao || extensao.length > 4)) extensao = 'mp4'; // Fallback de segurança para vídeos
+    
     const nomeFicheiroUnico = `${eventoId}_${Date.now()}-${crypto.randomUUID()}.${extensao}`;
     const arrayBuffer = await arquivo.arrayBuffer();
 
@@ -102,13 +101,11 @@ export async function POST(request: Request) {
       httpMetadata: { contentType: arquivo.type },
     });
 
-    // Como bloqueamos o balde público, a URL que salvamos no banco agora é a nossa Rota Segura local!
-    //const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8787' : 'https://galeria.flashfest.com.br';
     const urlSeguraAcesso = process.env.NODE_ENV === 'development' 
       ? `http://localhost:8787/api/fotos/${nomeFicheiroUnico}`
-      : `https://galeria.flashfest.com.br/${nomeFicheiroUnico}`; // Certifique-se de que este é o subdomínio exato que configurou
-    // 6. SALVA O REGISTRO NO D1
-    // Se o evento estiver configurado como 'auto', a foto já nasce 'aprovada'
+      : `https://fotos.flashfest.com.br/${nomeFicheiroUnico}`; 
+
+    // 6. SALVA O REGISTRO NO D1 (Agora com tipoMedia!)
     const statusInicial = evento.modoModeracao === 'auto' ? 'aprovada' : 'pendente';
 
     await db.insert(fotos).values({
@@ -116,14 +113,15 @@ export async function POST(request: Request) {
       eventoId: eventoId,
       urlImagem: urlSeguraAcesso,
       mensagem: mensagemForm,
+      tipoMedia: tipoMedia, // <--- SALVANDO O FORMATO NO BANCO!
       status: statusInicial,
       dataCaptura: new Date()
     });
 
-    return Response.json({ mensagem: 'Foto enviada com sucesso!' }, { status: 200 });
+    return NextResponse.json({ mensagem: 'Mídia enviada com sucesso!' }, { status: 200 });
 
   } catch (error) {
     console.error("Erro no upload:", error);
-    return Response.json({ erro: 'Erro interno no servidor' }, { status: 500 });
+    return NextResponse.json({ erro: 'Erro interno no servidor' }, { status: 500 });
   }
 }

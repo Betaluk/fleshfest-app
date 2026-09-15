@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Camera, Send, RefreshCcw, Sparkles } from 'lucide-react';
+import { Camera, Video, Send, RefreshCcw, Sparkles } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 
-// --- DEFINIÇÃO DOS FILTROS ---
+// --- DEFINIÇÃO DOS FILTROS (Mantidos intactos) ---
 const FILTROS = [
   { id: 'none', nome: 'Original', css: 'none' },
   { id: 'pb', nome: 'P&B', css: 'grayscale(100%)' },
@@ -13,67 +13,77 @@ const FILTROS = [
 ];
 
 export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvento: string }) {
-  const [fotoUrl, setFotoUrl] = useState<string | null>(null);
+  const [modo, setModo] = useState<'imagem' | 'video'>('imagem'); // Chave seletora
+  const [mediaUrl, setMediaUrl] = useState<string | null>(null);
   const [arquivoOriginal, setArquivoOriginal] = useState<File | null>(null);
   const [processando, setProcessando] = useState(false);
   const [mensagem, setMensagem] = useState('');
-  const [filtroAtual, setFiltroAtual] = useState('none'); // NOVO ESTADO DO FILTRO
+  const [filtroAtual, setFiltroAtual] = useState('none');
+  const [tipoMediaCapturada, setTipoMediaCapturada] = useState<'imagem' | 'video'>('imagem');
 
-  const capturarFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const capturarMedia = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Identifica se o celular retornou um vídeo ou imagem
+      const isVideo = file.type.startsWith('video/');
+      setTipoMediaCapturada(isVideo ? 'video' : 'imagem');
+      
       setArquivoOriginal(file);
       const url = URL.createObjectURL(file);
-      setFotoUrl(url);
-      setFiltroAtual('none'); // Reseta o filtro ao tirar nova foto
+      setMediaUrl(url);
+      setFiltroAtual('none');
     }
   };
 
-  const enviarFoto = async () => {
-    if (!arquivoOriginal || !fotoUrl) return;
-
+  const enviarMedia = async () => {
+    if (!arquivoOriginal || !mediaUrl) return;
     setProcessando(true);
 
     try {
       let arquivoParaProcessar = arquivoOriginal;
 
-      // --- MÁGICA DO CANVAS: "Queima" o filtro na imagem antes de enviar ---
-      if (filtroAtual !== 'none') {
-        arquivoParaProcessar = await new Promise<File>((resolve) => {
-          const img = new Image();
-          img.src = fotoUrl;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            
-            if (ctx) {
-              ctx.filter = filtroAtual;
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              canvas.toBlob((blob) => {
-                if (blob) resolve(new File([blob], arquivoOriginal.name, { type: arquivoOriginal.type }));
-                else resolve(arquivoOriginal);
-              }, arquivoOriginal.type);
-            } else {
-              resolve(arquivoOriginal);
-            }
-          };
-        });
+      // 1. PROCESSAMENTO DE IMAGEM (Mantém a mágica do Canvas e Compressão)
+      if (tipoMediaCapturada === 'imagem') {
+        if (filtroAtual !== 'none') {
+          arquivoParaProcessar = await new Promise<File>((resolve) => {
+            const img = new Image();
+            img.src = mediaUrl;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                ctx.filter = filtroAtual;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob((blob) => {
+                  if (blob) resolve(new File([blob], arquivoOriginal.name, { type: arquivoOriginal.type }));
+                  else resolve(arquivoOriginal);
+                }, arquivoOriginal.type);
+              } else {
+                resolve(arquivoOriginal);
+              }
+            };
+          });
+        }
+
+        const options = { maxSizeMB: 0.5, maxWidthOrHeight: 1920, useWebWorker: true };
+        arquivoParaProcessar = await imageCompression(arquivoParaProcessar, options);
+      } else {
+        // 2. PROCESSAMENTO DE VÍDEO (Hardware do Celular)
+        // O SO já comprimiu, mas fazemos uma trava de segurança (ex: max 25MB)
+        if (arquivoOriginal.size > 25 * 1024 * 1024) {
+          alert('Este vídeo é muito pesado. Tente gravar um clipe mais curto (10 a 15 segundos).');
+          setProcessando(false);
+          return;
+        }
       }
-      // ---------------------------------------------------------------------
 
-      // Comprime a imagem (agora já com o filtro aplicado, se houver)
-      const options = {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-      const fotoComprimida = await imageCompression(arquivoParaProcessar, options);
-
+      // 3. EMPACOTAMENTO
       const formData = new FormData();
-      formData.append('foto', fotoComprimida, arquivoOriginal.name);
+      formData.append('foto', arquivoParaProcessar, arquivoOriginal.name); // Mantemos a key 'foto' para não quebrar a API atual
       formData.append('eventoId', id);
+      formData.append('tipoMedia', tipoMediaCapturada); // <--- NOVA FLAG
       if (mensagem.trim()) formData.append('mensagem', mensagem.trim());
 
       const resposta = await fetch('/api/upload', {
@@ -85,15 +95,15 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
 
       if (resposta.ok) {
         alert('🎉 ' + dados.mensagem);
-        setFotoUrl(null);
+        setMediaUrl(null);
         setArquivoOriginal(null);
         setMensagem(''); 
-        setFiltroAtual('none'); // Limpa tudo
+        setFiltroAtual('none');
       } else {
         alert('Erro: ' + dados.erro);
       }
     } catch (error) {
-      console.error("Erro ao enviar a imagem:", error);
+      console.error("Erro ao enviar a mídia:", error);
       alert("Houve um erro de conexão. Tente novamente.");
     } finally {
       setProcessando(false);
@@ -102,120 +112,142 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
-      {/* Background Decorativo Premium */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/10 via-zinc-950/40 to-black pointer-events-none"></div>
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div className="w-full max-w-md flex flex-col items-center gap-8 p-8 sm:p-10 rounded-3xl bg-zinc-900/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative z-10">
+      
+      <div className="w-full max-w-md flex flex-col items-center gap-6 p-6 sm:p-8 rounded-3xl bg-zinc-900/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative z-10">
         
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center p-3 bg-white/5 rounded-2xl mb-2 border border-white/10 shadow-inner">
-            <Camera className="text-emerald-400 w-8 h-8" />
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 tracking-tight leading-tight">{nomeEvento}</h1>
-          <p className="text-zinc-400 text-base font-medium">Capture momentos únicos e compartilhe no telão!</p>
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 tracking-tight leading-tight">{nomeEvento}</h1>
+          <p className="text-zinc-400 text-sm font-medium">Deixe sua marca na festa!</p>
         </div>
 
-        {!fotoUrl ? (
-          <div className="w-full flex justify-center py-6">
-            <label className="group relative flex flex-col items-center justify-center w-56 h-56 rounded-full cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95">
-              <div className="absolute inset-0 bg-emerald-500 rounded-full animate-pulse opacity-20 blur-xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full shadow-[0_0_40px_rgba(16,185,129,0.3)] group-hover:shadow-[0_0_60px_rgba(16,185,129,0.5)] transition-shadow"></div>
-              <div className="absolute inset-[4px] bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-full border border-emerald-300/30 flex flex-col items-center justify-center gap-3">
-                <Camera size={56} className="text-white filter drop-shadow-lg group-hover:-translate-y-1 transition-transform" />
-                <span className="text-white font-bold text-xl tracking-wide shadow-black drop-shadow-md">Tirar Foto</span>
+        {!mediaUrl ? (
+          <div className="w-full flex flex-col items-center py-4 gap-6">
+            
+            {/* CHAVE SELETORA FOTO/VÍDEO */}
+            <div className="flex bg-zinc-950/80 p-1 rounded-full border border-zinc-800 shadow-inner w-full max-w-[200px]">
+              <button 
+                onClick={() => setModo('imagem')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-full transition-all ${modo === 'imagem' ? 'bg-emerald-500 text-zinc-950 shadow-md' : 'text-zinc-400 hover:text-white'}`}
+              >
+                <Camera size={16} /> Foto
+              </button>
+              <button 
+                onClick={() => setModo('video')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-full transition-all ${modo === 'video' ? 'bg-emerald-500 text-zinc-950 shadow-md' : 'text-zinc-400 hover:text-white'}`}
+              >
+                <Video size={16} /> Vídeo
+              </button>
+            </div>
+
+            <label className="group relative flex flex-col items-center justify-center w-48 h-48 rounded-full cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full shadow-[0_0_40px_rgba(16,185,129,0.3)]"></div>
+              <div className="absolute inset-[4px] bg-zinc-900 rounded-full border border-emerald-500/50 flex flex-col items-center justify-center gap-3 group-hover:bg-zinc-800 transition-colors">
+                {modo === 'imagem' ? <Camera size={48} className="text-emerald-400" /> : <Video size={48} className="text-emerald-400" />}
+                <span className="text-white font-bold text-lg tracking-wide">
+                  {modo === 'imagem' ? 'Tirar Foto' : 'Gravar 15s'}
+                </span>
               </div>
               <input
                 type="file"
-                accept="image/*"
+                accept={modo === 'imagem' ? "image/*" : "video/*"}
                 capture="environment"
                 className="hidden"
-                onChange={capturarFoto}
+                onChange={capturarMedia}
               />
             </label>
           </div>
         ) : (
-          <div className="flex flex-col items-center w-full gap-6 animate-in fade-in zoom-in duration-300">
+          <div className="flex flex-col items-center w-full gap-5 animate-in fade-in zoom-in duration-300">
             
-            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black/50 backdrop-blur-sm group">
-              <img 
-                src={fotoUrl} 
-                alt="Sua foto" 
-                className="object-contain w-full h-full transition-all duration-300"
-                style={{ filter: filtroAtual }} // O css renderiza o filtro em tempo real aqui!
-              />
+            {/* PREVIEW DINÂMICO (IMAGEM OU VÍDEO) */}
+            <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border border-white/20 shadow-2xl bg-black group">
+              {tipoMediaCapturada === 'video' ? (
+                <video 
+                  src={mediaUrl} 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <img 
+                  src={mediaUrl} 
+                  alt="Sua foto" 
+                  className="object-cover w-full h-full transition-all duration-300"
+                  style={{ filter: filtroAtual }}
+                />
+              )}
+
               {processando && (
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center gap-4 text-emerald-400 font-medium z-50">
-                  <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
-                  <span className="animate-pulse text-lg">Enviando para o telão...</span>
+                <div className="absolute inset-0 bg-black/70 backdrop-blur-md flex flex-col items-center justify-center gap-4 text-emerald-400 font-medium z-50">
+                  <div className="w-10 h-10 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+                  <span className="animate-pulse">Enviando para o telão...</span>
                 </div>
               )}
             </div>
 
-            {/* --- SELEÇÃO DE FILTROS --- */}
-            <div className="w-full">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={16} className="text-emerald-400" />
-                <span className="text-sm font-semibold text-zinc-300">Estilo da Foto</span>
+            {/* SELEÇÃO DE FILTROS (Escondido se for vídeo) */}
+            {tipoMediaCapturada === 'imagem' && (
+              <div className="w-full animate-in slide-in-from-top-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles size={16} className="text-emerald-400" />
+                  <span className="text-sm font-semibold text-zinc-300">Estilo da Foto</span>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-2 snap-x hide-scrollbar">
+                  {FILTROS.map((filtro) => (
+                    <button
+                      key={filtro.id}
+                      onClick={() => setFiltroAtual(filtro.css)}
+                      disabled={processando}
+                      className={`snap-center shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                        filtroAtual === filtro.css
+                          ? 'bg-emerald-500 text-zinc-950 shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                          : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700'
+                      }`}
+                    >
+                      {filtro.nome}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-3 overflow-x-auto pb-2 snap-x hide-scrollbar">
-                {FILTROS.map((filtro) => (
-                  <button
-                    key={filtro.id}
-                    onClick={() => setFiltroAtual(filtro.css)}
-                    disabled={processando}
-                    className={`snap-center shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      filtroAtual === filtro.css
-                        ? 'bg-emerald-500 text-zinc-950 shadow-[0_0_15px_rgba(16,185,129,0.4)]'
-                        : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700'
-                    }`}
-                  >
-                    {filtro.nome}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {/* --------------------------- */}
+            )}
             
-            {/* O SEU CAMPO DE MENSAGEM INTACTO */}
-            <div className="w-full animate-in slide-in-from-bottom-4 duration-500">
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Deixe uma mensagem (opcional)</label>
+            <div className="w-full">
               <textarea 
                 value={mensagem}
                 onChange={(e) => setMensagem(e.target.value)}
                 maxLength={120}
-                placeholder="Felicidades aos noivos! 🎉"
+                placeholder={tipoMediaCapturada === 'imagem' ? "Deixe uma mensagem (opcional)" : "Legenda do vídeo (opcional)"}
                 disabled={processando}
-                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:border-transparent resize-none h-24 backdrop-blur-md transition-all disabled:opacity-50"
+                className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none h-20 transition-all text-sm"
               />
-              <div className="text-right text-xs text-zinc-500 mt-1">{mensagem.length}/120</div>
             </div>
-            {/* ------------------------------ */}
             
-            <div className="flex w-full gap-4">
+            <div className="flex w-full gap-3">
               <button 
                 onClick={() => {
-                  setFotoUrl(null);
+                  setMediaUrl(null);
                   setArquivoOriginal(null);
-                  setMensagem(''); 
-                  setFiltroAtual('none');
+                  setMensagem('');
                 }}
                 disabled={processando}
-                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-semibold transition-all disabled:opacity-50"
               >
-                <RefreshCcw size={22} className={processando ? "animate-spin" : ""} />
+                <RefreshCcw size={20} />
                 Refazer
               </button>
               <button 
-                onClick={enviarFoto}
+                onClick={enviarMedia}
                 disabled={processando}
-                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] border border-emerald-400/30"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50"
               >
-                <Send size={22} className={processando ? "animate-bounce" : ""} />
-                {processando ? "Enviando..." : "Enviar Foto"}
+                <Send size={20} />
+                {processando ? "Enviando..." : "Enviar"}
               </button>
             </div>
+
           </div>
         )}
       </div>
