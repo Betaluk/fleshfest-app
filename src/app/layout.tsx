@@ -1,4 +1,8 @@
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta' });
 
 export const metadata = {
   title: 'FlashFest',
@@ -11,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
-      <body className="bg-zinc-950 text-white antialiased">
+    <html lang="pt-BR" className={`${inter.variable} ${jakarta.variable}`}>
+      <body className="bg-zinc-950 text-white antialiased font-sans selection:bg-emerald-500/30">
         {children}
       </body>
     </html>
