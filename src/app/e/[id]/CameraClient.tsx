@@ -1,14 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Camera, Send, RefreshCcw } from 'lucide-react';
+import { Camera, Send, RefreshCcw, Sparkles } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
+
+// --- DEFINIÇÃO DOS FILTROS ---
+const FILTROS = [
+  { id: 'none', nome: 'Original', css: 'none' },
+  { id: 'pb', nome: 'P&B', css: 'grayscale(100%)' },
+  { id: 'sepia', nome: 'Sépia', css: 'sepia(100%)' },
+  { id: 'vintage', nome: 'Vintage', css: 'contrast(1.2) saturate(1.2) sepia(0.4) hue-rotate(-10deg)' },
+];
 
 export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvento: string }) {
   const [fotoUrl, setFotoUrl] = useState<string | null>(null);
   const [arquivoOriginal, setArquivoOriginal] = useState<File | null>(null);
   const [processando, setProcessando] = useState(false);
   const [mensagem, setMensagem] = useState('');
+  const [filtroAtual, setFiltroAtual] = useState('none'); // NOVO ESTADO DO FILTRO
 
   const capturarFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -16,21 +25,51 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
       setArquivoOriginal(file);
       const url = URL.createObjectURL(file);
       setFotoUrl(url);
+      setFiltroAtual('none'); // Reseta o filtro ao tirar nova foto
     }
   };
 
   const enviarFoto = async () => {
-    if (!arquivoOriginal) return;
+    if (!arquivoOriginal || !fotoUrl) return;
 
     setProcessando(true);
 
     try {
+      let arquivoParaProcessar = arquivoOriginal;
+
+      // --- MÁGICA DO CANVAS: "Queima" o filtro na imagem antes de enviar ---
+      if (filtroAtual !== 'none') {
+        arquivoParaProcessar = await new Promise<File>((resolve) => {
+          const img = new Image();
+          img.src = fotoUrl;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            
+            if (ctx) {
+              ctx.filter = filtroAtual;
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              canvas.toBlob((blob) => {
+                if (blob) resolve(new File([blob], arquivoOriginal.name, { type: arquivoOriginal.type }));
+                else resolve(arquivoOriginal);
+              }, arquivoOriginal.type);
+            } else {
+              resolve(arquivoOriginal);
+            }
+          };
+        });
+      }
+      // ---------------------------------------------------------------------
+
+      // Comprime a imagem (agora já com o filtro aplicado, se houver)
       const options = {
         maxSizeMB: 0.5,
         maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
-      const fotoComprimida = await imageCompression(arquivoOriginal, options);
+      const fotoComprimida = await imageCompression(arquivoParaProcessar, options);
 
       const formData = new FormData();
       formData.append('foto', fotoComprimida, arquivoOriginal.name);
@@ -48,7 +87,8 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
         alert('🎉 ' + dados.mensagem);
         setFotoUrl(null);
         setArquivoOriginal(null);
-        setMensagem(''); // Limpa o campo de mensagem após o envio
+        setMensagem(''); 
+        setFiltroAtual('none'); // Limpa tudo
       } else {
         alert('Erro: ' + dados.erro);
       }
@@ -97,8 +137,14 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
           </div>
         ) : (
           <div className="flex flex-col items-center w-full gap-6 animate-in fade-in zoom-in duration-300">
+            
             <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black/50 backdrop-blur-sm group">
-              <img src={fotoUrl} alt="Sua foto" className="object-contain w-full h-full" />
+              <img 
+                src={fotoUrl} 
+                alt="Sua foto" 
+                className="object-contain w-full h-full transition-all duration-300"
+                style={{ filter: filtroAtual }} // O css renderiza o filtro em tempo real aqui!
+              />
               {processando && (
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center gap-4 text-emerald-400 font-medium z-50">
                   <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
@@ -106,8 +152,33 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
                 </div>
               )}
             </div>
+
+            {/* --- SELEÇÃO DE FILTROS --- */}
+            <div className="w-full">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles size={16} className="text-emerald-400" />
+                <span className="text-sm font-semibold text-zinc-300">Estilo da Foto</span>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-2 snap-x hide-scrollbar">
+                {FILTROS.map((filtro) => (
+                  <button
+                    key={filtro.id}
+                    onClick={() => setFiltroAtual(filtro.css)}
+                    disabled={processando}
+                    className={`snap-center shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      filtroAtual === filtro.css
+                        ? 'bg-emerald-500 text-zinc-950 shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                        : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700'
+                    }`}
+                  >
+                    {filtro.nome}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* --------------------------- */}
             
-            {/* --- NOVO CAMPO DE MENSAGEM --- */}
+            {/* O SEU CAMPO DE MENSAGEM INTACTO */}
             <div className="w-full animate-in slide-in-from-bottom-4 duration-500">
               <label className="block text-sm font-medium text-zinc-300 mb-2">Deixe uma mensagem (opcional)</label>
               <textarea 
@@ -127,7 +198,8 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
                 onClick={() => {
                   setFotoUrl(null);
                   setArquivoOriginal(null);
-                  setMensagem(''); // Limpa a mensagem ao decidir refazer a foto
+                  setMensagem(''); 
+                  setFiltroAtual('none');
                 }}
                 disabled={processando}
                 className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
