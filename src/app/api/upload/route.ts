@@ -103,7 +103,7 @@ export async function POST(request: Request) {
 
     const urlSeguraAcesso = process.env.NODE_ENV === 'development' 
       ? `http://localhost:8787/api/fotos/${nomeFicheiroUnico}`
-      : `https://fotos.flashfest.com.br/${nomeFicheiroUnico}`; 
+      : `https://galeria.flashfest.com.br/${nomeFicheiroUnico}`; 
 
     // 6. SALVA O REGISTRO NO D1
     const statusInicial = evento.modoModeracao === 'auto' ? 'aprovada' : 'pendente';
