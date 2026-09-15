@@ -94,12 +94,24 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
             {fotosGaleria.map((foto) => (
               <div key={foto.id} className="relative group break-inside-avoid rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={foto.urlImagem} 
-                  alt="Momento do evento" 
-                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
+                {/* LÓGICA HÍBRIDA NA GALERIA */}
+                {foto.tipoMedia === 'video' ? (
+                  <video 
+                    src={foto.urlImagem} 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <img 
+                    src={foto.urlImagem} 
+                    alt="Momento do evento" 
+                    className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                )}
                 
                 {/* Overlay com Botão de Download (Sempre visível no celular; aparece no Hover no Desktop) */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-3 md:p-4">

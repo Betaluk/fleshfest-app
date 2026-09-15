@@ -90,7 +90,20 @@ export default async function ModeracaoPage({
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {fotosPendentes.map((foto) => (
               <div key={foto.id} className="relative group rounded-lg overflow-hidden border border-zinc-700 bg-black aspect-[3/4]">
-                <img src={foto.urlImagem} alt="Pendente" className="w-full h-full object-cover" />
+                
+                {/* LÓGICA HÍBRIDA: FILA DE APROVAÇÃO */}
+                {foto.tipoMedia === 'video' ? (
+                  <video 
+                    src={foto.urlImagem} 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img src={foto.urlImagem} alt="Pendente" className="w-full h-full object-cover" />
+                )}
                 
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3 p-4">
                   <form action={aprovarFoto} className="w-full">
@@ -121,19 +134,32 @@ export default async function ModeracaoPage({
         
         {fotosAprovadas.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center text-zinc-400">
-            Ainda não há fotos aprovadas para esta festa.
+            Ainda não há mídias aprovadas para esta festa.
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {fotosAprovadas.map((foto) => (
               <div key={foto.id} className="relative group rounded-lg overflow-hidden border border-zinc-800 bg-black aspect-[3/4]">
-                <img src={foto.urlImagem} alt="Aprovada" className="w-full h-full object-cover" />
+                
+                {/* LÓGICA HÍBRIDA: GALERIA DE APROVADAS */}
+                {foto.tipoMedia === 'video' ? (
+                  <video 
+                    src={foto.urlImagem} 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img src={foto.urlImagem} alt="Aprovada" className="w-full h-full object-cover" />
+                )}
                 
                 {/* Botão para apagar a foto caso tenha se arrependido de aprovar */}
                 <form action={rejeitarFoto} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <input type="hidden" name="fotoId" value={foto.id} />
                   <input type="hidden" name="chaveFicheiro" value={foto.chaveFicheiro} />
-                  <button className="bg-black/80 hover:bg-red-600 text-white p-2 rounded-full transition" title="Excluir Foto">
+                  <button className="bg-black/80 hover:bg-red-600 text-white p-2 rounded-full transition" title="Excluir Mídia">
                     🗑️
                   </button>
                 </form>
