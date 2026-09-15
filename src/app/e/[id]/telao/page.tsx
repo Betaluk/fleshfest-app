@@ -37,7 +37,8 @@ export default async function TelaoPage({
   const fotosTratadas = await Promise.all(fotosAprovadas.map(async (foto) => {
     const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
     // Assina a URL para durar 12 horas
-    const urlSegura = await gerarUrlAssinada(chaveFicheiro, env.IMAGE_SECRET, 12);
+    const secret = env.IMAGE_SECRET || 'dummy-secret-for-dev';
+    const urlSegura = await gerarUrlAssinada(chaveFicheiro, secret, 12);
     
     return {
       ...foto,
@@ -50,7 +51,8 @@ export default async function TelaoPage({
   let urlLogoSegura = null;
   if (evento?.urlLogo) {
     const chaveLogo = evento.urlLogo.split('/').pop() || '';
-    urlLogoSegura = await gerarUrlAssinada(chaveLogo, env.IMAGE_SECRET, 12);
+    const secret = env.IMAGE_SECRET || 'dummy-secret-for-dev';
+    urlLogoSegura = await gerarUrlAssinada(chaveLogo, secret, 12);
   }
   // =================================================================
 
