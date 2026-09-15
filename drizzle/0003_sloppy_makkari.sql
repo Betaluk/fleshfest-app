@@ -1,0 +1,1 @@
+ALTER TABLE `fotos` ADD `tipo_media` text DEFAULT 'imagem' NOT NULL;
