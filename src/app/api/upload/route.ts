@@ -92,7 +92,7 @@ export async function POST(request: Request) {
 
     // 5. UPLOAD PARA A CLOUDFLARE R2
     let extensao = arquivo.name.split('.').pop() || 'jpg';
-    if (tipoMedia === 'video' && (!extensao || extensao.length > 4)) extensao = 'mp4'; // Fallback de segurança para vídeos
+    if (tipoMedia === 'video' && (!extensao || extensao.length > 4)) extensao = 'mp4'; // Fallback de segurança
     
     const nomeFicheiroUnico = `${eventoId}_${Date.now()}-${crypto.randomUUID()}.${extensao}`;
     const arrayBuffer = await arquivo.arrayBuffer();
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
       ? `http://localhost:8787/api/fotos/${nomeFicheiroUnico}`
       : `https://fotos.flashfest.com.br/${nomeFicheiroUnico}`; 
 
-    // 6. SALVA O REGISTRO NO D1 (Agora com tipoMedia!)
+    // 6. SALVA O REGISTRO NO D1
     const statusInicial = evento.modoModeracao === 'auto' ? 'aprovada' : 'pendente';
 
     await db.insert(fotos).values({
@@ -113,7 +113,7 @@ export async function POST(request: Request) {
       eventoId: eventoId,
       urlImagem: urlSeguraAcesso,
       mensagem: mensagemForm,
-      tipoMedia: tipoMedia, // <--- SALVANDO O FORMATO NO BANCO!
+      tipoMedia: tipoMedia, // <--- SALVANDO O FORMATO NO BANCO AQUI!
       status: statusInicial,
       dataCaptura: new Date()
     });
