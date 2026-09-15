@@ -240,15 +240,15 @@ export default async function GerenciarEventoPage({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10">
           {/* Template 1: Plaquinha de Mesa */}
           <a 
-            href="https://www.canva.com/design/play?category=tACFahzNhT4" 
+            href="https://canva.link/ayo6ci7uj5n6a9c"
             target="_blank" 
             rel="noopener noreferrer" 
             className="group flex flex-col bg-zinc-950/50 border border-zinc-800 rounded-xl p-6 hover:border-emerald-500/50 hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-1"
           >
             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-bottom-left">🖼️</div>
-            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Plaquinha de Mesa</h4>
+            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Modelo 1</h4>
             <p className="text-sm text-zinc-500 flex-1">
-              Tamanho 10x15cm (A6). O formato clássico e perfeito para colocar no centro das mesas de jantar.
+              Modelo 1 para a plaquinha com QrCode. Fique à vontade para personalizar. Não se esqueça de salvar uma cópia na sua conta do canva.
             </p>
             <div className="mt-4 text-emerald-500 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
               Abrir no Canva <span>&rarr;</span>
@@ -257,15 +257,15 @@ export default async function GerenciarEventoPage({
           
           {/* Template 2: Totem de Bar */}
           <a 
-            href="https://www.canva.com/design/play?category=tACFahzNhT4" 
+            href="https://canva.link/ufj35lnh9umrbn1" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="group flex flex-col bg-zinc-950/50 border border-zinc-800 rounded-xl p-6 hover:border-emerald-500/50 hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-1"
           >
             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-bottom-left">🍹</div>
-            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Totem de Bar/Entrada</h4>
+            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Modelo 2</h4>
             <p className="text-sm text-zinc-500 flex-1">
-              Tamanho 15x21cm (A5). Uma peça vertical de destaque para ilhas de drinks ou hall de entrada.
+              Modelo 2 para a plaquinha com QrCode. Fique à vontade para personalizar. Não se esqueça de salvar uma cópia na sua conta do canva.
             </p>
             <div className="mt-4 text-emerald-500 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
               Abrir no Canva <span>&rarr;</span>
@@ -274,15 +274,15 @@ export default async function GerenciarEventoPage({
 
           {/* Template 3: Cartão de Lembrança */}
           <a 
-            href="https://www.canva.com/design/play?category=tACFahzNhT4" 
+            href="https://canva.link/jp0j21957ycdrmk" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="group flex flex-col bg-zinc-950/50 border border-zinc-800 rounded-xl p-6 hover:border-emerald-500/50 hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-1"
           >
             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-bottom-left">💌</div>
-            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Cartão de Agradecimento</h4>
+            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Modelo 3</h4>
             <p className="text-sm text-zinc-500 flex-1">
-              Pequeno e elegante. Ideal para ser entregue na saída, junto com as lembrancinhas do evento.
+              Modelo 3 para a plaquinha com QrCode. Fique à vontade para personalizar. Não se esqueça de salvar uma cópia na sua conta do canva.
             </p>
             <div className="mt-4 text-emerald-500 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
               Abrir no Canva <span>&rarr;</span>
