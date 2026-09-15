@@ -212,7 +212,7 @@ export default async function GerenciarEventoPage({
               </Link>
             </div>
 
-            {/* BOTÃO DE DOWNLOAD (Já contém a lógica de bloqueio interno) */}
+            {/* BOTÃO DE DOWNLOAD */}
             <div className="sm:col-span-2">
                <BotaoDownloadZip fotosUrls={fotosUrls} nomeEvento={evento.nomeEvento} />
             </div>
@@ -220,6 +220,78 @@ export default async function GerenciarEventoPage({
           </div>
         </div>
       </div>
+      {/* ^^^ FECHAMENTO DO GRID PRINCIPAL ^^^ */}
+
+      {/* --- NOVA SEÇÃO: ENXOVAL DE MARKETING --- */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 sm:p-8 relative overflow-hidden">
+        {/* Detalhe visual premium */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="mb-8 relative z-10">
+          <h3 className="text-2xl font-bold text-white flex items-center gap-2 mb-2">
+            <span className="text-emerald-400 text-3xl">🎨</span> Enxoval de Marketing
+          </h3>
+          <p className="text-zinc-400 text-sm max-w-2xl">
+            Eleve o nível da sua festa! Separamos templates profissionais e 100% gratuitos no Canva. 
+            Basta acessar, colar o QR Code do seu evento (baixado acima) no layout e mandar imprimir para as mesas.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10">
+          {/* Template 1: Plaquinha de Mesa */}
+          <a 
+            href="https://www.canva.com/design/play?category=tACFahzNhT4" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="group flex flex-col bg-zinc-950/50 border border-zinc-800 rounded-xl p-6 hover:border-emerald-500/50 hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-1"
+          >
+            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-bottom-left">🖼️</div>
+            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Plaquinha de Mesa</h4>
+            <p className="text-sm text-zinc-500 flex-1">
+              Tamanho 10x15cm (A6). O formato clássico e perfeito para colocar no centro das mesas de jantar.
+            </p>
+            <div className="mt-4 text-emerald-500 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              Abrir no Canva <span>&rarr;</span>
+            </div>
+          </a>
+          
+          {/* Template 2: Totem de Bar */}
+          <a 
+            href="https://www.canva.com/design/play?category=tACFahzNhT4" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="group flex flex-col bg-zinc-950/50 border border-zinc-800 rounded-xl p-6 hover:border-emerald-500/50 hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-1"
+          >
+            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-bottom-left">🍹</div>
+            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Totem de Bar/Entrada</h4>
+            <p className="text-sm text-zinc-500 flex-1">
+              Tamanho 15x21cm (A5). Uma peça vertical de destaque para ilhas de drinks ou hall de entrada.
+            </p>
+            <div className="mt-4 text-emerald-500 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              Abrir no Canva <span>&rarr;</span>
+            </div>
+          </a>
+
+          {/* Template 3: Cartão de Lembrança */}
+          <a 
+            href="https://www.canva.com/design/play?category=tACFahzNhT4" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="group flex flex-col bg-zinc-950/50 border border-zinc-800 rounded-xl p-6 hover:border-emerald-500/50 hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-1"
+          >
+            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-bottom-left">💌</div>
+            <h4 className="text-white font-bold text-lg mb-2 group-hover:text-emerald-400 transition-colors">Cartão de Agradecimento</h4>
+            <p className="text-sm text-zinc-500 flex-1">
+              Pequeno e elegante. Ideal para ser entregue na saída, junto com as lembrancinhas do evento.
+            </p>
+            <div className="mt-4 text-emerald-500 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              Abrir no Canva <span>&rarr;</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      {/* -------------------------------------- */}
+
     </div>
   );
 }
