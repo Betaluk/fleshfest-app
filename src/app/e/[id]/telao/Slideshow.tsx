@@ -1,44 +1,124 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Slideshow({ fotos, urlCamera }: { fotos: any[], urlCamera: string }) {
-  const [indexAtual, setIndexAtual] = useState(0);
+// Função para gerar posições e animações aleatórias para o fundo
+const generateRandomCloudStyle = () => {
+  const isLeft = Math.random() > 0.5;
+  const isTop = Math.random() > 0.5;
 
-  const avancarSlide = () => {
-    setIndexAtual((prev) => (prev + 1) % fotos.length);
+  const baseXY = {
+    x: (Math.random() * 40 + 20) * (isLeft ? -1 : 1) + 'vw',
+    y: (Math.random() * 40 + 20) * (isTop ? -1 : 1) + 'vh',
   };
 
-  // 1. Temporizador Dinâmico (Fotos = 6s, Vídeos = Tempo real)
+  const floatTarget = {
+    x: (Math.random() * 50 + 10) * (isLeft ? -1 : 1) + 'vw',
+    y: (Math.random() * 50 + 10) * (isTop ? -1 : 1) + 'vh',
+  };
+
+  return {
+    initial: {
+      x: baseXY.x,
+      y: baseXY.y,
+      scale: Math.random() * 0.3 + 0.2, // Escala entre 0.2 e 0.5
+      opacity: Math.random() * 0.3 + 0.1, // Opacidade entre 0.1 e 0.4
+      filter: `blur(${Math.random() * 4 + 4}px)`, // Blur entre 4px e 8px
+      zIndex: 0,
+      rotate: Math.random() * 10 - 5,
+    },
+    animate: {
+      x: [baseXY.x, floatTarget.x, baseXY.x],
+      y: [baseXY.y, floatTarget.y, baseXY.y],
+      transition: {
+        duration: Math.random() * 20 + 20, // Movimento bem lento
+        repeat: Infinity,
+        ease: "linear",
+      }
+    }
+  };
+};
+
+export default function Slideshow({ fotos, urlCamera }: { fotos: any[], urlCamera: string }) {
+  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [newArrivalId, setNewArrivalId] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const seenIdsRef = useRef<Set<string>>(new Set());
+  const cloudStylesRef = useRef<Record<string, ReturnType<typeof generateRandomCloudStyle>>>({});
+
+  useEffect(() => {
+    setIsMounted(true);
+    let hasNew = false;
+    let latestNewId: string | null = null;
+
+    fotos.forEach(foto => {
+      if (!cloudStylesRef.current[foto.id]) {
+        cloudStylesRef.current[foto.id] = generateRandomCloudStyle();
+      }
+      if (!seenIdsRef.current.has(foto.id)) {
+        seenIdsRef.current.add(foto.id);
+        if (seenIdsRef.current.size > fotos.length) {
+          hasNew = true;
+          latestNewId = foto.id;
+        }
+      }
+    });
+
+    if (seenIdsRef.current.size === fotos.length && !focusedId && fotos.length > 0) {
+      setFocusedId(fotos[0].id);
+      seenIdsRef.current = new Set(fotos.map(f => f.id));
+    } else if (hasNew && latestNewId) {
+      setNewArrivalId(latestNewId);
+      setFocusedId(latestNewId);
+    }
+  }, [fotos, focusedId]);
+
+  const avancarFoco = () => {
+    if (fotos.length <= 1) return;
+
+    let proximoFoco;
+    do {
+      const randomIndex = Math.floor(Math.random() * fotos.length);
+      proximoFoco = fotos[randomIndex].id;
+    } while (proximoFoco === focusedId && fotos.length > 1);
+
+    setFocusedId(proximoFoco);
+  };
+
   useEffect(() => {
     if (fotos.length <= 1) return;
 
     let timer: NodeJS.Timeout;
-    const fotoAtual = fotos[indexAtual];
+    const fotoAtual = fotos.find(f => f.id === focusedId);
 
-    // Se for imagem, passa em 6 segundos. Se for vídeo, o evento onEnded fará a transição.
+    const holdTime = newArrivalId === focusedId ? 7000 : 6000;
+
     if (fotoAtual?.tipoMedia !== 'video') {
       timer = setTimeout(() => {
-        avancarSlide();
-      }, 6000);
+        if (newArrivalId === focusedId) setNewArrivalId(null);
+        avancarFoco();
+      }, holdTime);
     } else {
-      // Backup de segurança para vídeos: se falhar o play, força a troca em 16 segundos
       timer = setTimeout(() => {
-        avancarSlide();
+        if (newArrivalId === focusedId) setNewArrivalId(null);
+        avancarFoco();
       }, 16000);
     }
 
     return () => clearTimeout(timer);
-  }, [indexAtual, fotos]);
+  }, [focusedId, fotos, newArrivalId]);
 
-  // 2. Refresh automático da página a cada 30 segundos
   useEffect(() => {
     const refreshInterval = setInterval(() => {
-      window.location.reload();
+      if (!newArrivalId) {
+        window.location.reload();
+      }
     }, 30000);
     return () => clearInterval(refreshInterval);
-  }, []);
+  }, [newArrivalId]);
 
   if (fotos.length === 0) {
     return (
@@ -52,59 +132,111 @@ export default function Slideshow({ fotos, urlCamera }: { fotos: any[], urlCamer
     );
   }
 
-  return (
-    <div className="relative h-screen w-full bg-black overflow-hidden flex items-center justify-center">
-      
-      {fotos.map((foto, index) => (
-        <div
-          key={foto.id}
-          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-            index === indexAtual ? 'opacity-100 z-10' : 'opacity-0 z-0'
-          }`}
-        >
-          {/* LÓGICA HÍBRIDA: IMAGEM OU VÍDEO */}
-          {foto.tipoMedia === 'video' ? (
-             <video
-               ref={(el) => {
-                 // Pausa os vídeos invisíveis e toca apenas o que está na tela
-                 if (el) {
-                   if (index === indexAtual) {
-                     el.currentTime = 0;
-                     el.play().catch(() => {});
-                   } else {
-                     el.pause();
-                   }
-                 }
-               }}
-               src={foto.urlImagem}
-               muted
-               playsInline
-               onEnded={avancarSlide} // <-- Passa a foto assim que o vídeo acaba
-               className="w-full h-full object-contain"
-             />
-          ) : (
-             <img
-               src={foto.urlImagem}
-               alt="Lembrança do evento"
-               className="w-full h-full object-contain"
-             />
-          )}
-          
-          {foto.mensagem && (
-            <div className="absolute bottom-16 left-0 right-0 flex justify-center pointer-events-none px-4 z-30">
-              <div className="bg-black/60 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-full max-w-3xl text-center shadow-2xl">
-                <p className="text-2xl font-medium tracking-wide">"{foto.mensagem}"</p>
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
+  if (!isMounted) return <div className="h-screen w-full bg-[#050505]" />;
 
-      <div className="absolute bottom-8 right-8 bg-white/10 backdrop-blur-md p-4 rounded-2xl flex flex-col items-center border border-white/20 shadow-2xl z-40">
-        <div className="bg-white p-2 rounded-lg mb-2">
-          <QRCodeSVG value={urlCamera} size={120} />
+  return (
+    <div className="relative h-screen w-full bg-[#050505] overflow-hidden flex items-center justify-center perspective-[1000px]">
+      
+      <AnimatePresence>
+        {fotos.map((foto) => {
+          const isFocused = foto.id === focusedId;
+          const isNewArrival = isFocused && foto.id === newArrivalId;
+          const cloudStyle = cloudStylesRef.current[foto.id] || generateRandomCloudStyle();
+
+          return (
+            <motion.div
+              key={foto.id}
+              className="absolute inset-0 w-full h-full flex items-center justify-center origin-center"
+              initial={cloudStyle.initial as any}
+              animate={(isFocused ? {
+                x: 0,
+                y: 0,
+                scale: isNewArrival ? [0, 1.1, 1] : 1,
+                opacity: 1,
+                filter: "blur(0px)",
+                rotate: 0,
+                zIndex: 50,
+                transition: {
+                  duration: isNewArrival ? 0.8 : 1.2,
+                  ease: isNewArrival ? [0.175, 0.885, 0.32, 1.275] : "easeInOut"
+                }
+              } : {
+                x: cloudStyle.animate.x,
+                y: cloudStyle.animate.y,
+                scale: cloudStyle.initial.scale,
+                opacity: cloudStyle.initial.opacity,
+                filter: cloudStyle.initial.filter,
+                rotate: cloudStyle.initial.rotate,
+                zIndex: 0,
+                transition: cloudStyle.animate.transition
+              }) as any}
+            >
+              <motion.div
+                className={`relative w-[90%] max-w-4xl max-h-[85vh] rounded-xl overflow-hidden shadow-2xl ${
+                  isNewArrival ? 'shadow-white/50 border border-white/40' : 'border border-transparent'
+                }`}
+                animate={{
+                  boxShadow: isNewArrival
+                    ? ['0px 0px 0px rgba(255,255,255,0)', '0px 0px 100px rgba(255,255,255,0.6)', '0px 0px 40px rgba(255,255,255,0.2)']
+                    : '0px 0px 0px rgba(0,0,0,0)',
+                }}
+                transition={{ duration: 1.5 }}
+              >
+                {foto.tipoMedia === 'video' ? (
+                  <video
+                    ref={(el) => {
+                      if (el && isFocused && el.paused) {
+                        el.currentTime = 0;
+                        el.play().catch(() => {});
+                      } else if (el && !isFocused && !el.paused) {
+                        el.pause();
+                      }
+                    }}
+                    src={foto.urlImagem}
+                    muted
+                    playsInline
+                    onEnded={() => {
+                       if(isFocused) {
+                           if (newArrivalId === focusedId) setNewArrivalId(null);
+                           avancarFoco();
+                       }
+                    }}
+                    className="w-full h-full object-contain bg-black/40 backdrop-blur-sm rounded-xl"
+                  />
+                ) : (
+                  <img
+                    src={foto.urlImagem}
+                    alt="Lembrança do evento"
+                    className="w-full h-full object-contain bg-black/40 backdrop-blur-sm rounded-xl"
+                  />
+                )}
+
+                <AnimatePresence>
+                  {foto.mensagem && isFocused && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ delay: 0.5, duration: 0.8 }}
+                      className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none px-4"
+                    >
+                      <div className="bg-white/10 backdrop-blur-xl border border-white/20 text-white px-8 py-4 rounded-2xl max-w-2xl text-center shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+                        <p className="text-2xl font-light tracking-wide text-white/95">"{foto.mensagem}"</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+
+      <div className="absolute bottom-8 right-8 bg-black/30 backdrop-blur-xl p-4 rounded-2xl flex flex-col items-center border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] z-50 transition-transform hover:scale-105">
+        <div className="bg-white p-2 rounded-xl mb-2 shadow-inner">
+          <QRCodeSVG value={urlCamera} size={100} />
         </div>
-        <span className="text-white font-bold text-sm drop-shadow-md mt-1">Deixe sua marca!</span>
+        <span className="text-white/80 font-medium text-xs tracking-wider uppercase mt-1">Participe</span>
       </div>
       
     </div>
