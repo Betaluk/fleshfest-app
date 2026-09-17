@@ -3,6 +3,26 @@ import { auth, signIn } from '@/auth';
 
 export const dynamic = 'force-dynamic';
 
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'FlashFest | Telão Interativo e Compartilhamento de Fotos para Eventos',
+  description: 'Transforme os convidados nos fotógrafos do seu evento. Escaneie o QR Code, tire a foto e veja no telão da festa em tempo real. A alternativa moderna à cabine de fotos.',
+  keywords: ['telão interativo', 'fotos casamento', 'cabine de fotos alternativa', 'qr code fotos festa', 'slideshow eventos ao vivo'],
+  openGraph: {
+    title: 'FlashFest | O Telão Interativo do seu Evento',
+    description: 'Os convidados escaneiam o QR Code e as fotos aparecem instantaneamente no telão da festa.',
+    url: 'https://flashfest.com.br',
+    siteName: 'FlashFest',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  }
+};
+
 export default async function LandingPage() {
   const session = await auth();
   const isLogado = !!session?.user;
@@ -19,8 +39,28 @@ export default async function LandingPage() {
     { nome: 'VIP+', preco: '199', fotos: '10.000', dias: '30', ideal: 'Grandes eventos corporativos' }
   ];
 
+  // 1. Criação do Schema Markup de Software
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'FlashFest',
+    applicationCategory: 'MultimediaApplication',
+    operatingSystem: 'Any',
+    offers: {
+      '@type': 'Offer',
+      price: '49.00',
+      priceCurrency: 'BRL',
+    },
+    description: 'Plataforma de telão interativo e compartilhamento de fotos em tempo real para casamentos e eventos corporativos.',
+  };
+
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-50 selection:bg-emerald-500/30 overflow-hidden">
+      {/* 2. Injeção do Schema invisível na página */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
       {/* ANIMATED BACKGROUND EFFECTS */}
       <div className="absolute top-0 inset-x-0 h-screen pointer-events-none overflow-hidden">
