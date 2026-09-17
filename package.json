@@ -19,7 +19,7 @@
     "browser-image-compression": "^2.0.2",
     "drizzle-orm": "^0.45.2",
     "file-saver": "^2.0.5",
-    "framer-motion": "^13.3.0",
+    "framer-motion": "^13.4.0",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "lucide-react": "^1.29.0",

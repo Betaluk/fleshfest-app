@@ -171,8 +171,9 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
                 transition: cloudStyle.animate.transition
               }) as any}
             >
+              {/* CORREÇÃO AQUI: Mudamos para inline-flex e removemos larguras fixas */}
               <motion.div
-                className={`relative w-[90%] max-w-4xl max-h-[85vh] rounded-xl overflow-hidden shadow-2xl ${
+                className={`relative inline-flex items-center justify-center rounded-xl overflow-hidden shadow-2xl ${
                   isNewArrival ? 'shadow-white/50 border border-white/40' : 'border border-transparent'
                 }`}
                 animate={{
@@ -201,13 +202,15 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
                            avancarFoco();
                        }
                     }}
-                    className="w-full h-full object-contain bg-black/40 backdrop-blur-sm rounded-xl"
+                    /* CORREÇÃO AQUI: Altura e largura automáticas mas com limites de tela (vw/vh) */
+                    className="max-w-[90vw] max-h-[85vh] w-auto h-auto object-contain bg-black/40 backdrop-blur-sm rounded-xl"
                   />
                 ) : (
                   <img
                     src={foto.urlImagem}
                     alt="Lembrança do evento"
-                    className="w-full h-full object-contain bg-black/40 backdrop-blur-sm rounded-xl"
+                    /* CORREÇÃO AQUI: Altura e largura automáticas mas com limites de tela (vw/vh) */
+                    className="max-w-[90vw] max-h-[85vh] w-auto h-auto object-contain bg-black/40 backdrop-blur-sm rounded-xl"
                   />
                 )}
 
