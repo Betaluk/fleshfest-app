@@ -22,7 +22,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async () => {
 
   const googleId = cloudflareEnv?.AUTH_GOOGLE_ID || process.env.AUTH_GOOGLE_ID;
   const googleSecret = cloudflareEnv?.AUTH_GOOGLE_SECRET || process.env.AUTH_GOOGLE_SECRET;
-  const authSecret = cloudflareEnv?.AUTH_SECRET || process.env.AUTH_SECRET || "FlashFestSuperSecretKey2026!@#";
+  const authSecret = cloudflareEnv?.AUTH_SECRET || process.env.AUTH_SECRET;
+
+  if (!authSecret) {
+    throw new Error("FALHA CRÍTICA DE SEGURANÇA: A variável de ambiente AUTH_SECRET não está definida.");
+  }
 
   const db = cloudflareEnv ? getDb(cloudflareEnv) : null;
 
