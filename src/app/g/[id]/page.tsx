@@ -102,13 +102,13 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
                     loop 
                     muted 
                     playsInline
-                    className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-auto object-contain bg-black transform group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
                   <img 
                     src={foto.urlImagem} 
                     alt="Momento do evento" 
-                    className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-auto object-contain bg-black transform group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
                 )}
