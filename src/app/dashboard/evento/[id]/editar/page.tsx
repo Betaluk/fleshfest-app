@@ -53,9 +53,10 @@ export default async function EditarEventoPage({
     const nome = formData.get('nome') as string;
     const data = formData.get('data') as string;
     const modoModeracao = formData.get('modoModeracao') as 'auto' | 'manual';
+    const displayMode = formData.get('displayMode') as 'simple' | 'cloud';
     const logo = formData.get('logo') as File | null;
 
-    if (!nome || !data || !modoModeracao) return;
+    if (!nome || !data || !modoModeracao || !displayMode) return;
 
     // Atualizamos o tipo do Env para incluir o BUCKET_FOTOS
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { BUCKET_FOTOS: any } };
@@ -85,6 +86,7 @@ export default async function EditarEventoPage({
           nomeEvento: nome,
           dataEvento: new Date(data),
           modoModeracao: modoModeracao,
+          displayMode: displayMode,
           urlLogo: novaUrlLogo,
         })
         .where(and(eq(eventos.id, id), eq(eventos.usuarioId, session.user.id)));
@@ -128,10 +130,34 @@ export default async function EditarEventoPage({
           />
         </div>
 
+        {/* SEÇÃO: Controle de Exibição no Telão */}
+        <div className="pt-2">
+          <label className="block text-sm font-medium text-zinc-300 mb-3">
+            Layout do Telão
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.displayMode === 'cloud' ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+              <div className="flex items-center gap-2">
+                <input type="radio" name="displayMode" value="cloud" defaultChecked={evento.displayMode === 'cloud'} className="text-emerald-500 bg-zinc-900 border-zinc-700" />
+                <span className="font-bold text-white">Nuvem 3D</span>
+              </div>
+              <span className="text-sm text-zinc-400 pl-6">Fotos flutuam em um ambiente 3D dinâmico.</span>
+            </label>
+
+            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.displayMode === 'simple' ? 'border-amber-500 bg-amber-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+              <div className="flex items-center gap-2">
+                <input type="radio" name="displayMode" value="simple" defaultChecked={evento.displayMode === 'simple'} className="text-amber-500 bg-zinc-900 border-zinc-700" />
+                <span className="font-bold text-white">Slide Simples</span>
+              </div>
+              <span className="text-sm text-zinc-400 pl-6">Fotos em tela cheia com transição suave.</span>
+            </label>
+          </div>
+        </div>
+
         {/* SEÇÃO: Controle de Moderação */}
         <div className="pt-2">
           <label className="block text-sm font-medium text-zinc-300 mb-3">
-            Modo de Exibição no Telão
+            Aprovação de Fotos
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.modoModeracao === 'auto' ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>

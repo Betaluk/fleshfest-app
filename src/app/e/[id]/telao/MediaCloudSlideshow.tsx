@@ -41,7 +41,7 @@ const generateRandomCloudStyle = () => {
   };
 };
 
-export default function Slideshow({ fotos, urlCamera }: { fotos: any[], urlCamera: string }) {
+export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[], urlCamera: string }) {
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [newArrivalId, setNewArrivalId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -136,7 +136,7 @@ export default function Slideshow({ fotos, urlCamera }: { fotos: any[], urlCamer
 
   return (
     <div className="relative h-screen w-full bg-[#050505] overflow-hidden flex items-center justify-center perspective-[1000px]">
-      
+
       <AnimatePresence>
         {fotos.map((foto) => {
           const isFocused = foto.id === focusedId;
@@ -238,7 +238,7 @@ export default function Slideshow({ fotos, urlCamera }: { fotos: any[], urlCamer
         </div>
         <span className="text-white/80 font-medium text-xs tracking-wider uppercase mt-1">Participe</span>
       </div>
-      
+
     </div>
   );
 }
