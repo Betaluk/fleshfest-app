@@ -12,7 +12,12 @@ const LIMITE_POR_MINUTO = 10; // Máximo de 10 envios por minuto por IP
 export async function POST(request: Request) {
   try {
     // 1. VERIFICAÇÃO DE RATE LIMITING (Anti-Spam)
-    const ipConvidado = request.headers.get('cf-connecting-ip') || 'ip-desconhecido';
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const ipConvidado = (forwardedFor ? forwardedFor.split(',')[0].trim() : null) ||
+                        request.headers.get('x-real-ip') || 
+                        request.headers.get('cf-connecting-ip') || 
+                        'ip-desconhecido';
+
     const agora = Date.now();
     const historicoIp = rateLimitMap.get(ipConvidado) || { quantidade: 0, ultimoEnvio: agora };
 
