@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 // Função para gerar posições e animações aleatórias para o fundo
 const generateRandomCloudStyle = () => {
@@ -42,6 +43,7 @@ const generateRandomCloudStyle = () => {
 };
 
 export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[], urlCamera: string }) {
+  const router = useRouter();
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [newArrivalId, setNewArrivalId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -114,11 +116,11 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
   useEffect(() => {
     const refreshInterval = setInterval(() => {
       if (!newArrivalId) {
-        window.location.reload();
+        router.refresh();
       }
-    }, 30000);
+    }, 10000);
     return () => clearInterval(refreshInterval);
-  }, [newArrivalId]);
+  }, [newArrivalId, router]);
 
   if (fotos.length === 0) {
     return (

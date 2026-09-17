@@ -9,6 +9,7 @@ import { gerarUrlAssinada } from '@/lib/seguranca';
 import BotaoBaixarPDF from './BotaoBaixarPDF';
 import { redirect } from 'next/navigation';
 import DisplayModeToggle from './DisplayModeToggle';
+import AutoRefresh from '@/components/AutoRefresh';
 
 export const dynamic = 'force-dynamic';
 
@@ -77,6 +78,7 @@ export default async function GerenciarEventoPage({
 
   return (
     <div className="space-y-10 mt-8 mb-12 animate-fade-in-up">
+      <AutoRefresh interval={10000} /> {/* Atualiza a cada 10 segundos */}
       {/* CABEÇALHO */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-white/10 pb-8 gap-4">
         <div>

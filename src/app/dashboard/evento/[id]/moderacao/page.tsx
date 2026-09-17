@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { gerarUrlAssinada } from '@/lib/seguranca';
+import AutoRefresh from '@/components/AutoRefresh';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,6 +70,7 @@ export default async function ModeracaoPage({
 
   return (
     <div className="space-y-8 mt-4">
+      <AutoRefresh interval={10000} /> {/* Atualiza a cada 10 segundos */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-zinc-800 pb-6 gap-4">
         <div>
           <h2 className="text-3xl font-bold text-white">Moderação e Galeria</h2>
