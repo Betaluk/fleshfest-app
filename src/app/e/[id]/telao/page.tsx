@@ -4,7 +4,6 @@ import { eventos, fotos } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import SimpleSlideshow from './SimpleSlideshow';
 import MediaCloudSlideshow from './MediaCloudSlideshow';
-import { gerarUrlAssinada } from '@/lib/seguranca';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,26 +34,24 @@ export default async function TelaoPage({
     .orderBy(desc(fotos.dataCaptura));
 
   // TRUQUE: Troca o domínio pela nossa API para a imagem carregar perfeitamente no R2
-  const fotosTratadas = await Promise.all(fotosAprovadas.map(async (foto) => {
+  // =================================================================
+  // NOVA LÓGICA: URL Pública do CDN (Custo Zero de CPU)
+  const cdnBase = 'https://cdn.flashfest.com.br';
+
+  const fotosTratadas = fotosAprovadas.map((foto) => {
     const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
-    // Assina a URL para durar 12 horas
-    const secret = env.IMAGE_SECRET || 'dummy-secret-for-dev';
-    const urlSegura = await gerarUrlAssinada(chaveFicheiro, secret, 12);
-    
     return {
       ...foto,
-      urlImagem: urlSegura
+      urlImagem: `${cdnBase}/${chaveFicheiro}`
     };
-  }));
+  });
 
-  // =================================================================
-  // NOVA LÓGICA: Desbloqueando a Logo segura para o telão
   let urlLogoSegura = null;
   if (evento?.urlLogo) {
     const chaveLogo = evento.urlLogo.split('/').pop() || '';
-    const secret = env.IMAGE_SECRET || 'dummy-secret-for-dev';
-    urlLogoSegura = await gerarUrlAssinada(chaveLogo, secret, 12);
+    urlLogoSegura = `${cdnBase}/${chaveLogo}`;
   }
+  // =================================================================
   // =================================================================
 
   // --- MÁGICA DA URL DINÂMICA (Fazemos isso ANTES do return) ---

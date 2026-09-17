@@ -6,7 +6,6 @@ import { auth } from '@/auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { gerarUrlAssinada } from '@/lib/seguranca';
 import AutoRefresh from '@/components/AutoRefresh';
 
 export const dynamic = 'force-dynamic';
@@ -33,14 +32,17 @@ export default async function ModeracaoPage({
   // Busca TODAS as fotos da festa, ordenadas da mais recente para a mais antiga
   const todasFotos = await db.select().from(fotos).where(eq(fotos.eventoId, id)).orderBy(desc(fotos.dataCaptura));
 
-  // Gera as URLs seguras para o anfitrião conseguir ver as imagens bloqueadas
-  const fotosSeguras = await Promise.all(
-    todasFotos.map(async (foto) => {
-      const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
-      const urlSegura = await gerarUrlAssinada(chaveFicheiro, env.IMAGE_SECRET, 12);
-      return { ...foto, urlImagem: urlSegura, chaveFicheiro };
-    })
-  );
+  // Gera as URLs baseadas no seu domínio público do R2
+  const cdnBase = 'https://cdn.flashfest.com.br';
+  
+  const fotosSeguras = todasFotos.map((foto) => {
+    const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
+    return { 
+      ...foto, 
+      urlImagem: `${cdnBase}/${chaveFicheiro}`, 
+      chaveFicheiro 
+    };
+  });
 
   const fotosPendentes = fotosSeguras.filter(f => f.status === 'pendente');
   const fotosAprovadas = fotosSeguras.filter(f => f.status === 'aprovada');

@@ -5,7 +5,6 @@ import { eq, count, and } from 'drizzle-orm';
 import Link from 'next/link';
 import QRCodeCard from './QRCodeCard';
 import BotaoDownloadZip from './BotaoDownloadZip';
-import { gerarUrlAssinada } from '@/lib/seguranca';
 import BotaoBaixarPDF from './BotaoBaixarPDF';
 import { redirect } from 'next/navigation';
 import DisplayModeToggle from './DisplayModeToggle';
@@ -52,12 +51,12 @@ export default async function GerenciarEventoPage({
   
   const fotosAprovadas = await db.select().from(fotos).where(and(eq(fotos.eventoId, id), eq(fotos.status, 'aprovada')));
 
-  const fotosUrls = await Promise.all(
-    fotosAprovadas.map(async (foto) => {
-      const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
-      return await gerarUrlAssinada(chaveFicheiro, env.IMAGE_SECRET, 12);
-    })
-  );
+  const cdnBase = 'https://cdn.flashfest.com.br';
+  
+  const fotosUrls = fotosAprovadas.map((foto) => {
+    const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
+    return `${cdnBase}/${chaveFicheiro}`;
+  });
 
   // 4. LÓGICA DO AVISO DE EXPIRAÇÃO
   const dataDoEvento = new Date(evento.dataEvento);

@@ -55,7 +55,9 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
 
   // 3. Busca de Fotos com Trava de Moderação
   // Se for manual, puxa só as que estão com status 'aprovada'. Se for automático, puxa todas.
-  const fotosGaleria = await db.select().from(fotos)
+  // 3. Busca de Fotos com Trava de Moderação
+  // Se for manual, puxa só as que estão com status 'aprovada'. Se for automático, puxa todas.
+  const fotosBrutas = await db.select().from(fotos)
     .where(
       evento.modoModeracao === 'manual'
         ? and(eq(fotos.eventoId, evento.id), eq(fotos.status, 'aprovada'))
@@ -63,6 +65,17 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
     )
     .orderBy(desc(fotos.id)); // Exibe as mais recentes primeiro
 
+  // =================================================================
+  // NOVA LÓGICA: URL Pública do CDN (Custo Zero de CPU)
+  const cdnBase = 'https://cdn.flashfest.com.br';
+  const fotosGaleria = fotosBrutas.map((foto) => {
+    const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
+    return {
+      ...foto,
+      urlImagem: `${cdnBase}/${chaveFicheiro}`
+    };
+  });
+  // =================================================================
   const dataFormatada = new Date(evento.dataEvento).toLocaleDateString('pt-BR');
   // Monta a URL completa baseada no ambiente
   const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://flashfest.com.br';
