@@ -1,0 +1,1 @@
+ALTER TABLE `eventos` ADD `display_mode` text DEFAULT 'cloud' NOT NULL;

@@ -28,6 +28,7 @@ export const eventos = sqliteTable('eventos', {
   modoModeracao: text('modo_moderacao').notNull(), // 'auto' ou 'manual'
   statusPagamento: text('status_pagamento').notNull(), // 'pendente' ou 'pago'
   urlLogo: text('url_logo'),
+  displayMode: text('display_mode').notNull().default('cloud'), // 'simple' ou 'cloud'
 });
 
 // 4. Tabela: Fotos

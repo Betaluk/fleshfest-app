@@ -2,7 +2,8 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDb, Env } from '@/db';
 import { eventos, fotos } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
-import Slideshow from './Slideshow';
+import SimpleSlideshow from './SimpleSlideshow';
+import MediaCloudSlideshow from './MediaCloudSlideshow';
 import { gerarUrlAssinada } from '@/lib/seguranca';
 
 export const dynamic = 'force-dynamic';
@@ -69,7 +70,11 @@ export default async function TelaoPage({
     <main className="relative w-full h-screen bg-black overflow-hidden">
       
       {/* 1. O fundo com as fotos animadas */}
-      <Slideshow fotos={fotosTratadas} urlCamera={urlCamera} />
+      {evento.displayMode === 'cloud' ? (
+        <MediaCloudSlideshow fotos={fotosTratadas} urlCamera={urlCamera} />
+      ) : (
+        <SimpleSlideshow fotos={fotosTratadas} urlCamera={urlCamera} />
+      )}
       
       {/* 2. O Monograma flutuando no canto inferior direito por cima das fotos */}
       {urlLogoSegura && (
