@@ -8,6 +8,7 @@ import BotaoDownloadZip from './BotaoDownloadZip';
 import { gerarUrlAssinada } from '@/lib/seguranca';
 import BotaoBaixarPDF from './BotaoBaixarPDF';
 import { redirect } from 'next/navigation';
+import DisplayModeToggle from './DisplayModeToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -161,6 +162,49 @@ export default async function GerenciarEventoPage({
               {Math.round((totalFotos / limiteFotos) * 100)}% da capacidade atingida
             </p>
           </div>
+          {/* FINAL DO STATS CARD */}
+            <div className="w-full bg-black/40 rounded-full h-5 mt-8 border border-white/10 relative z-10 overflow-hidden shadow-inner backdrop-blur-md">
+              <div
+                className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-full rounded-full transition-all duration-1000 relative"
+                style={{ width: `${Math.min((totalFotos / limiteFotos) * 100, 100)}%` }}
+              >
+                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+              </div>
+            </div>
+            <p className="text-xs text-zinc-500 mt-3 text-right font-medium">
+              {Math.round((totalFotos / limiteFotos) * 100)}% da capacidade atingida
+            </p>
+          </div>
+
+          {/* ======================================= */}
+          {/* O NOVO SELETOR DE MODO DE TELA ENTRA AQUI */}
+          {/* ======================================= */}
+          <DisplayModeToggle 
+            eventoId={evento.id} 
+            currentMode={evento.displayMode || 'cloud'} 
+          />
+
+          {/* INÍCIO DO GRID DE BOTÕES */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            
+            {/* BOTÃO DO TELÃO */}
+            <Link
+              href={estaExpirado ? '#' : `/e/${id}/telao`}
+              target={estaExpirado ? '_self' : '_blank'}
+              className={`flex flex-col items-center justify-center border border-white/10 rounded-[2rem] p-10 transition-all duration-500 group hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden backdrop-blur-xl ${
+                estaExpirado 
+                  ? 'bg-zinc-900/30 opacity-50 pointer-events-none cursor-not-allowed'
+                  : 'bg-zinc-900/40 hover:bg-zinc-800/80 hover:border-emerald-500/50'
+              }`}
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="text-6xl mb-4 group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500 relative z-10 filter drop-shadow-lg">📺</span>
+              <span className="font-bold text-white text-xl relative z-10 font-[family-name:var(--font-jakarta)]">Abrir Telão</span>
+              <span className="text-sm text-zinc-400 mt-2 relative z-10 font-light">Inicia o Slideshow</span>
+            </Link>
+            
+            {/* BOTÃO DE MODERAÇÃO */}
+            {/* ... o restante do seu código continua igual a partir daqui ... */}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* BOTÃO DO TELÃO */}
