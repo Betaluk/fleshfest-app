@@ -99,10 +99,10 @@ export default async function ModeracaoPage({
                     loop 
                     muted 
                     playsInline
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
-                  <img src={foto.urlImagem} alt="Pendente" className="w-full h-full object-cover" />
+                  <img src={foto.urlImagem} alt="Pendente" className="w-full h-full object-contain" />
                 )}
                 
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3 p-4">
@@ -149,10 +149,10 @@ export default async function ModeracaoPage({
                     loop 
                     muted 
                     playsInline
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
-                  <img src={foto.urlImagem} alt="Aprovada" className="w-full h-full object-cover" />
+                  <img src={foto.urlImagem} alt="Aprovada" className="w-full h-full object-contain" />
                 )}
                 
                 {/* Botão para apagar a foto caso tenha se arrependido de aprovar */}

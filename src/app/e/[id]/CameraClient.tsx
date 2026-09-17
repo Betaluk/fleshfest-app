@@ -169,13 +169,13 @@ export default function CameraClient({ id, nomeEvento }: { id: string, nomeEvent
                   loop 
                   muted 
                   playsInline
-                  className="object-cover w-full h-full"
+                  className="object-contain w-full h-full bg-black"
                 />
               ) : (
                 <img 
                   src={mediaUrl} 
                   alt="Sua foto" 
-                  className="object-cover w-full h-full transition-all duration-300"
+                  className="object-contain w-full h-full transition-all duration-300 bg-black"
                   style={{ filter: filtroAtual }}
                 />
               )}
