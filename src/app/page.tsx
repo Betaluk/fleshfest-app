@@ -350,7 +350,7 @@ export default async function LandingPage() {
                 <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
               </summary>
               <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
-                Não. O link do evento é criptografado e as fotos são 100% privadas. Apenas as pessoas que estiverem fisicamente na sua festa e escanearem o QR Code (e você, pelo painel) terão acesso às imagens.
+                A privacidade da sua festa é nossa prioridade. Durante o evento, apenas quem estiver presencialmente no local e escanear o QR Code consegue interagir com o telão. Para o pós-festa, o sistema gera um <strong className="text-zinc-200">link seguro da sua Galeria Pública</strong>. Você pode enviar esse link no WhatsApp apenas para os convidados que desejar, permitindo que eles acessem, revivam e baixem as memórias da festa de qualquer lugar.
               </p>
             </details>
 
@@ -361,6 +361,16 @@ export default async function LandingPage() {
               </summary>
               <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
                 No seu painel, você terá um botão "Abrir Telão". Basta acessá-lo no notebook que será usado no salão de festas, conectar o cabo HDMI da TV ou Projetor, colocar em tela cheia e pronto! O sistema atualizará as fotos sozinho.
+              </p>
+            </details>
+
+            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
+              <summary className="flex items-center justify-between list-none font-medium text-lg text-white outline-none">
+                <span>Como funciona a moderação de fotos? Eu preciso aprovar tudo que vai para o telão?</span>
+                <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
+              </summary>
+              <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
+                Não, a moderação é uma ferramenta <strong className="text-zinc-200">100% opcional</strong>. Ao criar sua festa, você pode escolher o <strong className="text-zinc-200">Modo Automático</strong> (fotos e vídeos vão direto para o telão, ideal para eventos íntimos) ou o <strong className="text-zinc-200">Modo Manual</strong> (as mídias ficam numa fila aguardando sua aprovação pelo celular, ideal para eventos corporativos). Independente da sua escolha, você sempre terá um botão no painel para excluir qualquer foto indesejada na hora.
               </p>
             </details>
           </div>
