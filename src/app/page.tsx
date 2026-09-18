@@ -32,14 +32,14 @@ export default async function LandingPage() {
     await signIn('google', { redirectTo: '/dashboard' });
   }
 
+  // Planos atualizados com a flag de vídeos curtos
   const planos = [
-    { nome: 'Start', preco: '49', fotos: '500', dias: '2', ideal: 'Festas íntimas' },
-    { nome: 'Pro', preco: '99', fotos: '2.000', dias: '7', ideal: 'Aniversários e noivados', destaque: true },
-    { nome: 'VIP', preco: '149', fotos: '5.000', dias: '30', ideal: 'Casamentos e formaturas' },
-    { nome: 'VIP+', preco: '199', fotos: '10.000', dias: '30', ideal: 'Grandes eventos corporativos' }
+    { nome: 'Start', preco: '49', fotos: '500', dias: '2', ideal: 'Festas íntimas', videos: false },
+    { nome: 'Pro', preco: '99', fotos: '2.000', dias: '7', ideal: 'Aniversários e noivados', destaque: true, videos: true },
+    { nome: 'VIP', preco: '149', fotos: '5.000', dias: '30', ideal: 'Casamentos e formaturas', videos: true },
+    { nome: 'VIP+', preco: '199', fotos: '10.000', dias: '30', ideal: 'Grandes eventos corporativos', videos: true }
   ];
 
-  // 1. Criação do Schema Markup de Software
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -56,7 +56,6 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-50 selection:bg-emerald-500/30 overflow-hidden">
-      {/* 2. Injeção do Schema invisível na página */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -106,8 +105,8 @@ export default async function LandingPage() {
           </h1>
           
           <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-            Um telão ao vivo, QR Codes instantâneos e fotos salvas em alta qualidade. 
-            Esqueça as hashtags confusas. Seus convidados escaneiam, tiram a foto e ela aparece no telão na mesma hora.
+            Um telão ao vivo, QR Codes instantâneos, fotos com filtros e vídeos curtos da pista de dança. 
+            Esqueça as hashtags confusas. Seus convidados escaneiam e a mágica aparece no telão na mesma hora.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-6">
@@ -160,57 +159,67 @@ export default async function LandingPage() {
             </div>
             <div className="w-full md:w-auto flex justify-center relative z-10">
               <div className="bg-white/5 backdrop-blur-md p-4 rounded-3xl border border-white/10 shadow-[0_0_50px_-15px_rgba(52,211,153,0.2)] transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-500 hover:border-emerald-500/30 hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(52,211,153,0.4)]">
-                {/* 
-                  NOTA: Assim que você criar um evento de teste na sua conta real, 
-                  basta salvar a imagem do QR Code gerado pelo sistema e substituir essa DIV abaixo por uma tag <img /> 
-                */}
                 <img src="/demo-qr.png" alt="QR Code Test Drive" className="w-48 h-48 rounded-2xl bg-white p-2" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* BENTO GRID DE FUNCIONALIDADES */}
+        {/* BENTO GRID DE FUNCIONALIDADES - Transformado em 2x2 focado em Conversão */}
         <section className="max-w-7xl mx-auto px-6 py-32 mt-12 relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 tracking-tight font-[family-name:var(--font-jakarta)]">Tudo que você precisa, <span className="text-zinc-600">zero complicação.</span></h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="text-emerald-500/20 text-6xl">📸</span>
+              </div>
+              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📸</div>
+              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">A Vibe da Câmera Descartável</h3>
+              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Seus convidados aplicam filtros exclusivos (Vintage, P&B, Sépia) e deixam mensagens carinhosas de felicitações gravadas na própria foto antes de ela ir para o telão.</p>
+            </div>
+            
             <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="text-emerald-500/20 text-6xl">📺</span>
               </div>
-              <div className="text-3xl mb-4 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📺</div>
-              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Telão Dinâmico</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Um slideshow cinematográfico que se atualiza em tempo real enquanto os convidados tiram as fotos. Com a sua logo flutuando perfeitamente.</p>
+              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📺</div>
+              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Telão & Vídeos Curtos</h3>
+              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Um slideshow cinematográfico que se atualiza em tempo real enquanto os convidados tiram fotos ou gravam clipes de 15s na pista de dança. Com a sua logo flutuando perfeitamente.</p>
             </div>
+
             <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <span className="text-emerald-500/20 text-7xl blur-sm">🛡️</span>
               </div>
               <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🛡️</div>
               <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Moderação Total</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto antes que ela apareça no telão.</p>
+              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto e vídeo antes que apareça no telão.</p>
             </div>
+            
             <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <span className="text-emerald-500/20 text-7xl blur-sm">🖨️</span>
+                <span className="text-emerald-500/20 text-7xl blur-sm">🎨</span>
               </div>
-              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🖨️</div>
-              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Placas e QR Codes</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Crie o evento e o sistema gera automaticamente os QR Codes e um PDF pronto para imprimir e colocar nas mesas dos convidados.</p>
+              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🎨</div>
+              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Enxoval de Marketing Premium</h3>
+              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Não entregamos apenas um QR Code genérico. Você recebe templates editáveis no Canva (plaquinhas de mesa, totens e banners) para combinar perfeitamente com a decoração e identidade visual do seu evento.</p>
             </div>
           </div>
         </section>
 
         {/* SEÇÃO DE PREÇOS */}
-        <section className="max-w-7xl mx-auto px-6 py-32 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+        <section className="max-w-7xl mx-auto px-6 py-16 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-900/30 to-transparent pointer-events-none rounded-[3rem]"></div>
 
           <div className="text-center mb-20 relative z-10">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 font-[family-name:var(--font-jakarta)]">Preço justo e sem surpresas.</h2>
-            <p className="text-xl text-zinc-400 font-light max-w-2xl mx-auto">Cabines de fotos custam em média R$ 1.500. Escolha a solução inteligente pelo tamanho do seu evento.</p>
+            <p className="text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
+              Cabines de fotos custam em média R$ 1.500. Escolha a solução inteligente pelo tamanho do seu evento.<br/>
+              <span className="font-medium text-emerald-400">Sem mensalidades, sem cobranças surpresas em dólar. Pagamento único em Reais.</span>
+            </p>
           </div>
 
           <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-4 gap-6 pb-8 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:mx-0 md:px-0 relative z-10 items-end">
@@ -242,13 +251,19 @@ export default async function LandingPage() {
                       <span className="text-emerald-500">✓</span>
                       <span>Até <strong>{plano.fotos} fotos</strong></span>
                     </div>
+                    {plano.videos && (
+                      <div className="flex items-center gap-3">
+                        <span className="text-emerald-500">✓</span>
+                        <span>Suporte a <strong>Vídeos Curtos (15s)</strong></span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-3">
                       <span className="text-emerald-500">✓</span>
-                      <span><strong>{plano.dias} dias</strong> para baixar</span>
+                      <span><strong>{plano.dias} dias</strong> para baixar as memórias</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-emerald-500">✓</span>
-                      <span>Telão e QR Code inclusos</span>
+                      <span>Telão, Filtros e QR Code inclusos</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-emerald-500">✓</span>
@@ -287,6 +302,20 @@ export default async function LandingPage() {
               </div>
             ))}
           </div>
+
+          {/* BANNER B2B PARA CERIMONIALISTAS */}
+          <div className="mt-16 bg-zinc-900/40 backdrop-blur-xl border border-emerald-500/20 rounded-[2rem] p-8 md:p-10 max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none group-hover:from-emerald-500/10 transition-colors duration-500"></div>
+            <div className="relative z-10 text-center md:text-left">
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">É Cerimonialista ou Produtor?</h3>
+              <p className="text-zinc-400 font-light text-lg">Fale conosco para pacotes de volume e revenda o FlashFest nos seus orçamentos com margem de lucro.</p>
+            </div>
+            <div className="relative z-10 shrink-0">
+              <a href="mailto:contato@flashfest.com.br" className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-bold transition-all duration-300 whitespace-nowrap inline-block border border-white/10 hover:border-white/20 shadow-lg">
+                Falar com a Equipe
+              </a>
+            </div>
+          </div>
         </section>
 
         {/* FAQ - PERGUNTAS FREQUENTES */}
@@ -311,7 +340,7 @@ export default async function LandingPage() {
                 <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
               </summary>
               <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
-                Nosso sistema foi construído com tecnologia moderna que comprime as imagens antes do envio, consumindo pouquíssimos dados. Elas sobem rápido até mesmo em redes móveis 3G.
+                Internet do salão está lenta? Não tem problema. Diferente de outros aplicativos que travam, o FlashFest possui uma tecnologia inteligente que comprime a foto no próprio celular do convidado em milissegundos antes do envio. Funciona perfeitamente até no 3G mais fraco da festa!
               </p>
             </details>
 
