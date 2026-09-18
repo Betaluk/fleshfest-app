@@ -196,7 +196,7 @@ export default async function LandingPage() {
               </div>
               <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🛡️</div>
               <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Moderação Total</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Se você quiser, tenha o controle do que vai para o telão. O anfitrião tem um painel para aprovar ou ocultar qualquer foto e vídeo antes que apareça no telão.</p>
+              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto e vídeo antes que apareça no telão.</p>
             </div>
             
             <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
@@ -210,11 +210,11 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* SEÇÃO DE PREÇOS */}
+        {/* SEÇÃO DE PREÇOS (Alinhamento e Alturas corrigidos) */}
         <section className="max-w-7xl mx-auto px-6 py-16 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-900/30 to-transparent pointer-events-none rounded-[3rem]"></div>
 
-          <div className="text-center mb-20 relative z-10">
+          <div className="text-center mb-12 relative z-10">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 font-[family-name:var(--font-jakarta)]">Preço justo e sem surpresas.</h2>
             <p className="text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
               Cabines de fotos custam em média R$ 1.500. Escolha a solução inteligente pelo tamanho do seu evento.<br/>
@@ -222,11 +222,11 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-4 gap-6 pb-8 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:mx-0 md:px-0 relative z-10 items-end">
+          <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-4 gap-6 pt-10 pb-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:mx-0 md:px-0 relative z-10 items-stretch">
             {planos.map((plano) => (
               <div 
                 key={plano.nome} 
-                className={`snap-center shrink-0 w-[85vw] sm:w-[320px] md:w-auto flex flex-col p-8 rounded-[2rem] transition-all duration-500 ${
+                className={`snap-center shrink-0 w-[85vw] sm:w-[320px] md:w-auto h-full flex flex-col p-8 rounded-[2rem] transition-all duration-500 ${
                   plano.destaque 
                     ? 'bg-zinc-900/80 backdrop-blur-2xl border border-emerald-500/50 shadow-[0_0_50px_-15px_rgba(52,211,153,0.3)] relative transform md:-translate-y-4 hover:-translate-y-6'
                     : 'bg-zinc-900/40 backdrop-blur-xl border border-white/10 hover:bg-zinc-900/60 hover:border-white/20 hover:-translate-y-2'
@@ -350,7 +350,7 @@ export default async function LandingPage() {
                 <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
               </summary>
               <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
-                Não. O link do evento é criptografado e as fotos são 100% privadas. Somente as pessoas que estiverem fisicamente na sua festa (telão) ou aquelas com quem você compartilhar o link da galeria pública após a festa terão acesso às imagens.
+                Não. O link do evento é criptografado e as fotos são 100% privadas. Apenas as pessoas que estiverem fisicamente na sua festa e escanearem o QR Code (e você, pelo painel) terão acesso às imagens.
               </p>
             </details>
 
@@ -361,16 +361,6 @@ export default async function LandingPage() {
               </summary>
               <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
                 No seu painel, você terá um botão "Abrir Telão". Basta acessá-lo no notebook que será usado no salão de festas, conectar o cabo HDMI da TV ou Projetor, colocar em tela cheia e pronto! O sistema atualizará as fotos sozinho.
-              </p>
-            </details>
-
-            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
-              <summary className="flex items-center justify-between list-none font-medium text-lg text-white outline-none">
-                <span>Como funciona a moderação das fotos?</span>
-                <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
-              </summary>
-              <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
-                Você pode escolher a opção de habilitar a moderação ou não. Se habilitada, cada foto e video deverá ser aprovada antes de ir para o telão. Se desabilitada, as fotos e vídeos vão direto para o telão sem ninguem precisar aprovar.
               </p>
             </details>
           </div>
