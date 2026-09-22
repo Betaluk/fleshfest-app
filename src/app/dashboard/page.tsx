@@ -1,7 +1,8 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDb, Env } from '@/db';
 import { eventos, fotos } from '@/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, gte } from 'drizzle-orm';
+import { planos } from '@/db/schema';
 import { auth } from '@/auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -11,7 +12,7 @@ import BotaoExcluir from './BotaoExcluir'; // Importamos o nosso novo botão sup
 
 export const dynamic = 'force-dynamic';
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: { erro?: string, sucesso?: string } }) {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -37,6 +38,49 @@ export default async function DashboardPage() {
 
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { STRIPE_SECRET_KEY: string } };
     
+    const dbServer = getDb(env);
+
+    if (priceId === 'plano-gratis') {
+      const sessionAction = await auth();
+      if (!sessionAction?.user?.id) return;
+
+      const userId = sessionAction.user.id;
+      const ontem = new Date();
+      ontem.setDate(ontem.getDate() - 1);
+
+      const eventosGratis = await dbServer.select()
+        .from(eventos)
+        .where(
+          and(
+            eq(eventos.usuarioId, userId),
+            eq(eventos.planoId, 'plano-gratis'),
+            gte(eventos.dataCriacao, ontem)
+          )
+        );
+
+      if (eventosGratis.length > 0) {
+        redirect('/dashboard?erro=limite_gratis');
+      }
+
+      await dbServer.insert(planos).values({
+        id: 'plano-gratis',
+        nomePlano: 'Grátis',
+        limiteFotos: 10,
+        diasExpiracao: 1,
+        preco: 0
+      }).onConflictDoNothing();
+
+      await dbServer.update(eventos)
+        .set({
+          statusPagamento: 'pago',
+          planoId: 'plano-gratis'
+        })
+        .where(eq(eventos.id, eventoId));
+
+      revalidatePath('/dashboard');
+      redirect('/dashboard?sucesso=true');
+    }
+
     const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
       apiVersion: '2026-07-29.dahlia', 
       httpClient: Stripe.createFetchHttpClient(),
@@ -110,6 +154,7 @@ export default async function DashboardPage() {
   }
 
   const planosDisponiveis = [
+    { id: 'plano-gratis', nome: 'Grátis', preco: 'R$ 0', fotos: '10', dias: '1' },
     { id: 'price_1UAyWLRwdoo1gIwbBa6BWaRO', nome: 'Start', preco: 'R$ 49', fotos: '500', dias: '2' },
     { id: 'price_1UAyaMRwdoo1gIwbrstbMrBs', nome: 'Pro', preco: 'R$ 99', fotos: '2.000', dias: '7' },
     { id: 'price_1UAycQRwdoo1gIwbdiKOZRgI', nome: 'VIP', preco: 'R$ 149', fotos: '5.000', dias: '30' },
@@ -119,6 +164,7 @@ export default async function DashboardPage() {
   // TRADUTOR DE PLANOS: Converte o ID da Stripe no nome bonito para a tela
   const nomesDosPlanos: Record<string, string> = {
     'plano-falso': 'Pendente',
+    'plano-gratis': 'Grátis',
     'price_1UAyWLRwdoo1gIwbBa6BWaRO': 'Start',
     'price_1UAyaMRwdoo1gIwbrstbMrBs': 'Pro',
     'price_1UAycQRwdoo1gIwbdiKOZRgI': 'VIP',
@@ -127,6 +173,13 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-10 mt-8 mb-12 animate-fade-in-up">
+      {searchParams.erro === 'limite_gratis' && (
+        <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-xl relative text-center mb-6" role="alert">
+          <strong className="font-bold">Aviso: </strong>
+          <span className="block sm:inline">Você já criou um evento grátis nas últimas 24 horas.</span>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/10 pb-8 gap-4">
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight text-white mb-2 font-[family-name:var(--font-jakarta)]">Meus Eventos</h2>
