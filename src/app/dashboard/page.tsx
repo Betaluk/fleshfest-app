@@ -12,12 +12,14 @@ import BotaoExcluir from './BotaoExcluir'; // Importamos o nosso novo botão sup
 
 export const dynamic = 'force-dynamic';
 
-export default async function DashboardPage({ searchParams }: { searchParams: { erro?: string, sucesso?: string } }) {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ erro?: string, sucesso?: string }> }) {
   const session = await auth();
 
   if (!session?.user?.id) {
     redirect('/');
   }
+
+  const params = await searchParams;
 
   // Adicionamos qualquer tipo (any) ao BUCKET_FOTOS para garantir que o TypeScript aceita a limpeza
   const { env } = (await getCloudflareContext({ async: true })) as unknown as { 
@@ -173,7 +175,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
   return (
     <div className="space-y-10 mt-8 mb-12 animate-fade-in-up">
-      {searchParams.erro === 'limite_gratis' && (
+      {params.erro === 'limite_gratis' && (
         <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-xl relative text-center mb-6" role="alert">
           <strong className="font-bold">Aviso: </strong>
           <span className="block sm:inline">Você já criou um evento grátis nas últimas 24 horas.</span>
