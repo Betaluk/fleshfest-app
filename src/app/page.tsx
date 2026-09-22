@@ -32,8 +32,9 @@ export default async function LandingPage() {
     await signIn('google', { redirectTo: '/dashboard' });
   }
 
-  // Planos atualizados com a flag de vídeos curtos
+  // Planos atualizados com a flag de vídeos curtos e Plano Grátis
   const planos = [
+    { nome: 'Grátis', preco: '0', fotos: '10', dias: '1', ideal: 'Teste (1 por dia)', videos: false },
     { nome: 'Start', preco: '49', fotos: '500', dias: '2', ideal: 'Festas íntimas', videos: false },
     { nome: 'Pro', preco: '99', fotos: '2.000', dias: '7', ideal: 'Aniversários e noivados', destaque: true, videos: true },
     { nome: 'VIP', preco: '149', fotos: '5.000', dias: '30', ideal: 'Casamentos e formaturas', videos: true },

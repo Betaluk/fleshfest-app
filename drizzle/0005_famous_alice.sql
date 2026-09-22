@@ -1,0 +1,1 @@
+ALTER TABLE `eventos` ADD `data_criacao` integer NOT NULL;
