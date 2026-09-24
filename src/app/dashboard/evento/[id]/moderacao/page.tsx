@@ -109,17 +109,17 @@ export default async function ModeracaoPage({
                   <img src={foto.urlImagem} alt="Pendente" className="w-full h-full object-contain" />
                 )}
                 
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3 p-4">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3 p-4">
                   <form action={aprovarFoto} className="w-full">
                     <input type="hidden" name="fotoId" value={foto.id} />
-                    <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2 rounded shadow-lg transition">
+                    <button aria-label="Aprovar Mídia" className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2 rounded shadow-lg transition focus-visible:ring-2 focus-visible:ring-emerald-500 outline-none">
                       ✅ Aprovar
                     </button>
                   </form>
                   <form action={rejeitarFoto} className="w-full">
                     <input type="hidden" name="fotoId" value={foto.id} />
                     <input type="hidden" name="chaveFicheiro" value={foto.chaveFicheiro} />
-                    <button className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded shadow-lg transition">
+                    <button aria-label="Rejeitar Mídia" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded shadow-lg transition focus-visible:ring-2 focus-visible:ring-red-500 outline-none">
                       🗑️ Rejeitar
                     </button>
                   </form>
@@ -160,10 +160,10 @@ export default async function ModeracaoPage({
                 )}
                 
                 {/* Botão para apagar a foto caso tenha se arrependido de aprovar */}
-                <form action={rejeitarFoto} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <form action={rejeitarFoto} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                   <input type="hidden" name="fotoId" value={foto.id} />
                   <input type="hidden" name="chaveFicheiro" value={foto.chaveFicheiro} />
-                  <button className="bg-black/80 hover:bg-red-600 text-white p-2 rounded-full transition" title="Excluir Mídia">
+                  <button aria-label="Excluir Mídia" className="bg-black/80 hover:bg-red-600 text-white p-2 rounded-full transition focus-visible:ring-2 focus-visible:ring-red-500 outline-none" title="Excluir Mídia">
                     🗑️
                   </button>
                 </form>
