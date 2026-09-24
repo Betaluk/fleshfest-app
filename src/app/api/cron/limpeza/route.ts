@@ -37,16 +37,30 @@ export async function GET(req: Request) {
     // Cria um dicionário rápido para saber quantos dias cada plano dá de limite
     const mapaPlanos = new Map(todosPlanos.map(p => [p.id, p.diasExpiracao]));
     const eventosExpiradosIds: string[] = [];
+    const logosParaApagar: string[] = [];
 
     for (const ev of todosEventos) {
       if (ev.id === idDemo) continue; // Pula a Demo (ela é imortal)
       
-      const diasExp = mapaPlanos.get(ev.planoId) || 2;
-      const dataLimite = new Date(ev.dataEvento);
-      dataLimite.setDate(dataLimite.getDate() + diasExp);
+      const diasExp = ev.planoId === 'plano-gratis' ? 1 : (mapaPlanos.get(ev.planoId) || 2);
+      let dataLimite: Date;
+
+      // Para eventos gratuitos de teste: expiração estrita de 24h a partir da data de criação
+      if (ev.planoId === 'plano-gratis') {
+        const dataBase = ev.dataCriacao ? new Date(ev.dataCriacao) : new Date(ev.dataEvento);
+        dataLimite = new Date(dataBase.getTime() + (24 * 60 * 60 * 1000));
+      } else {
+        // Para eventos pagos: prazo conta a partir da data da festa
+        dataLimite = new Date(ev.dataEvento);
+        dataLimite.setDate(dataLimite.getDate() + diasExp);
+      }
 
       if (hoje > dataLimite) {
         eventosExpiradosIds.push(ev.id);
+        if (ev.urlLogo) {
+          const chaveLogo = ev.urlLogo.split('/').pop();
+          if (chaveLogo) logosParaApagar.push(chaveLogo);
+        }
       }
     }
 
@@ -59,32 +73,50 @@ export async function GET(req: Request) {
     const todasAsFotosParaApagar = [...fotosDemo, ...fotosExpiradas];
 
     // 4. A FAXINA FÍSICA NO BUCKET R2
-    let apagadasR2 = 0;
+    let fotosApagadasR2 = 0;
     for (const foto of todasAsFotosParaApagar) {
       const nomeArquivo = foto.urlImagem.split('/').pop();
       if (nomeArquivo) {
         await env.BUCKET_FOTOS.delete(nomeArquivo); 
-        apagadasR2++;
+        fotosApagadasR2++;
       }
     }
 
+    let logosApagadasR2 = 0;
+    for (const chaveLogo of logosParaApagar) {
+      await env.BUCKET_FOTOS.delete(chaveLogo);
+      logosApagadasR2++;
+    }
+
     // 5. A FAXINA NO BANCO DE DADOS (D1)
-    let apagadasD1 = 0;
+    // 5.1 Apagamos as fotos em lotes de 50 para não sobrecarregar o D1
+    let fotosApagadasD1 = 0;
     if (todasAsFotosParaApagar.length > 0) {
       const idsParaApagar = todasAsFotosParaApagar.map(f => f.id);
       
-      // Apagamos em lotes de 50 para não sobrecarregar o D1
       for (let i = 0; i < idsParaApagar.length; i += 50) {
         const chunk = idsParaApagar.slice(i, i + 50);
         await db.delete(fotos).where(inArray(fotos.id, chunk));
-        apagadasD1 += chunk.length;
+        fotosApagadasD1 += chunk.length;
+      }
+    }
+
+    // 5.2 Apagamos os registros dos eventos expirados (A Demo nunca é apagada)
+    let eventosApagadosD1 = 0;
+    if (eventosExpiradosIds.length > 0) {
+      for (let i = 0; i < eventosExpiradosIds.length; i += 50) {
+        const chunk = eventosExpiradosIds.slice(i, i + 50);
+        await db.delete(eventos).where(inArray(eventos.id, chunk));
+        eventosApagadosD1 += chunk.length;
       }
     }
 
     return NextResponse.json({ 
       sucesso: true, 
-      mensagem: `Faxina concluída! ${apagadasR2} fotos removidas fisicamente.`,
-      eventosExpirados: eventosExpiradosIds.length
+      mensagem: `Faxina concluída! ${fotosApagadasR2} fotos e ${logosApagadasR2} logos removidas do R2. ${eventosApagadosD1} eventos expirados removidos do banco.`,
+      fotosRemovidas: fotosApagadasR2,
+      logosRemovidas: logosApagadasR2,
+      eventosExpirados: eventosApagadosD1
     }, { status: 200 });
 
   } catch (error: any) {
