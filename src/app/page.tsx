@@ -348,39 +348,59 @@ export default async function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* 1. Casamentos */}
-            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
-              <div className="text-4xl mb-4">💍</div>
-              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Casamentos & Noivados</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed font-light">
-                Monograma dos noivos flutuando no telão, mensagens carinhosas dos padrinhos e todas as fotos salvas em alta resolução no dia seguinte.
-              </p>
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+              <div>
+                <div className="text-4xl mb-4">💍</div>
+                <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Casamentos & Noivados</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                  Monograma dos noivos flutuando no telão, mensagens carinhosas dos padrinhos e todas as fotos salvas em alta resolução no dia seguinte.
+                </p>
+              </div>
+              <Link href="/casamentos" className="inline-flex items-center text-xs font-semibold text-emerald-400 mt-4 hover:underline">
+                Conhecer para casamentos &rarr;
+              </Link>
             </div>
 
             {/* 2. 15 Anos */}
-            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
-              <div className="text-4xl mb-4">👑</div>
-              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">15 Anos & Debutantes</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed font-light">
-                A pista de dança vira um show com filtros exclusivos (Vintage e P&B), clipes de 15 segundos e zero complicação de instalar aplicativos.
-              </p>
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+              <div>
+                <div className="text-4xl mb-4">👑</div>
+                <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">15 Anos & Debutantes</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                  A pista de dança vira um show com filtros exclusivos (Vintage e P&B), clipes de 15 segundos e zero complicação de instalar aplicativos.
+                </p>
+              </div>
+              <Link href="/15-anos" className="inline-flex items-center text-xs font-semibold text-purple-400 mt-4 hover:underline">
+                Conhecer para 15 anos &rarr;
+              </Link>
             </div>
 
             {/* 3. Formaturas */}
-            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
-              <div className="text-4xl mb-4">🎓</div>
-              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Formaturas & Bailes</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed font-light">
-                Celebre a conquista com a turma inteira conectada. Registros espontâneos projetados instantaneamente na festa de formatura.
-              </p>
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+              <div>
+                <div className="text-4xl mb-4">🎓</div>
+                <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Formaturas & Bailes</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                  Celebre a conquista com a turma inteira conectada. Registros espontâneos projetados instantaneamente na festa de formatura.
+                </p>
+              </div>
+              <a href="#planos" className="inline-flex items-center text-xs font-semibold text-zinc-400 mt-4 hover:underline">
+                Ver planos para formaturas &rarr;
+              </a>
             </div>
 
             {/* 4. Corporativo */}
-            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
-              <div className="text-4xl mb-4">💼</div>
-              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Eventos Corporativos</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed font-light">
-                Ativação inovadora com logotipo da sua marca no telão, moderação completa pelo celular do anfitrião e relatório visual pós-evento.
-              </p>
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+              <div>
+                <div className="text-4xl mb-4">💼</div>
+                <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Eventos Corporativos</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                  Ativação inovadora com logotipo da sua marca no telão, moderação completa pelo celular do anfitrião e relatório visual pós-evento.
+                </p>
+              </div>
+              <Link href="/corporativo" className="inline-flex items-center text-xs font-semibold text-amber-400 mt-4 hover:underline">
+                Conhecer para empresas &rarr;
+              </Link>
             </div>
           </div>
         </section>
@@ -575,19 +595,19 @@ export default async function LandingPage() {
               </h4>
               <ul className="space-y-2 text-sm text-zinc-400 font-light">
                 <li>
-                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Telão para Casamentos</a>
+                  <Link href="/casamentos" className="hover:text-emerald-400 transition-colors">Telão para Casamentos</Link>
                 </li>
                 <li>
-                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Festas de 15 Anos & Debutantes</a>
+                  <Link href="/15-anos" className="hover:text-emerald-400 transition-colors">Festas de 15 Anos & Debutantes</Link>
                 </li>
                 <li>
                   <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Bailes de Formatura</a>
                 </li>
                 <li>
-                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Eventos Corporativos</a>
+                  <Link href="/corporativo" className="hover:text-emerald-400 transition-colors">Eventos Corporativos</Link>
                 </li>
                 <li>
-                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Aniversários & Confraternizações</a>
+                  <a href="#planos" className="hover:text-emerald-400 transition-colors">Aniversários & Confraternizações</a>
                 </li>
               </ul>
             </div>
