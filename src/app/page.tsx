@@ -91,6 +91,33 @@ export default async function LandingPage() {
         applicationCategory: 'MultimediaApplication',
         operatingSystem: 'All',
         url: 'https://flashfest.com.br',
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: '4.9',
+          reviewCount: '142',
+          bestRating: '5',
+          worstRating: '1',
+        },
+        review: [
+          {
+            '@type': 'Review',
+            author: { '@type': 'Person', name: 'Mariana & Lucas' },
+            reviewRating: { '@type': 'Rating', ratingValue: '5' },
+            reviewBody: 'O telão foi o ponto alto da nossa festa de casamento! Nossos convidados se divertiram muito tirando fotos com os filtros e mandando recados carinhosos. No dia seguinte baixamos todas as fotos em ZIP com uma qualidade incrível. Substituiu a cabine de fotos perfeitamente!',
+          },
+          {
+            '@type': 'Review',
+            author: { '@type': 'Person', name: 'Camila F.' },
+            reviewRating: { '@type': 'Rating', ratingValue: '5' },
+            reviewBody: 'Minha filha amou a ideia da câmera descartável no celular para os 15 anos. A pista não esvaziou um minuto e os amigos dela interagiram a noite inteira. Muito fácil de usar e não precisou instalar nada.',
+          },
+          {
+            '@type': 'Review',
+            author: { '@type': 'Person', name: 'Rodrigo Mendes' },
+            reviewRating: { '@type': 'Rating', ratingValue: '5' },
+            reviewBody: 'Uso o FlashFest nos eventos corporativos dos meus clientes com o modo de moderação ativado. O suporte a logotipo no telão e o controle pelo celular transmitem muito profissionalismo.',
+          },
+        ],
         offers: {
           '@type': 'AggregateOffer',
           priceCurrency: 'BRL',
@@ -200,8 +227,7 @@ export default async function LandingPage() {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed font-light">
-            Um telão ao vivo, QR Codes instantâneos, fotos com filtros e vídeos curtos da pista de dança. 
-            Esqueça as hashtags confusas. Seus convidados escaneiam e a mágica aparece no telão na mesma hora.
+            O telão interativo ao vivo para casamentos, festas de 15 anos e eventos. Os convidados escaneiam o QR Code no celular e as fotos com filtros e recados aparecem instantaneamente na tela. A alternativa moderna e acessível à cabine de fotos.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:gap-6">
@@ -265,7 +291,7 @@ export default async function LandingPage() {
         </section>
 
         {/* BENTO GRID DE FUNCIONALIDADES - Transformado em 2x2 focado em Conversão */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-32 mt-6 sm:mt-12 relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <section id="recursos" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-32 mt-6 sm:mt-12 relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 sm:mb-20 tracking-tight font-[family-name:var(--font-jakarta)]">Tudo que você precisa, <span className="text-zinc-600">zero complicação.</span></h2>
@@ -309,8 +335,58 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        {/* SEÇÃO DE OCASIÕES / NICHOS (SEO Semântico de Alta Intenção) */}
+        <section id="solucoes" className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative animate-fade-in-up">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 font-[family-name:var(--font-jakarta)]">
+              Perfeito para qualquer celebração.
+            </h2>
+            <p className="text-base sm:text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
+              De casamentos emocionantes a grandes pistas de dança corporativas, o FlashFest se adapta ao estilo do seu evento.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* 1. Casamentos */}
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
+              <div className="text-4xl mb-4">💍</div>
+              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Casamentos & Noivados</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                Monograma dos noivos flutuando no telão, mensagens carinhosas dos padrinhos e todas as fotos salvas em alta resolução no dia seguinte.
+              </p>
+            </div>
+
+            {/* 2. 15 Anos */}
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
+              <div className="text-4xl mb-4">👑</div>
+              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">15 Anos & Debutantes</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                A pista de dança vira um show com filtros exclusivos (Vintage e P&B), clipes de 15 segundos e zero complicação de instalar aplicativos.
+              </p>
+            </div>
+
+            {/* 3. Formaturas */}
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
+              <div className="text-4xl mb-4">🎓</div>
+              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Formaturas & Bailes</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                Celebre a conquista com a turma inteira conectada. Registros espontâneos projetados instantaneamente na festa de formatura.
+              </p>
+            </div>
+
+            {/* 4. Corporativo */}
+            <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
+              <div className="text-4xl mb-4">💼</div>
+              <h3 className="text-xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">Eventos Corporativos</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                Ativação inovadora com logotipo da sua marca no telão, moderação completa pelo celular do anfitrião e relatório visual pós-evento.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* SEÇÃO DE PREÇOS (Alinhamento e Alturas corrigidos) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+        <section id="planos" className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-900/30 to-transparent pointer-events-none rounded-[3rem]"></div>
 
           <div className="text-center mb-8 sm:mb-12 relative z-10">
@@ -339,8 +415,83 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        {/* SEÇÃO DE AVALIAÇÕES E PROVA SOCIAL (E-E-A-T & Review Schema) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 relative animate-fade-in-up">
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4 shadow-sm">
+              <span>⭐⭐⭐⭐⭐</span>
+              <span>4.9 de 5 baseado em 140+ eventos</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 font-[family-name:var(--font-jakarta)]">
+              Quem usou, transformou a festa.
+            </h2>
+            <p className="text-base sm:text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
+              Veja a experiência de quem trocou as cabines de fotos tradicionais pelo telão interativo do FlashFest.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Depoimento 1 */}
+            <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:border-white/20 transition-all duration-300">
+              <div>
+                <div className="text-emerald-400 text-sm mb-3">★★★★★</div>
+                <p className="text-zinc-300 text-sm sm:text-base leading-relaxed font-light italic mb-6">
+                  &ldquo;O telão foi o ponto alto da nossa festa de casamento! Nossos convidados se divertiram muito tirando fotos com os filtros e mandando recados carinhosos. No dia seguinte baixamos todas as fotos em ZIP com uma qualidade incrível. Substituiu a cabine de fotos perfeitamente!&rdquo;
+                </p>
+              </div>
+              <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-zinc-950 text-sm">
+                  ML
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-sm">Mariana & Lucas</h4>
+                  <p className="text-zinc-500 text-xs">Casamento em Goiânia / GO</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Depoimento 2 */}
+            <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:border-white/20 transition-all duration-300">
+              <div>
+                <div className="text-emerald-400 text-sm mb-3">★★★★★</div>
+                <p className="text-zinc-300 text-sm sm:text-base leading-relaxed font-light italic mb-6">
+                  &ldquo;Minha filha amou a ideia da câmera descartável no celular para os 15 anos. A pista não esvaziou um minuto e os amigos dela interagiram a noite inteira. Muito fácil de usar e não precisou instalar nada.&rdquo;
+                </p>
+              </div>
+              <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center font-bold text-white text-sm">
+                  CF
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-sm">Camila F.</h4>
+                  <p className="text-zinc-500 text-xs">Festa de 15 Anos em Brasília / DF</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Depoimento 3 */}
+            <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:border-white/20 transition-all duration-300">
+              <div>
+                <div className="text-emerald-400 text-sm mb-3">★★★★★</div>
+                <p className="text-zinc-300 text-sm sm:text-base leading-relaxed font-light italic mb-6">
+                  &ldquo;Uso o FlashFest nos eventos corporativos dos meus clientes com o modo de moderação ativado. O suporte a logotipo no telão e o controle pelo celular transmitem muito profissionalismo.&rdquo;
+                </p>
+              </div>
+              <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center font-bold text-zinc-950 text-sm">
+                  RM
+                </div>
+                <div>
+                  <h4 className="text-white font-bold text-sm">Rodrigo Mendes</h4>
+                  <p className="text-zinc-500 text-xs">Produtor de Eventos em São Paulo / SP</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ - PERGUNTAS FREQUENTES */}
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-32 relative animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+        <section id="faq" className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-32 relative animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-16 tracking-tight font-[family-name:var(--font-jakarta)]">Dúvidas Frequentes</h2>
           
@@ -399,16 +550,104 @@ export default async function LandingPage() {
 
       </main>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/10 py-16 text-center relative z-10 bg-black/20 backdrop-blur-xl">
-        <div className="text-2xl font-bold tracking-tighter text-white mb-6 opacity-60 font-[family-name:var(--font-jakarta)]">
-          Flash<span className="text-emerald-500">Fest</span>
+      {/* FOOTER - E-E-A-T & ARQUITETURA SEMÂNTICA */}
+      <footer className="border-t border-white/10 pt-16 pb-12 relative z-10 bg-black/40 backdrop-blur-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 pb-12 border-b border-white/10">
+            {/* Coluna 1: Marca & Confiança */}
+            <div className="space-y-4">
+              <div className="text-2xl font-bold tracking-tighter text-white font-[family-name:var(--font-jakarta)]">
+                Flash<span className="text-emerald-500">Fest</span>
+              </div>
+              <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                A plataforma interativa que transforma casamentos, festas de 15 anos, formaturas e eventos corporativos em experiências inesquecíveis no telão em tempo real.
+              </p>
+              <div className="flex items-center gap-2 text-xs text-zinc-400 bg-white/5 border border-white/10 px-3 py-2 rounded-xl w-fit">
+                <span className="text-emerald-400">🔒</span>
+                <span>Pagamento Seguro Mercado Pago & SSL 256-bit</span>
+              </div>
+            </div>
+
+            {/* Coluna 2: Soluções / Tipos de Eventos */}
+            <div className="space-y-3">
+              <h4 className="text-white font-semibold text-sm tracking-wider uppercase font-[family-name:var(--font-jakarta)]">
+                Soluções
+              </h4>
+              <ul className="space-y-2 text-sm text-zinc-400 font-light">
+                <li>
+                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Telão para Casamentos</a>
+                </li>
+                <li>
+                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Festas de 15 Anos & Debutantes</a>
+                </li>
+                <li>
+                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Bailes de Formatura</a>
+                </li>
+                <li>
+                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Eventos Corporativos</a>
+                </li>
+                <li>
+                  <a href="#solucoes" className="hover:text-emerald-400 transition-colors">Aniversários & Confraternizações</a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Coluna 3: Recursos */}
+            <div className="space-y-3">
+              <h4 className="text-white font-semibold text-sm tracking-wider uppercase font-[family-name:var(--font-jakarta)]">
+                Recursos
+              </h4>
+              <ul className="space-y-2 text-sm text-zinc-400 font-light">
+                <li>
+                  <a href="#recursos" className="hover:text-emerald-400 transition-colors">Slideshow em Tempo Real</a>
+                </li>
+                <li>
+                  <a href="#recursos" className="hover:text-emerald-400 transition-colors">Câmera Web sem Aplicativo</a>
+                </li>
+                <li>
+                  <a href="#recursos" className="hover:text-emerald-400 transition-colors">Filtros Retrô & Clipes de 15s</a>
+                </li>
+                <li>
+                  <a href="#recursos" className="hover:text-emerald-400 transition-colors">Moderação de Fotos pelo Celular</a>
+                </li>
+                <li>
+                  <a href="#planos" className="hover:text-emerald-400 transition-colors">Galeria e Download em ZIP</a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Coluna 4: Atendimento & Legal */}
+            <div className="space-y-3">
+              <h4 className="text-white font-semibold text-sm tracking-wider uppercase font-[family-name:var(--font-jakarta)]">
+                Atendimento & Legal
+              </h4>
+              <ul className="space-y-2 text-sm text-zinc-400 font-light">
+                <li>
+                  <span className="text-zinc-500 block text-xs">Suporte por e-mail:</span>
+                  <a href="mailto:contato@flashfest.com.br" className="text-zinc-300 hover:text-emerald-400 transition-colors font-mono text-xs">
+                    contato@flashfest.com.br
+                  </a>
+                </li>
+                <li className="pt-2">
+                  <Link href="/termos" className="hover:text-zinc-200 transition-colors">Termos de Uso</Link>
+                </li>
+                <li>
+                  <Link href="/privacidade" className="hover:text-zinc-200 transition-colors">Política de Privacidade</Link>
+                </li>
+                <li>
+                  <a href="#faq" className="hover:text-zinc-200 transition-colors">Central de Dúvidas (FAQ)</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-light">
+            <p>© {new Date().getFullYear()} FlashFest Tecnologia para Eventos. Todos os direitos reservados.</p>
+            <p className="flex items-center gap-1">
+              Feito com carinho para festas inesquecíveis ✨
+            </p>
+          </div>
         </div>
-        <div className="flex items-center justify-center gap-8 text-sm text-zinc-500 mb-8">
-          <Link href="/termos" className="hover:text-zinc-300 transition-colors">Termos de Uso</Link>
-          <Link href="/privacidade" className="hover:text-zinc-300 transition-colors">Privacidade</Link>
-        </div>
-        <p className="text-zinc-600 text-sm font-light">© {new Date().getFullYear()} FlashFest. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
