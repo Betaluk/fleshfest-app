@@ -66,17 +66,17 @@ export default function BotaoDownloadZip({
     <button
       onClick={baixarZip}
       disabled={baixando || fotosUrls.length === 0}
-      className="flex flex-col items-center justify-center bg-zinc-800 hover:bg-emerald-600 border border-zinc-700 rounded-xl p-8 transition group disabled:opacity-50 disabled:hover:bg-zinc-800"
+      className="w-full flex flex-col items-center justify-center bg-zinc-900/40 hover:bg-emerald-600/30 border border-white/10 hover:border-emerald-500/50 rounded-2xl sm:rounded-[2rem] p-6 sm:p-8 backdrop-blur-xl transition-all duration-500 group disabled:opacity-50 disabled:hover:bg-zinc-900/40 active:scale-[0.99] cursor-pointer"
     >
       {baixando ? (
-        <Loader2 className="animate-spin text-white mb-3" size={40} />
+        <Loader2 className="animate-spin text-white mb-3" size={36} />
       ) : (
-        <span className="text-4xl mb-3 group-hover:scale-110 transition-transform">📥</span>
+        <span className="text-4xl sm:text-5xl mb-3 group-hover:scale-110 transition-transform">📥</span>
       )}
-      <span className="font-bold text-white text-lg">
-        {baixando ? `A transferir... ${progresso}%` : 'Baixar Todas (ZIP)'}
+      <span className="font-bold text-white text-base sm:text-lg">
+        {baixando ? `A transferir... ${progresso}%` : 'Baixar Todas as Fotos (ZIP)'}
       </span>
-      <span className="text-sm text-zinc-400 mt-1">
+      <span className="text-xs sm:text-sm text-zinc-400 mt-1">
         {baixando ? 'A compactar ficheiros' : `${fotosUrls.length} fotos prontas`}
       </span>
     </button>

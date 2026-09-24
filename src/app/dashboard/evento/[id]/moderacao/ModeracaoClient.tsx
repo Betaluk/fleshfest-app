@@ -202,22 +202,22 @@ export default function ModeracaoClient({
                   )}
 
                   {/* BARRA DE AÇÕES INFERIOR */}
-                  <div className="relative z-20 w-full p-2.5 bg-gradient-to-t from-black via-black/80 to-transparent flex gap-2">
+                  <div className="relative z-20 w-full p-1.5 sm:p-2.5 bg-gradient-to-t from-black via-black/80 to-transparent flex gap-1.5 sm:gap-2">
                     <button
                       onClick={(e) => handleAprovar(foto, e)}
                       disabled={estaProcessando}
-                      className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold py-2 rounded-xl shadow-md transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 disabled:opacity-50"
+                      className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 rounded-xl shadow-md transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 disabled:opacity-50"
                     >
-                      {estaProcessando ? <span className="animate-spin">⏳</span> : <span>✓</span>}
-                      <span>Aprovar</span>
+                      {estaProcessando ? <span className="animate-spin text-[10px]">⏳</span> : <span>✓</span>}
+                      <span className="truncate">Aprovar</span>
                     </button>
                     <button
                       onClick={(e) => handleRejeitar(foto, e)}
                       disabled={estaProcessando}
-                      className="flex-1 bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold py-2 rounded-xl shadow-md transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 disabled:opacity-50"
+                      className="flex-1 bg-red-600/90 hover:bg-red-600 text-white text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-1 rounded-xl shadow-md transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 disabled:opacity-50"
                     >
-                      {estaProcessando ? <span className="animate-spin">⏳</span> : <span>✕</span>}
-                      <span>Rejeitar</span>
+                      {estaProcessando ? <span className="animate-spin text-[10px]">⏳</span> : <span>✕</span>}
+                      <span className="truncate">Rejeitar</span>
                     </button>
                   </div>
                 </div>
@@ -344,10 +344,10 @@ export default function ModeracaoClient({
                   e.stopPropagation();
                   midiaAnterior();
                 }}
-                className="absolute left-2 sm:left-6 z-30 p-3 sm:p-4 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md border border-white/10 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute left-1.5 sm:left-6 z-30 p-2 sm:p-4 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/10 transition-all hover:scale-110 active:scale-95 cursor-pointer"
                 title="Anterior (Seta esquerda)"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
               </button>
@@ -365,7 +365,7 @@ export default function ModeracaoClient({
                   autoPlay
                   playsInline
                   loop
-                  className="max-h-[68vh] sm:max-h-[74vh] max-w-[92vw] sm:max-w-4xl rounded-2xl shadow-2xl object-contain bg-black"
+                  className="max-h-[66vh] sm:max-h-[74vh] max-w-[92vw] sm:max-w-4xl rounded-2xl shadow-2xl object-contain bg-black"
                 />
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -373,7 +373,7 @@ export default function ModeracaoClient({
                   key={fotoModal.id}
                   src={fotoModal.urlImagem}
                   alt="Inspeção de mídia"
-                  className="max-h-[68vh] sm:max-h-[74vh] max-w-[92vw] sm:max-w-4xl rounded-2xl shadow-2xl object-contain"
+                  className="max-h-[66vh] sm:max-h-[74vh] max-w-[92vw] sm:max-w-4xl rounded-2xl shadow-2xl object-contain"
                 />
               )}
             </div>
@@ -384,10 +384,10 @@ export default function ModeracaoClient({
                   e.stopPropagation();
                   proximaMidia();
                 }}
-                className="absolute right-2 sm:right-6 z-30 p-3 sm:p-4 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md border border-white/10 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute right-1.5 sm:right-6 z-30 p-2 sm:p-4 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/10 transition-all hover:scale-110 active:scale-95 cursor-pointer"
                 title="Próxima (Seta direita)"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </button>
@@ -396,18 +396,18 @@ export default function ModeracaoClient({
 
           {/* FOOTER DO INSPETOR COM RECADO E BOTÕES DE AÇÃO RÁPIDA */}
           <div
-            className="p-4 sm:p-6 bg-gradient-to-t from-black/95 via-black/80 to-transparent relative z-20 flex flex-col items-center gap-3"
+            className="p-3 sm:p-6 bg-gradient-to-t from-black/95 via-black/80 to-transparent relative z-20 flex flex-col items-center gap-3"
             onClick={(e) => e.stopPropagation()}
           >
             {(fotoModal.nomeConvidado || fotoModal.mensagem) && (
-              <div className="max-w-xl bg-zinc-900/90 border border-white/10 backdrop-blur-xl px-5 py-2.5 rounded-2xl shadow-2xl text-center">
+              <div className="max-w-xl bg-zinc-900/90 border border-white/10 backdrop-blur-xl px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl shadow-2xl text-center">
                 {fotoModal.nomeConvidado && (
                   <p className="text-xs font-bold text-emerald-400 flex items-center justify-center gap-1.5">
                     <span>👤</span> {fotoModal.nomeConvidado}
                   </p>
                 )}
                 {fotoModal.mensagem && (
-                  <p className="text-sm text-white italic mt-0.5">
+                  <p className="text-xs sm:text-sm text-white italic mt-0.5 line-clamp-2 sm:line-clamp-none">
                     &ldquo;{fotoModal.mensagem}&rdquo;
                   </p>
                 )}
@@ -415,7 +415,7 @@ export default function ModeracaoClient({
             )}
 
             {/* BOTÕES DE APROVAÇÃO/REJEIÇÃO DENTRO DO MODAL */}
-            <div className="flex items-center gap-3 w-full max-w-md">
+            <div className="flex items-center gap-2.5 sm:gap-3 w-full max-w-md">
               {fotoModal.status === 'pendente' ? (
                 <>
                   <button
@@ -423,18 +423,22 @@ export default function ModeracaoClient({
                       handleAprovar(fotoModal);
                       proximaMidia();
                     }}
-                    className="flex-1 py-3 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm shadow-xl transition flex items-center justify-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                    className="flex-1 py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs sm:text-sm shadow-xl transition flex items-center justify-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
                   >
-                    <span>✓</span> Aprovar e Próxima
+                    <span>✓</span>
+                    <span className="hidden sm:inline">Aprovar e Próxima</span>
+                    <span className="sm:hidden">Aprovar</span>
                   </button>
                   <button
                     onClick={() => {
                       handleRejeitar(fotoModal);
                       proximaMidia();
                     }}
-                    className="flex-1 py-3 px-4 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm shadow-xl transition flex items-center justify-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                    className="flex-1 py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs sm:text-sm shadow-xl transition flex items-center justify-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
                   >
-                    <span>✕</span> Rejeitar
+                    <span>✕</span>
+                    <span className="hidden sm:inline">Rejeitar e Próxima</span>
+                    <span className="sm:hidden">Rejeitar</span>
                   </button>
                 </>
               ) : (
@@ -443,7 +447,7 @@ export default function ModeracaoClient({
                     handleRejeitar(fotoModal);
                     proximaMidia();
                   }}
-                  className="w-full py-3 px-4 rounded-2xl bg-red-600/90 hover:bg-red-600 text-white font-bold text-sm shadow-xl transition flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95"
+                  className="w-full py-3 px-4 rounded-xl sm:rounded-2xl bg-red-600/90 hover:bg-red-600 text-white font-bold text-xs sm:text-sm shadow-xl transition flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-95"
                 >
                   <span>🗑️</span> Excluir Mídia do Telão
                 </button>

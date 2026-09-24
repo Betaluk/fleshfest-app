@@ -243,29 +243,29 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/10 pb-8 gap-4">
         <div>
-          <h2 className="text-4xl font-extrabold tracking-tight text-white mb-2 font-[family-name:var(--font-jakarta)]">Meus Eventos</h2>
-          <p className="text-zinc-400 text-lg font-light">Gerencie suas festas e controle seus telões ativos.</p>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-2 font-[family-name:var(--font-jakarta)]">Meus Eventos</h2>
+          <p className="text-zinc-400 text-sm sm:text-lg font-light">Gerencie suas festas e controle seus telões ativos.</p>
         </div>
-        <Link href="/dashboard/novo" className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-white text-black font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.15)] gap-2 hover:bg-zinc-100 hover:shadow-[0_0_30px_rgba(255,255,255,0.25)]">
+        <Link href="/dashboard/novo" className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-8 py-3.5 rounded-full bg-white text-black font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.15)] gap-2 hover:bg-zinc-100 hover:shadow-[0_0_30px_rgba(255,255,255,0.25)]">
           <span className="text-lg">+</span>
           Criar Novo Evento
         </Link>
       </div>
 
       {meusEventos.length === 0 ? (
-        <div className="bg-zinc-900/30 border border-white/10 rounded-[2rem] p-16 text-center backdrop-blur-xl flex flex-col items-center shadow-2xl relative overflow-hidden">
+        <div className="bg-zinc-900/30 border border-white/10 rounded-2xl sm:rounded-[2rem] p-8 sm:p-16 text-center backdrop-blur-xl flex flex-col items-center shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
-          <div className="text-6xl mb-8 bg-white/5 w-28 h-28 flex items-center justify-center rounded-full border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)] relative z-10">🎉</div>
-          <h3 className="text-3xl font-bold text-white mb-4 tracking-tight font-[family-name:var(--font-jakarta)] relative z-10">Nenhuma festa por aqui!</h3>
-          <p className="text-zinc-400 max-w-md mx-auto mb-10 text-lg font-light relative z-10">
+          <div className="text-5xl sm:text-6xl mb-6 sm:mb-8 bg-white/5 w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center rounded-full border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)] relative z-10">🎉</div>
+          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 tracking-tight font-[family-name:var(--font-jakarta)] relative z-10">Nenhuma festa por aqui!</h3>
+          <p className="text-zinc-400 max-w-md mx-auto mb-8 sm:mb-10 text-base sm:text-lg font-light relative z-10">
             Parece que você ainda não criou nenhum evento. Crie o seu primeiro evento e comece a recolher memórias inesquecíveis.
           </p>
-          <Link href="/dashboard/novo" className="px-8 py-4 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 font-bold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] relative z-10">
+          <Link href="/dashboard/novo" className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 font-bold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] relative z-10 text-center">
             Criar Meu Primeiro Evento
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {meusEventos.map((evento) => {
             const isPago = evento.statusPagamento === 'pago';
             const dataFormatada = new Date(evento.dataEvento).toLocaleDateString('pt-BR');
@@ -273,7 +273,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             const nomePlanoExibido = nomesDosPlanos[evento.planoId] || 'Desconhecido';
 
             return (
-              <div key={evento.id} className="group relative bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 flex flex-col justify-between hover:border-white/20 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
+              <div key={evento.id} className="group relative bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 flex flex-col justify-between hover:border-white/20 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 {isPago && (
                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px] pointer-events-none rounded-full"></div>
@@ -337,8 +337,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                                 }`}
                                 title={isGratisBloqueado ? `Disponível em ${tempoRestanteTexto}` : undefined}
                               >
-                                <div className="flex justify-between items-center w-full mb-1 relative z-10">
-                                  <span className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                                <div className="flex flex-wrap items-center justify-between gap-1.5 w-full mb-1 relative z-10">
+                                  <span className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors flex flex-wrap items-center gap-1.5">
                                     {plano.nome}
                                     {isGratisBloqueado && (
                                       <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30 font-normal">
@@ -346,7 +346,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                                       </span>
                                     )}
                                   </span>
-                                  <span className="text-white font-bold text-sm">{plano.preco}</span>
+                                  <span className="text-white font-bold text-sm shrink-0">{plano.preco}</span>
                                 </div>
                                 <span className="text-[11px] text-zinc-400 relative z-10 font-medium">{plano.fotos} fotos • {plano.dias} dias</span>
                               </button>

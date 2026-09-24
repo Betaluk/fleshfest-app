@@ -94,8 +94,8 @@ export default async function LandingPage() {
 
       <main className="relative z-10">
         {/* HERO SECTION */}
-        <section className="max-w-5xl mx-auto px-6 pt-24 pb-24 text-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900/50 backdrop-blur-md border border-white/10 text-zinc-300 text-xs font-medium tracking-wide mb-8 shadow-xl">
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-16 sm:pb-24 text-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-zinc-900/50 backdrop-blur-md border border-white/10 text-zinc-300 text-xs font-medium tracking-wide mb-6 sm:mb-8 shadow-xl">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
@@ -103,20 +103,20 @@ export default async function LandingPage() {
             A câmera da sua festa na mão dos convidados
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40 mb-8 font-[family-name:var(--font-jakarta)] leading-tight">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white to-white/40 mb-6 sm:mb-8 font-[family-name:var(--font-jakarta)] leading-tight">
             A sua festa, <br className="hidden md:block" /> capturada por <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">todos.</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed font-light">
             Um telão ao vivo, QR Codes instantâneos, fotos com filtros e vídeos curtos da pista de dança. 
             Esqueça as hashtags confusas. Seus convidados escaneiam e a mágica aparece no telão na mesma hora.
           </p>
 
-          <div className="flex flex-col items-center justify-center gap-6">
+          <div className="flex flex-col items-center justify-center gap-4 sm:gap-6">
             {isLogado ? (
               <Link 
                 href="/dashboard" 
-                className="relative group flex items-center gap-2 px-8 py-4 bg-white text-zinc-950 rounded-full font-bold text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                className="relative group flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-zinc-950 rounded-full font-bold text-base sm:text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-center"
               >
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
                 <span className="relative z-10 flex items-center gap-2">
@@ -125,10 +125,10 @@ export default async function LandingPage() {
                 </span>
               </Link>
             ) : (
-              <form action={fazerLogin}>
+              <form action={fazerLogin} className="w-full sm:w-auto">
                 <button 
                   type="submit" 
-                  className="relative group flex items-center gap-2 px-8 py-4 bg-white text-zinc-950 rounded-full font-bold text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                  className="relative group flex items-center justify-center gap-2 w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-zinc-950 rounded-full font-bold text-base sm:text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-center"
                 >
                   <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
                   <span className="relative z-10 flex items-center gap-2">
@@ -140,7 +140,7 @@ export default async function LandingPage() {
             )}
             
             {!isLogado && (
-              <p className="text-sm text-zinc-500 font-medium mt-2">
+              <p className="text-xs sm:text-sm text-zinc-500 font-medium mt-1">
                 Sem mensalidades. Você só paga quando for lançar uma festa.
               </p>
             )}
@@ -148,92 +148,92 @@ export default async function LandingPage() {
         </section>
 
         {/* DEMO INTERATIVA (O Truque de Conversão) */}
-        <section className="max-w-5xl mx-auto px-6 py-16 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <SpotlightCard className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 md:p-14 flex flex-col md:flex-row items-center gap-10 shadow-2xl relative group hover:border-emerald-500/30 transition-colors duration-500">
-            <div className="flex-1 space-y-6 relative z-10 text-center md:text-left">
-              <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight font-[family-name:var(--font-jakarta)]">Faça o test drive agora mesmo.</h2>
-              <p className="text-lg text-zinc-400 font-light">Não acredite nas nossas palavras. Pegue o seu celular, aponte a câmera para o QR Code ao lado e veja a mágica acontecer na palma da sua mão.</p>
-              <div className="inline-flex items-center gap-2 text-emerald-400 font-medium bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <SpotlightCard className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-[2rem] p-6 sm:p-10 md:p-14 flex flex-col md:flex-row items-center gap-8 sm:gap-10 shadow-2xl relative group hover:border-emerald-500/30 transition-colors duration-500">
+            <div className="flex-1 space-y-4 sm:space-y-6 relative z-10 text-center md:text-left">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight font-[family-name:var(--font-jakarta)]">Faça o test drive agora mesmo.</h2>
+              <p className="text-base sm:text-lg text-zinc-400 font-light">Não acredite nas nossas palavras. Pegue o seu celular, aponte a câmera para o QR Code ao lado e veja a mágica acontecer na palma da sua mão.</p>
+              <div className="inline-flex items-center gap-2 text-emerald-400 font-medium bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.1)] text-xs sm:text-sm">
                 <span className="animate-pulse shadow-[0_0_8px_rgba(16,185,129,1)] bg-emerald-400 w-2 h-2 rounded-full inline-block"></span>
                 Experimente a interface real
               </div>
             </div>
             <div className="w-full md:w-auto flex justify-center relative z-10">
-              <div className="bg-white/5 backdrop-blur-md p-4 rounded-3xl border border-white/10 shadow-[0_0_50px_-15px_rgba(52,211,153,0.2)] transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-500 hover:border-emerald-500/30 hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(52,211,153,0.4)]">
-                <img src="/demo-qr.png" alt="QR Code Test Drive" className="w-48 h-48 rounded-2xl bg-white p-2" />
+              <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-3xl border border-white/10 shadow-[0_0_50px_-15px_rgba(52,211,153,0.2)] transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-500 hover:border-emerald-500/30 hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(52,211,153,0.4)]">
+                <img src="/demo-qr.png" alt="QR Code Test Drive" className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl bg-white p-2" />
               </div>
             </div>
           </SpotlightCard>
         </section>
 
         {/* BENTO GRID DE FUNCIONALIDADES - Transformado em 2x2 focado em Conversão */}
-        <section className="max-w-7xl mx-auto px-6 py-32 mt-12 relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-32 mt-6 sm:mt-12 relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 tracking-tight font-[family-name:var(--font-jakarta)]">Tudo que você precisa, <span className="text-zinc-600">zero complicação.</span></h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-12 sm:mb-20 tracking-tight font-[family-name:var(--font-jakarta)]">Tudo que você precisa, <span className="text-zinc-600">zero complicação.</span></h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-6 sm:p-10 rounded-2xl sm:rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="text-emerald-500/20 text-6xl">📸</span>
               </div>
-              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📸</div>
-              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">A Vibe da Câmera Descartável</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Seus convidados aplicam filtros exclusivos (Vintage, P&B, Sépia) e deixam mensagens carinhosas de felicitações gravadas na própria foto antes de ela ir para o telão.</p>
+              <div className="text-4xl mb-4 sm:mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📸</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">A Vibe da Câmera Descartável</h3>
+              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed relative z-10 font-light">Seus convidados aplicam filtros exclusivos (Vintage, P&B, Sépia) e deixam mensagens carinhosas de felicitações gravadas na própria foto antes de ela ir para o telão.</p>
             </SpotlightCard>
             
-            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-6 sm:p-10 rounded-2xl sm:rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="text-emerald-500/20 text-6xl">📺</span>
               </div>
-              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📺</div>
-              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Telão & Vídeos Curtos</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Um slideshow cinematográfico que se atualiza em tempo real enquanto os convidados tiram fotos ou gravam clipes de 15s na pista de dança. Com a sua logo flutuando perfeitamente.</p>
+              <div className="text-4xl mb-4 sm:mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📺</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Telão & Vídeos Curtos</h3>
+              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed relative z-10 font-light">Um slideshow cinematográfico que se atualiza em tempo real enquanto os convidados tiram fotos ou gravam clipes de 15s na pista de dança. Com a sua logo flutuando perfeitamente.</p>
             </SpotlightCard>
 
-            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-6 sm:p-10 rounded-2xl sm:rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <span className="text-emerald-500/20 text-7xl blur-sm">🛡️</span>
               </div>
-              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🛡️</div>
-              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Moderação Total</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto e vídeo antes que apareça no telão.</p>
+              <div className="text-4xl mb-4 sm:mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🛡️</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Moderação Total</h3>
+              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed relative z-10 font-light">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto e vídeo antes que apareça no telão.</p>
             </SpotlightCard>
             
-            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-6 sm:p-10 rounded-2xl sm:rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <span className="text-emerald-500/20 text-7xl blur-sm">🎨</span>
               </div>
-              <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🎨</div>
-              <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Enxoval de Marketing Premium</h3>
-              <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Não entregamos apenas um QR Code genérico. Você recebe templates editáveis no Canva (plaquinhas de mesa, totens e banners) para combinar perfeitamente com a decoração e identidade visual do seu evento.</p>
+              <div className="text-4xl mb-4 sm:mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🎨</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Enxoval de Marketing Premium</h3>
+              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed relative z-10 font-light">Não entregamos apenas um QR Code genérico. Você recebe templates editáveis no Canva (plaquinhas de mesa, totens e banners) para combinar perfeitamente com a decoração e identidade visual do seu evento.</p>
             </SpotlightCard>
           </div>
         </section>
 
         {/* SEÇÃO DE PREÇOS (Alinhamento e Alturas corrigidos) */}
-        <section className="max-w-7xl mx-auto px-6 py-16 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-900/30 to-transparent pointer-events-none rounded-[3rem]"></div>
 
-          <div className="text-center mb-12 relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 font-[family-name:var(--font-jakarta)]">Preço justo e sem surpresas.</h2>
-            <p className="text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
-              Cabines de fotos custam em média R$ 1.500. Escolha a solução inteligente pelo tamanho do seu evento.<br/>
-              <span className="font-medium text-emerald-400">Sem mensalidades, sem cobranças surpresas em dólar. Pagamento único em Reais.</span>
+          <div className="text-center mb-8 sm:mb-12 relative z-10">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 sm:mb-6 font-[family-name:var(--font-jakarta)]">Preço justo e sem surpresas.</h2>
+            <p className="text-base sm:text-xl text-zinc-400 font-light max-w-2xl mx-auto leading-relaxed">
+              Cabines de fotos custam em média R$ 1.500. Escolha a solução inteligente pelo tamanho do seu evento.<br className="hidden sm:inline" />
+              <span className="font-medium text-emerald-400"> Sem mensalidades, sem cobranças surpresas em dólar. Pagamento único em Reais.</span>
             </p>
           </div>
 
           <PlanosCarousel planos={planos} isLogado={isLogado} loginAction={fazerLogin} />
 
           {/* BANNER B2B PARA CERIMONIALISTAS */}
-          <div className="mt-16 max-w-5xl mx-auto">
-            <SpotlightCard className="bg-zinc-900/40 backdrop-blur-xl border border-emerald-500/20 rounded-[2rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative group">
+          <div className="mt-12 sm:mt-16 max-w-5xl mx-auto">
+            <SpotlightCard className="bg-zinc-900/40 backdrop-blur-xl border border-emerald-500/20 rounded-2xl sm:rounded-[2rem] p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 shadow-2xl relative group">
               <div className="relative z-10 text-center md:text-left">
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">É Cerimonialista ou Produtor?</h3>
-                <p className="text-zinc-400 font-light text-lg">Fale conosco para pacotes de volume e revenda o FlashFest nos seus orçamentos com margem de lucro.</p>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">É Cerimonialista ou Produtor?</h3>
+                <p className="text-zinc-400 font-light text-sm sm:text-lg">Fale conosco para pacotes de volume e revenda o FlashFest nos seus orçamentos com margem de lucro.</p>
               </div>
-              <div className="relative z-10 shrink-0">
-                <a href="mailto:contato@flashfest.com.br" className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-bold transition-all duration-300 whitespace-nowrap inline-block border border-white/10 hover:border-white/20 shadow-lg hover:scale-105 active:scale-95">
+              <div className="relative z-10 shrink-0 w-full md:w-auto">
+                <a href="mailto:contato@flashfest.com.br" className="w-full md:w-auto text-center px-6 sm:px-8 py-3.5 sm:py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-bold transition-all duration-300 whitespace-nowrap inline-block border border-white/10 hover:border-white/20 shadow-lg hover:scale-105 active:scale-95 text-sm sm:text-base">
                   Falar com a Equipe
                 </a>
               </div>
@@ -242,57 +242,57 @@ export default async function LandingPage() {
         </section>
 
         {/* FAQ - PERGUNTAS FREQUENTES */}
-        <section className="max-w-3xl mx-auto px-6 py-32 relative animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+        <section className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-32 relative animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-16 tracking-tight font-[family-name:var(--font-jakarta)]">Dúvidas Frequentes</h2>
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-16 tracking-tight font-[family-name:var(--font-jakarta)]">Dúvidas Frequentes</h2>
           
-          <div className="space-y-4">
-            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
-              <summary className="flex items-center justify-between list-none font-medium text-lg text-white outline-none">
+          <div className="space-y-3.5 sm:space-y-4">
+            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-4 sm:p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
+              <summary className="flex items-center justify-between list-none font-medium text-base sm:text-lg text-white outline-none gap-3">
                 <span>Os convidados precisam baixar algum aplicativo?</span>
-                <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
+                <span className="text-emerald-500 transition-transform group-open:rotate-180 shrink-0 text-xs sm:text-sm">▼</span>
               </summary>
-              <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
+              <p className="mt-3 sm:mt-4 text-zinc-400 text-sm sm:text-base leading-relaxed border-t border-white/10 pt-3 sm:pt-4 font-light">
                 De jeito nenhum! Toda a experiência acontece diretamente no navegador padrão do celular (Safari ou Chrome). Basta apontar a câmera para o QR Code e a tela de fotos se abre instantaneamente. Zero fricção.
               </p>
             </details>
             
-            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
-              <summary className="flex items-center justify-between list-none font-medium text-lg text-white outline-none">
+            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-4 sm:p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
+              <summary className="flex items-center justify-between list-none font-medium text-base sm:text-lg text-white outline-none gap-3">
                 <span>E se a internet do salão de festas for ruim?</span>
-                <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
+                <span className="text-emerald-500 transition-transform group-open:rotate-180 shrink-0 text-xs sm:text-sm">▼</span>
               </summary>
-              <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
+              <p className="mt-3 sm:mt-4 text-zinc-400 text-sm sm:text-base leading-relaxed border-t border-white/10 pt-3 sm:pt-4 font-light">
                 Internet do salão está lenta? Não tem problema. Diferente de outros aplicativos que travam, o FlashFest possui uma tecnologia inteligente que comprime a foto no próprio celular do convidado em milissegundos antes do envio. Funciona perfeitamente até no 3G mais fraco da festa!
               </p>
             </details>
 
-            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
-              <summary className="flex items-center justify-between list-none font-medium text-lg text-white outline-none">
+            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-4 sm:p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
+              <summary className="flex items-center justify-between list-none font-medium text-base sm:text-lg text-white outline-none gap-3">
                 <span>Qualquer pessoa pode ver as fotos do meu evento?</span>
-                <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
+                <span className="text-emerald-500 transition-transform group-open:rotate-180 shrink-0 text-xs sm:text-sm">▼</span>
               </summary>
-              <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
+              <p className="mt-3 sm:mt-4 text-zinc-400 text-sm sm:text-base leading-relaxed border-t border-white/10 pt-3 sm:pt-4 font-light">
                 A privacidade da sua festa é nossa prioridade. Durante o evento, apenas quem estiver presencialmente no local e escanear o QR Code consegue interagir com o telão. Para o pós-festa, o sistema gera um <strong className="text-zinc-200">link seguro da sua Galeria Pública</strong>. Você pode enviar esse link no WhatsApp apenas para os convidados que desejar, permitindo que eles acessem, revivam e baixem as memórias da festa de qualquer lugar.
               </p>
             </details>
 
-            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
-              <summary className="flex items-center justify-between list-none font-medium text-lg text-white outline-none">
+            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-4 sm:p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
+              <summary className="flex items-center justify-between list-none font-medium text-base sm:text-lg text-white outline-none gap-3">
                 <span>Como funciona o telão na prática?</span>
-                <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
+                <span className="text-emerald-500 transition-transform group-open:rotate-180 shrink-0 text-xs sm:text-sm">▼</span>
               </summary>
-              <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
+              <p className="mt-3 sm:mt-4 text-zinc-400 text-sm sm:text-base leading-relaxed border-t border-white/10 pt-3 sm:pt-4 font-light">
                 No seu painel, você terá um botão "Abrir Telão". Basta acessá-lo no notebook que será usado no salão de festas, conectar o cabo HDMI da TV ou Projetor, colocar em tela cheia e pronto! O sistema atualizará as fotos sozinho.
               </p>
             </details>
 
-            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
-              <summary className="flex items-center justify-between list-none font-medium text-lg text-white outline-none">
+            <details className="group bg-zinc-900/30 backdrop-blur-lg hover:bg-zinc-900/50 border border-white/10 rounded-2xl p-4 sm:p-6 open:bg-zinc-900/60 open:border-emerald-500/20 transition-all duration-500 cursor-pointer shadow-lg">
+              <summary className="flex items-center justify-between list-none font-medium text-base sm:text-lg text-white outline-none gap-3">
                 <span>Como funciona a moderação de fotos? Eu preciso aprovar tudo que vai para o telão?</span>
-                <span className="text-emerald-500 transition-transform group-open:rotate-180">▼</span>
+                <span className="text-emerald-500 transition-transform group-open:rotate-180 shrink-0 text-xs sm:text-sm">▼</span>
               </summary>
-              <p className="mt-4 text-zinc-400 leading-relaxed border-t border-white/10 pt-4 font-light">
+              <p className="mt-3 sm:mt-4 text-zinc-400 text-sm sm:text-base leading-relaxed border-t border-white/10 pt-3 sm:pt-4 font-light">
                 Não, a moderação é uma ferramenta <strong className="text-zinc-200">100% opcional</strong>. Ao criar sua festa, você pode escolher o <strong className="text-zinc-200">Modo Automático</strong> (fotos e vídeos vão direto para o telão, ideal para eventos íntimos) ou o <strong className="text-zinc-200">Modo Manual</strong> (as mídias ficam numa fila aguardando sua aprovação pelo celular, ideal para eventos corporativos). Independente da sua escolha, você sempre terá um botão no painel para excluir qualquer foto indesejada na hora.
               </p>
             </details>

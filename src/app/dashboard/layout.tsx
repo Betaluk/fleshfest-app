@@ -12,29 +12,29 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
       {/* Cabeçalho do Painel */}
       <header className="bg-zinc-900 border-b border-zinc-800 p-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold tracking-tight">
+        <div className="max-w-6xl mx-auto flex justify-between items-center gap-2">
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight shrink-0">
             FlashFest <span className="text-zinc-400 font-normal">Painel</span>
           </h1>
           
           {/* Se estiver logado, mostra a foto, nome e botão de sair */}
           {session?.user && (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
               {session.user.image && (
                 <img 
                   src={session.user.image} 
                   alt="Foto de perfil" 
-                  className="w-8 h-8 rounded-full"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full"
                   referrerPolicy="no-referrer" /* O truque que libera a foto do Google */
                 />
               )}
               {/* Mostra apenas o primeiro nome para ficar elegante */}
-              <span className="text-sm font-medium text-white">
+              <span className="text-xs sm:text-sm font-medium text-white max-w-[110px] sm:max-w-none truncate">
                 Olá, {session.user.name?.split(' ')[0]}
               </span>
               
               <form action={async () => { 'use server'; await signOut(); }}>
-                <button type="submit" className="text-xs text-red-400 hover:text-red-300 transition px-2">
+                <button type="submit" className="text-xs text-red-400 hover:text-red-300 transition px-2 py-1 rounded hover:bg-red-500/10">
                   Sair
                 </button>
               </form>

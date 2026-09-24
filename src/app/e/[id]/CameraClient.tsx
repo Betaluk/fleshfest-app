@@ -328,7 +328,7 @@ export default function CameraClient({ id, nomeEvento }: { id: string; nomeEvent
                 maxLength={120}
                 placeholder={tipoMediaCapturada === 'imagem' ? "Deixe uma mensagem ou seu nome (opcional)" : "Legenda do vídeo (opcional)"}
                 disabled={processando}
-                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none h-20 transition-all text-sm"
+                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white placeholder:text-zinc-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none h-20 transition-all text-base sm:text-sm"
               />
             </div>
             
@@ -342,7 +342,7 @@ export default function CameraClient({ id, nomeEvento }: { id: string; nomeEvent
                   setMensagem('');
                 }}
                 disabled={processando}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-semibold transition-all disabled:opacity-50 cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 font-semibold text-sm sm:text-base transition-all disabled:opacity-50 cursor-pointer active:scale-95"
               >
                 <RefreshCcw size={18} />
                 Refazer
@@ -351,10 +351,10 @@ export default function CameraClient({ id, nomeEvento }: { id: string; nomeEvent
                 type="button"
                 onClick={enviarMedia}
                 disabled={processando}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-zinc-950 font-bold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-zinc-950 font-bold text-sm sm:text-base transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 cursor-pointer active:scale-95"
               >
                 <Send size={18} />
-                {processando ? (etapaEnvio || "Enviando...") : "Enviar"}
+                <span>{processando ? "Enviando..." : "Enviar"}</span>
               </button>
             </div>
 

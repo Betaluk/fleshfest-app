@@ -85,11 +85,11 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
   return (
     <div className="min-h-screen bg-zinc-950 text-white font-sans pb-32">
       {/* CABEÇALHO */}
-      <header className="border-b border-white/10 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <header className="border-b border-white/10 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
           <div className="text-center sm:text-left w-full sm:w-auto">
-            <h1 className="text-2xl font-bold tracking-tight">{evento.nomeEvento}</h1>
-            <p className="text-zinc-400 text-sm">Realizado em {dataFormatada} • {fotosGaleria.length} {fotosGaleria.length === 1 ? 'mídia' : 'mídias'}</p>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight break-words">{evento.nomeEvento}</h1>
+            <p className="text-zinc-400 text-xs sm:text-sm mt-0.5">Realizado em {dataFormatada} • {fotosGaleria.length} {fotosGaleria.length === 1 ? 'mídia' : 'mídias'}</p>
           </div>
           
           {/* A INJEÇÃO DOS BOTÕES */}
@@ -98,12 +98,12 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
       </header>
 
       {/* GRID INTERATIVO COM LIGHTBOX */}
-      <main className="max-w-6xl mx-auto px-6 py-10">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <GaleriaGrid fotos={fotosGaleria} nomeEvento={evento.nomeEvento} />
       </main>
 
       {/* BANNER DE MARKETING (Sticky no Rodapé) */}
-      <div className="fixed bottom-0 inset-x-0 z-50 p-4 bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent pointer-events-none">
+      <div className="fixed bottom-0 inset-x-0 z-40 p-4 bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent pointer-events-none">
         <div className="max-w-3xl mx-auto pointer-events-auto">
           <div className="bg-zinc-900 border border-emerald-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_40px_-10px_rgba(52,211,153,0.2)]">
             <div>

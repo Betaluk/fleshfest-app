@@ -86,9 +86,10 @@ export default function BotaoBaixarPDF({ url, nomeEvento }: { url: string, nomeE
     <button
       onClick={gerarPDF}
       disabled={carregando}
-      className="mt-4 w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-lg transition disabled:opacity-50"
+      className="mt-4 w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs sm:text-sm py-3 px-3 rounded-xl transition duration-300 disabled:opacity-50 active:scale-[0.98] shadow-md shadow-emerald-600/20"
     >
-      {carregando ? '⏳ Gerando Placa...' : '📄 Baixar Placa de Mesa (PDF)'}
+      <span>{carregando ? '⏳' : '📄'}</span>
+      <span>{carregando ? 'Gerando Placa...' : 'Baixar Placa de Mesa (PDF)'}</span>
     </button>
   );
 }

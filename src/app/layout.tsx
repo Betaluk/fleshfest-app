@@ -1,10 +1,19 @@
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 
+import type { Metadata, Viewport } from 'next';
+
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta' });
 
-export const metadata = {
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#09090b',
+};
+
+export const metadata: Metadata = {
   title: 'FlashFest',
   description: 'A câmera descartável virtual para sua festa.',
 };

@@ -254,7 +254,7 @@ export default function GaleriaGrid({ fotos, nomeEvento }: GaleriaGridProps) {
       {/* MODAL LIGHTBOX FULLSCREEN */}
       {fotoAtual !== null && indiceAtivo !== null && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex flex-col justify-between select-none animate-fade-in"
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col justify-between select-none animate-fade-in"
           onClick={fecharLightbox}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}

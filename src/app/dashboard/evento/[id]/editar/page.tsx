@@ -98,8 +98,8 @@ export default async function EditarEventoPage({
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-zinc-900 border border-zinc-800 rounded-lg p-8 mt-8">
-      <h2 className="text-2xl font-bold text-white mb-6">Editar Evento</h2>
+    <div className="max-w-2xl mx-auto bg-zinc-900/60 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 mt-4 sm:mt-8 shadow-2xl">
+      <h2 className="text-2xl font-bold text-white mb-6 font-[family-name:var(--font-jakarta)]">Editar Evento</h2>
       
       <form action={atualizarEvento} className="space-y-6">
         <div>
@@ -112,7 +112,7 @@ export default async function EditarEventoPage({
             name="nome"
             defaultValue={evento.nomeEvento}
             required
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-white text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition"
           />
         </div>
 
@@ -126,7 +126,7 @@ export default async function EditarEventoPage({
             name="data"
             defaultValue={dataIso}
             required
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600 [color-scheme:dark]"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-white text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 [color-scheme:dark] transition"
           />
         </div>
 
@@ -136,20 +136,20 @@ export default async function EditarEventoPage({
             Layout do Telão
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.displayMode === 'cloud' ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+            <label className={`border rounded-xl p-4 cursor-pointer transition flex flex-col gap-2 ${evento.displayMode === 'cloud' ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'}`}>
               <div className="flex items-center gap-2">
                 <input type="radio" name="displayMode" value="cloud" defaultChecked={evento.displayMode === 'cloud'} className="text-emerald-500 bg-zinc-900 border-zinc-700" />
-                <span className="font-bold text-white">Nuvem 3D</span>
+                <span className="font-bold text-white text-sm sm:text-base">Nuvem 3D</span>
               </div>
-              <span className="text-sm text-zinc-400 pl-6">Fotos flutuam em um ambiente 3D dinâmico.</span>
+              <span className="text-xs sm:text-sm text-zinc-400 pl-6">Fotos flutuam em um ambiente 3D dinâmico.</span>
             </label>
 
-            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.displayMode === 'simple' ? 'border-amber-500 bg-amber-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+            <label className={`border rounded-xl p-4 cursor-pointer transition flex flex-col gap-2 ${evento.displayMode === 'simple' ? 'border-amber-500 bg-amber-500/10' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'}`}>
               <div className="flex items-center gap-2">
                 <input type="radio" name="displayMode" value="simple" defaultChecked={evento.displayMode === 'simple'} className="text-amber-500 bg-zinc-900 border-zinc-700" />
-                <span className="font-bold text-white">Slide Simples</span>
+                <span className="font-bold text-white text-sm sm:text-base">Slide Simples</span>
               </div>
-              <span className="text-sm text-zinc-400 pl-6">Fotos em tela cheia com transição suave.</span>
+              <span className="text-xs sm:text-sm text-zinc-400 pl-6">Fotos em tela cheia com transição suave.</span>
             </label>
           </div>
         </div>
@@ -160,20 +160,20 @@ export default async function EditarEventoPage({
             Aprovação de Fotos
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.modoModeracao === 'auto' ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+            <label className={`border rounded-xl p-4 cursor-pointer transition flex flex-col gap-2 ${evento.modoModeracao === 'auto' ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'}`}>
               <div className="flex items-center gap-2">
                 <input type="radio" name="modoModeracao" value="auto" defaultChecked={evento.modoModeracao === 'auto'} className="text-emerald-500 bg-zinc-900 border-zinc-700" />
-                <span className="font-bold text-white">Automático</span>
+                <span className="font-bold text-white text-sm sm:text-base">Automático</span>
               </div>
-              <span className="text-sm text-zinc-400 pl-6">Fotos vão direto para o telão assim que tiradas.</span>
+              <span className="text-xs sm:text-sm text-zinc-400 pl-6">Fotos vão direto para o telão assim que tiradas.</span>
             </label>
 
-            <label className={`border rounded-lg p-4 cursor-pointer transition flex flex-col gap-2 ${evento.modoModeracao === 'manual' ? 'border-amber-500 bg-amber-500/10' : 'border-zinc-700 bg-zinc-950 hover:border-zinc-500'}`}>
+            <label className={`border rounded-xl p-4 cursor-pointer transition flex flex-col gap-2 ${evento.modoModeracao === 'manual' ? 'border-amber-500 bg-amber-500/10' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'}`}>
               <div className="flex items-center gap-2">
                 <input type="radio" name="modoModeracao" value="manual" defaultChecked={evento.modoModeracao === 'manual'} className="text-amber-500 bg-zinc-900 border-zinc-700" />
-                <span className="font-bold text-white">Manual</span>
+                <span className="font-bold text-white text-sm sm:text-base">Manual</span>
               </div>
-              <span className="text-sm text-zinc-400 pl-6">Você precisará aprovar as fotos antes de aparecerem.</span>
+              <span className="text-xs sm:text-sm text-zinc-400 pl-6">Você precisará aprovar as fotos antes de aparecerem.</span>
             </label>
           </div>
         </div>
@@ -181,24 +181,27 @@ export default async function EditarEventoPage({
         {/* --- A MAGIA DO MONOGRAMA AQUI --- */}
         <div className="pt-2">
           <label className="block text-sm font-medium text-zinc-300 mb-2">Monograma / Marca d'Água (Opcional)</label>
-          <div className="bg-zinc-950 border border-zinc-800 rounded-md p-4 flex flex-col gap-4">
+          <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col gap-3">
             {evento.urlLogo && (
-              <div className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm rounded">
+              <div className="inline-block px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm rounded-lg">
                 ✅ Logo atual já configurada! Envie outra se desejar substituir.
               </div>
             )}
-            <input type="file" name="logo" accept="image/png" className="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 transition" />
+            <input type="file" name="logo" accept="image/png" className="w-full text-xs sm:text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs sm:file:text-sm file:font-bold file:bg-zinc-800 file:text-white hover:file:bg-zinc-700 transition" />
             <p className="text-xs text-zinc-500">Envie uma imagem com fundo transparente (.PNG) para aparecer no canto inferior direito do telão.</p>
           </div>
         </div>
 
-        <div className="pt-4 flex justify-end space-x-4 border-t border-zinc-800 mt-6">
-          <Link href={`/dashboard/evento/${id}`} className="px-4 py-2 text-zinc-400 hover:text-white transition">
+        <div className="pt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 border-t border-white/10 mt-6">
+          <Link 
+            href={`/dashboard/evento/${id}`} 
+            className="w-full sm:w-auto px-5 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-zinc-400 hover:text-white transition text-center font-medium text-sm"
+          >
             Cancelar
           </Link>
           <button
             type="submit"
-            className="bg-emerald-500 text-zinc-950 px-6 py-2 rounded-md font-bold hover:bg-emerald-400 transition"
+            className="w-full sm:w-auto bg-emerald-500 text-zinc-950 px-6 py-3 rounded-xl font-bold hover:bg-emerald-400 transition text-center text-sm shadow-lg shadow-emerald-500/20 active:scale-95"
           >
             Salvar Alterações
           </button>

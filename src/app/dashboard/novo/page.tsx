@@ -61,8 +61,8 @@ export default async function NovoEventoPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-zinc-900 border border-zinc-800 rounded-lg p-8 mt-8">
-      <h2 className="text-2xl font-bold text-white mb-6">Criar Novo Evento</h2>
+    <div className="max-w-2xl mx-auto bg-zinc-900/60 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 mt-4 sm:mt-8 shadow-2xl">
+      <h2 className="text-2xl font-bold text-white mb-6 font-[family-name:var(--font-jakarta)]">Criar Novo Evento</h2>
       <form action={criarEvento} className="space-y-6">
         <div>
           <label htmlFor="nome" className="block text-sm font-medium text-zinc-300 mb-2">
@@ -74,7 +74,7 @@ export default async function NovoEventoPage() {
             name="nome"
             required
             placeholder="Ex: Casamento Ana & João"
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-white text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition"
           />
         </div>
         <div>
@@ -86,7 +86,7 @@ export default async function NovoEventoPage() {
             id="data"
             name="data"
             required
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600 [color-scheme:dark]"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-white text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 [color-scheme:dark] transition"
           />
         </div>
         <div>
@@ -96,22 +96,25 @@ export default async function NovoEventoPage() {
           <select
             id="modoModeracao"
             name="modoModeracao"
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-zinc-600"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-white text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition cursor-pointer"
           >
             <option value="auto">Automático (Fotos vão direto para o telão)</option>
             <option value="manual">Manual (Aprovar fotos no celular antes)</option>
           </select>
         </div>
         {/* ÁREA DOS BOTÕES E CONSENTIMENTO */}
-        <div className="pt-6 border-t border-zinc-800 mt-6">
+        <div className="pt-6 border-t border-white/10 mt-6">
           {/* 1. Os botões ficam na própria linha deles, alinhados à direita */}
-          <div className="flex justify-end space-x-4 mb-4">
-            <Link href="/dashboard" className="px-4 py-2 text-zinc-400 hover:text-white transition">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 mb-4">
+            <Link 
+              href="/dashboard" 
+              className="w-full sm:w-auto px-5 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-zinc-400 hover:text-white transition text-center font-medium text-sm"
+            >
               Cancelar
             </Link>
             <button
               type="submit"
-              className="bg-emerald-500 text-zinc-950 px-6 py-2 rounded-md font-bold hover:bg-emerald-400 transition"
+              className="w-full sm:w-auto bg-emerald-500 text-zinc-950 px-6 py-3 rounded-xl font-bold hover:bg-emerald-400 transition text-center text-sm shadow-lg shadow-emerald-500/20 active:scale-95"
             >
               Criar Evento
             </button>
