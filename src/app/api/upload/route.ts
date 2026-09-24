@@ -1,6 +1,6 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDb, Env } from '@/db';
-import { eventos, fotos } from '@/db/schema';
+import { eventos, fotos, planos } from '@/db/schema';
 import { eq, count } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
@@ -83,8 +83,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ erro: 'Evento inválido ou inativo.' }, { status: 403 });
     }
 
-    // 4. TRAVA DO LIMITE DE FOTOS DO PLANO
-    const limiteFotosDoPlano = 500; 
+    // 4. TRAVA DO LIMITE DE FOTOS DO PLANO (Dinâmico conforme o plano contratado)
+    const plano = await db.select().from(planos).where(eq(planos.id, evento.planoId)).get();
+    const limiteFotosDoPlano = plano?.limiteFotos ?? 500;
+    
     const contagemResult = await db.select({ valor: count() }).from(fotos).where(eq(fotos.eventoId, eventoId)).get();
     const totalFotosAtuais = contagemResult?.valor || 0;
 
