@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { auth, signIn } from '@/auth';
+import PlanosCarousel from '@/components/PlanosCarousel';
 
 export const dynamic = 'force-dynamic';
 
@@ -223,86 +224,7 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-4 gap-6 pt-10 pb-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-6 px-6 md:mx-0 md:px-0 relative z-10 items-stretch">
-            {planos.map((plano) => (
-              <div 
-                key={plano.nome} 
-                className={`snap-center shrink-0 w-[85vw] sm:w-[320px] md:w-auto h-full flex flex-col p-8 rounded-[2rem] transition-all duration-500 ${
-                  plano.destaque 
-                    ? 'bg-zinc-900/80 backdrop-blur-2xl border border-emerald-500/50 shadow-[0_0_50px_-15px_rgba(52,211,153,0.3)] relative transform md:-translate-y-4 hover:-translate-y-6'
-                    : 'bg-zinc-900/40 backdrop-blur-xl border border-white/10 hover:bg-zinc-900/60 hover:border-white/20 hover:-translate-y-2'
-                }`}
-              >
-                {plano.destaque && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-zinc-950 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    Mais Escolhido
-                  </div>
-                )}
-                
-                <div>
-                  <h3 className="text-xl font-medium text-zinc-300 mb-3 font-[family-name:var(--font-jakarta)]">Plano {plano.nome}</h3>
-                  <div className="flex items-baseline gap-1 mb-8">
-                    <span className="text-lg text-zinc-500 font-medium">R$</span>
-                    <span className="text-6xl font-extrabold text-white tracking-tighter font-[family-name:var(--font-jakarta)]">{plano.preco}</span>
-                    <span className="text-sm text-zinc-500 font-medium">/evento</span>
-                  </div>
-                  
-                  <div className="space-y-4 text-sm text-zinc-300 font-light">
-                    <div className="flex items-center gap-3">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Até <strong>{plano.fotos} fotos</strong></span>
-                    </div>
-                    {plano.videos && (
-                      <div className="flex items-center gap-3">
-                        <span className="text-emerald-500">✓</span>
-                        <span>Suporte a <strong>Vídeos Curtos (15s)</strong></span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-3">
-                      <span className="text-emerald-500">✓</span>
-                      <span><strong>{plano.dias} dias</strong> para baixar as memórias</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Telão, Filtros e QR Code inclusos</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-emerald-500">✓</span>
-                      <span className="text-zinc-500">{plano.ideal}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-auto pt-10">
-                  {isLogado ? (
-                    <Link 
-                      href="/dashboard" 
-                      className={`block w-full py-4 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${
-                        plano.destaque 
-                          ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 shadow-[0_0_20px_rgba(52,211,153,0.3)] hover:shadow-[0_0_25px_rgba(52,211,153,0.5)]'
-                          : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
-                      }`}
-                    >
-                      Começar Agora
-                    </Link>
-                  ) : (
-                    <form action={fazerLogin} className="w-full">
-                      <button 
-                        type="submit" 
-                        className={`w-full py-4 rounded-xl font-semibold text-center transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${
-                          plano.destaque 
-                            ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 shadow-[0_0_20px_rgba(52,211,153,0.3)] hover:shadow-[0_0_25px_rgba(52,211,153,0.5)]'
-                            : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
-                      }`}
-                    >
-                      Começar Agora
-                    </button>
-                    </form>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+          <PlanosCarousel planos={planos} isLogado={isLogado} loginAction={fazerLogin} />
 
           {/* BANNER B2B PARA CERIMONIALISTAS */}
           <div className="mt-16 bg-zinc-900/40 backdrop-blur-xl border border-emerald-500/20 rounded-[2rem] p-8 md:p-10 max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden group">
