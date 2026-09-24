@@ -33,7 +33,7 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
   const diasExp = plano?.diasExpiracao || 2;
 
   // 2. Lógica de Expiração
-  const isDemo = evento.id === 'SEU_ID_DA_DEMO_AQUI'; // Coloque o ID da sua demo imortal aqui
+  const isDemo = evento.id === 'e0f9535f-d7b3-465d-8b61-b3fb70722656';
   const dataLimite = new Date(evento.dataEvento);
   dataLimite.setDate(dataLimite.getDate() + diasExp);
   const hoje = new Date();

@@ -11,9 +11,9 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const secret = url.searchParams.get('secret');
 
-    // Mapeamento do Cloudflare (Substitua BUCKET pelo nome exato que está no seu painel, caso seja diferente)
+    // Mapeamento do Cloudflare R2 sincronizado com wrangler.jsonc (BUCKET_FOTOS)
     const { env } = (await getCloudflareContext({ async: true })) as unknown as { 
-      env: Env & { CRON_SECRET: string, BUCKET: any } 
+      env: Env & { CRON_SECRET: string, BUCKET_FOTOS: any } 
     };
 
     // 1. SEGURANÇA: Verifica o crachá
@@ -63,7 +63,7 @@ export async function GET(req: Request) {
     for (const foto of todasAsFotosParaApagar) {
       const nomeArquivo = foto.urlImagem.split('/').pop();
       if (nomeArquivo) {
-        await env.BUCKET.delete(nomeArquivo); 
+        await env.BUCKET_FOTOS.delete(nomeArquivo); 
         apagadasR2++;
       }
     }
