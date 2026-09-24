@@ -3,7 +3,7 @@ import { getDb, Env } from '@/db';
 import { eventos, fotos, planos } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import Link from 'next/link';
-import BotaoDownload from './BotaoDownload';
+import GaleriaGrid from './GaleriaGrid';
 import BotoesCompartilhamento from './BotoesCompartilhamento';
 
 export const dynamic = 'force-dynamic';
@@ -72,7 +72,8 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
     const chaveFicheiro = foto.urlImagem.split('/').pop() || '';
     return {
       ...foto,
-      urlImagem: `${cdnBase}/${chaveFicheiro}`
+      urlImagem: `${cdnBase}/${chaveFicheiro}`,
+      dataCaptura: foto.dataCaptura instanceof Date ? foto.dataCaptura.toISOString() : String(foto.dataCaptura)
     };
   });
   // =================================================================
@@ -88,7 +89,7 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
         <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-center sm:text-left w-full sm:w-auto">
             <h1 className="text-2xl font-bold tracking-tight">{evento.nomeEvento}</h1>
-            <p className="text-zinc-400 text-sm">Realizado em {dataFormatada} • {fotosGaleria.length} fotos</p>
+            <p className="text-zinc-400 text-sm">Realizado em {dataFormatada} • {fotosGaleria.length} {fotosGaleria.length === 1 ? 'mídia' : 'mídias'}</p>
           </div>
           
           {/* A INJEÇÃO DOS BOTÕES */}
@@ -96,44 +97,9 @@ export default async function GaleriaPublica({ params }: { params: Promise<{ id:
         </div>
       </header>
 
-      {/* GRID DE FOTOS (Estilo Masonry/Pinterest com CSS nativo) */}
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        {fotosGaleria.length === 0 ? (
-          <div className="text-center py-20 text-zinc-500">
-            Nenhuma foto disponível para exibição no momento.
-          </div>
-        ) : (
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-            {fotosGaleria.map((foto) => (
-              <div key={foto.id} className="relative group break-inside-avoid rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {/* LÓGICA HÍBRIDA NA GALERIA */}
-                {foto.tipoMedia === 'video' ? (
-                  <video 
-                    src={foto.urlImagem} 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
-                    className="w-full h-auto object-contain bg-black transform group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <img 
-                    src={foto.urlImagem} 
-                    alt="Momento do evento" 
-                    className="w-full h-auto object-contain bg-black transform group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                )}
-                
-                {/* Overlay com Botão de Download (Sempre visível no celular; aparece no Hover no Desktop) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-end p-3 md:p-4">
-                  <BotaoDownload url={foto.urlImagem} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* GRID INTERATIVO COM LIGHTBOX */}
+      <main className="max-w-6xl mx-auto px-6 py-10">
+        <GaleriaGrid fotos={fotosGaleria} nomeEvento={evento.nomeEvento} />
       </main>
 
       {/* BANNER DE MARKETING (Sticky no Rodapé) */}

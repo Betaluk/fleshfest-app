@@ -12,12 +12,14 @@ import BotaoExcluir from './BotaoExcluir'; // Importamos o nosso novo botão sup
 
 export const dynamic = 'force-dynamic';
 
-export default async function DashboardPage({ searchParams }: { searchParams: { erro?: string, sucesso?: string } }) {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ erro?: string, sucesso?: string }> | { erro?: string, sucesso?: string } }) {
   const session = await auth();
 
   if (!session?.user?.id) {
     redirect('/');
   }
+
+  const resolvedSearchParams = await searchParams;
 
   // Adicionamos qualquer tipo (any) ao BUCKET_FOTOS para garantir que o TypeScript aceita a limpeza
   const { env } = (await getCloudflareContext({ async: true })) as unknown as { 
@@ -30,13 +32,32 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
     .where(eq(eventos.usuarioId, session.user.id))
     .orderBy(desc(eventos.dataEvento));
 
+  // Verifica se o usuário tem um evento teste grátis ativo criado nas últimas 24h
+  const agora = Date.now();
+  const vinteQuatroHorasMs = 24 * 60 * 60 * 1000;
+
+  const eventoGratisAtivo = meusEventos.find(
+    (ev) => ev.planoId === 'plano-gratis' && (agora - new Date(ev.dataCriacao).getTime()) < vinteQuatroHorasMs
+  );
+
+  let tempoRestanteTexto = '';
+  if (eventoGratisAtivo) {
+    const tempoPassado = agora - new Date(eventoGratisAtivo.dataCriacao).getTime();
+    const tempoRestanteMs = Math.max(0, vinteQuatroHorasMs - tempoPassado);
+    const horas = Math.floor(tempoRestanteMs / (1000 * 60 * 60));
+    const minutos = Math.floor((tempoRestanteMs % (1000 * 60 * 60)) / (1000 * 60));
+    tempoRestanteTexto = horas > 0 ? `${horas}h ${minutos}min` : `${minutos}min`;
+  }
+
   async function pagarEvento(formData: FormData) {
     'use server';
     const eventoId = formData.get('eventoId') as string;
     const priceId = formData.get('priceId') as string; // Agora recebemos o ID exato
     if (!eventoId || !priceId) return;
 
-    const { env } = (await getCloudflareContext({ async: true })) as unknown as { env: Env & { STRIPE_SECRET_KEY: string } };
+    const { env } = (await getCloudflareContext({ async: true })) as unknown as { 
+      env: Env & { STRIPE_SECRET_KEY: string, BUCKET_FOTOS: any } 
+    };
     
     const dbServer = getDb(env);
 
@@ -60,6 +81,32 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
       if (eventosGratis.length > 0) {
         redirect('/dashboard?erro=limite_gratis');
+      }
+
+      // Auto-limpeza de eventos grátis antigos (>24h) deste usuário para liberar espaço e não acumular
+      const eventosGratisAntigos = await dbServer.select()
+        .from(eventos)
+        .where(
+          and(
+            eq(eventos.usuarioId, userId),
+            eq(eventos.planoId, 'plano-gratis')
+          )
+        );
+
+      for (const evAntigo of eventosGratisAntigos) {
+        if (evAntigo.id !== eventoId) {
+          const fotosDoEvento = await dbServer.select().from(fotos).where(eq(fotos.eventoId, evAntigo.id));
+          for (const f of fotosDoEvento) {
+            const chave = f.urlImagem.split('/').pop();
+            if (chave) await env.BUCKET_FOTOS.delete(chave);
+          }
+          if (evAntigo.urlLogo) {
+            const chaveLogo = evAntigo.urlLogo.split('/').pop();
+            if (chaveLogo) await env.BUCKET_FOTOS.delete(chaveLogo);
+          }
+          await dbServer.delete(fotos).where(eq(fotos.eventoId, evAntigo.id));
+          await dbServer.delete(eventos).where(eq(eventos.id, evAntigo.id));
+        }
       }
 
       await dbServer.insert(planos).values({
@@ -173,10 +220,24 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
   return (
     <div className="space-y-10 mt-8 mb-12 animate-fade-in-up">
-      {searchParams.erro === 'limite_gratis' && (
-        <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-xl relative text-center mb-6" role="alert">
-          <strong className="font-bold">Aviso: </strong>
-          <span className="block sm:inline">Você já criou um evento grátis nas últimas 24 horas.</span>
+      {resolvedSearchParams.erro === 'limite_gratis' && (
+        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 shadow-xl backdrop-blur-md">
+          <div className="flex items-center gap-3.5">
+            <span className="text-3xl bg-amber-500/20 p-2.5 rounded-xl border border-amber-500/30">⏳</span>
+            <div>
+              <p className="font-bold text-white text-base">Limite de 1 Evento Grátis por 24 horas</p>
+              <p className="text-zinc-300 text-sm mt-0.5">
+                Você já possui um evento teste ativo{eventoGratisAtivo ? ` ("${eventoGratisAtivo.nomeEvento}")` : ''}.
+                {tempoRestanteTexto && ` Um novo teste gratuito estará liberado em ${tempoRestanteTexto}.`}
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/#planos"
+            className="shrink-0 px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold text-xs rounded-xl transition shadow hover:scale-105"
+          >
+            Ver Planos Completos
+          </Link>
         </div>
       )}
 
@@ -259,22 +320,39 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                     <div className="w-full bg-black/40 p-5 rounded-2xl border border-white/10 backdrop-blur-md">
                       <p className="text-sm text-zinc-400 mb-4 font-medium text-center">Ative seu evento para começar:</p>
                       <div className="grid grid-cols-1 gap-2">
-                        {planosDisponiveis.map((plano) => (
-                          <form key={plano.id} action={pagarEvento} className="w-full">
-                            <input type="hidden" name="eventoId" value={evento.id} />
-                            <input type="hidden" name="priceId" value={plano.id} />
-                            <button 
-                              type="submit" 
-                              className="w-full text-left p-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-emerald-500/10 hover:border-emerald-500/50 transition-all duration-300 group flex flex-col relative overflow-hidden"
-                            >
-                              <div className="flex justify-between items-center w-full mb-1 relative z-10">
-                                <span className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors">{plano.nome}</span>
-                                <span className="text-white font-bold text-sm">{plano.preco}</span>
-                              </div>
-                              <span className="text-[11px] text-zinc-400 relative z-10 font-medium">{plano.fotos} fotos • {plano.dias} dias</span>
-                            </button>
-                          </form>
-                        ))}
+                        {planosDisponiveis.map((plano) => {
+                          const isGratisBloqueado = plano.id === 'plano-gratis' && !!eventoGratisAtivo;
+
+                          return (
+                            <form key={plano.id} action={pagarEvento} className="w-full">
+                              <input type="hidden" name="eventoId" value={evento.id} />
+                              <input type="hidden" name="priceId" value={plano.id} />
+                              <button 
+                                type="submit" 
+                                disabled={isGratisBloqueado}
+                                className={`w-full text-left p-3.5 rounded-xl border transition-all duration-300 group flex flex-col relative overflow-hidden ${
+                                  isGratisBloqueado
+                                    ? 'border-white/5 bg-white/[0.02] opacity-60 cursor-not-allowed'
+                                    : 'border-white/10 bg-white/5 hover:bg-emerald-500/10 hover:border-emerald-500/50 cursor-pointer'
+                                }`}
+                                title={isGratisBloqueado ? `Disponível em ${tempoRestanteTexto}` : undefined}
+                              >
+                                <div className="flex justify-between items-center w-full mb-1 relative z-10">
+                                  <span className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                                    {plano.nome}
+                                    {isGratisBloqueado && (
+                                      <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30 font-normal">
+                                        ⏳ Cooldown ({tempoRestanteTexto})
+                                      </span>
+                                    )}
+                                  </span>
+                                  <span className="text-white font-bold text-sm">{plano.preco}</span>
+                                </div>
+                                <span className="text-[11px] text-zinc-400 relative z-10 font-medium">{plano.fotos} fotos • {plano.dias} dias</span>
+                              </button>
+                            </form>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

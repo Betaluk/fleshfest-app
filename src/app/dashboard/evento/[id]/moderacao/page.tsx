@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import AutoRefresh from '@/components/AutoRefresh';
+import ModeracaoClient from './ModeracaoClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,7 +41,8 @@ export default async function ModeracaoPage({
     return { 
       ...foto, 
       urlImagem: `${cdnBase}/${chaveFicheiro}`, 
-      chaveFicheiro 
+      chaveFicheiro,
+      dataCaptura: foto.dataCaptura instanceof Date ? foto.dataCaptura.toISOString() : String(foto.dataCaptura)
     };
   });
 
@@ -95,128 +97,14 @@ export default async function ModeracaoPage({
         </Link>
       </div>
 
-      {/* FILA DE APROVAÇÃO (Aparece se houver fotos pendentes) */}
-      {fotosPendentes.length > 0 && (
-        <section className="bg-zinc-900/60 border border-amber-500/30 rounded-2xl p-6 shadow-xl backdrop-blur-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <span className="text-3xl bg-amber-500/10 p-2 rounded-xl border border-amber-500/20">⏳</span>
-              <div>
-                <h3 className="text-xl font-bold text-amber-400">Fila de Aprovação ({fotosPendentes.length})</h3>
-                <p className="text-xs text-zinc-400">Aprove ou rejeite mídias antes de subirem para o telão</p>
-              </div>
-            </div>
-
-            <form action={aprovarTodas}>
-              <button 
-                type="submit" 
-                className="w-full sm:w-auto px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>✅</span> Aprovar Todas ({fotosPendentes.length})
-              </button>
-            </form>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {fotosPendentes.map((foto) => (
-              <div key={foto.id} className="relative group rounded-2xl overflow-hidden border border-zinc-700 bg-black aspect-[3/4] shadow-md flex flex-col justify-end">
-                
-                {/* LÓGICA HÍBRIDA: FILA DE APROVAÇÃO */}
-                {foto.tipoMedia === 'video' ? (
-                  <video 
-                    src={foto.urlImagem} 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
-                    className="w-full h-full object-contain absolute inset-0"
-                  />
-                ) : (
-                  <img src={foto.urlImagem} alt="Pendente" className="w-full h-full object-contain absolute inset-0" />
-                )}
-
-                {/* Mensagem do Convidado (se houver) */}
-                {foto.mensagem && (
-                  <div className="absolute top-2 inset-x-2 z-10">
-                    <p className="text-[11px] bg-black/80 backdrop-blur-md text-zinc-200 px-2.5 py-1 rounded-lg line-clamp-2 border border-white/10 shadow">
-                      💬 {foto.mensagem}
-                    </p>
-                  </div>
-                )}
-                
-                {/* BARRA DE AÇÕES: Sempre visível no mobile, e no hover em desktop */}
-                <div className="relative z-20 w-full p-2.5 bg-gradient-to-t from-black via-black/80 to-transparent flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                  <form action={aprovarFoto} className="flex-1">
-                    <input type="hidden" name="fotoId" value={foto.id} />
-                    <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-bold py-2 rounded-xl shadow-md transition flex items-center justify-center gap-1 cursor-pointer">
-                      <span>✓</span> Aprovar
-                    </button>
-                  </form>
-                  <form action={rejeitarFoto} className="flex-1">
-                    <input type="hidden" name="fotoId" value={foto.id} />
-                    <input type="hidden" name="chaveFicheiro" value={foto.chaveFicheiro} />
-                    <button className="w-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold py-2 rounded-xl shadow-md transition flex items-center justify-center gap-1 cursor-pointer">
-                      <span>✕</span> Rejeitar
-                    </button>
-                  </form>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* GALERIA DE FOTOS APROVADAS */}
-      <section>
-        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-          <span>✅</span> Galeria Ativa no Telão ({fotosAprovadas.length})
-        </h3>
-        
-        {fotosAprovadas.length === 0 ? (
-          <div className="bg-zinc-900/40 border border-white/10 rounded-2xl p-12 text-center text-zinc-400">
-            Ainda não há mídias aprovadas para esta festa.
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {fotosAprovadas.map((foto) => (
-              <div key={foto.id} className="relative group rounded-2xl overflow-hidden border border-zinc-800 bg-black aspect-[3/4] shadow-md">
-                
-                {/* LÓGICA HÍBRIDA: GALERIA DE APROVADAS */}
-                {foto.tipoMedia === 'video' ? (
-                  <video 
-                    src={foto.urlImagem} 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <img src={foto.urlImagem} alt="Aprovada" className="w-full h-full object-contain" />
-                )}
-
-                {/* Mensagem do Convidado (se houver) */}
-                {foto.mensagem && (
-                  <div className="absolute bottom-2 inset-x-2 z-10 pointer-events-none">
-                    <p className="text-[10px] bg-black/80 backdrop-blur-md text-zinc-300 px-2 py-0.5 rounded-md truncate border border-white/10">
-                      💬 {foto.mensagem}
-                    </p>
-                  </div>
-                )}
-                
-                {/* Botão para apagar a foto caso tenha se arrependido de aprovar (Sempre visível no mobile) */}
-                <form action={rejeitarFoto} className="absolute top-2 right-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-20">
-                  <input type="hidden" name="fotoId" value={foto.id} />
-                  <input type="hidden" name="chaveFicheiro" value={foto.chaveFicheiro} />
-                  <button className="bg-black/80 hover:bg-red-600 text-white p-2 rounded-xl transition border border-white/10 backdrop-blur-md cursor-pointer" title="Excluir Mídia">
-                    🗑️
-                  </button>
-                </form>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+      <ModeracaoClient
+        fotosPendentes={fotosPendentes}
+        fotosAprovadas={fotosAprovadas}
+        nomeEvento={evento.nomeEvento}
+        aprovarFotoAction={aprovarFoto}
+        rejeitarFotoAction={rejeitarFoto}
+        aprovarTodasAction={aprovarTodas}
+      />
     </div>
   );
 }
