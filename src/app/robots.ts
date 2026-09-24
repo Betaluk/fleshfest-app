@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/dashboard/', '/api/'], // Protege suas áreas privadas de aparecerem no Google
+      disallow: ['/dashboard/', '/api/', '/e/', '/g/'], // Protege áreas privadas, câmeras e galerias de clientes
     },
     sitemap: 'https://flashfest.com.br/sitemap.xml',
   };

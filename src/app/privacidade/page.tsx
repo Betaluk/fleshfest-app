@@ -1,4 +1,13 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Política de Privacidade',
+  description: 'Política de privacidade e proteção de dados pessoais da plataforma FlashFest. Saiba como cuidamos da sua segurança e das fotos do seu evento.',
+  alternates: {
+    canonical: '/privacidade',
+  },
+};
 
 export default function PrivacidadePage() {
   return (

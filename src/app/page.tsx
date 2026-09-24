@@ -8,9 +8,20 @@ export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'FlashFest | Telão Interativo e Compartilhamento de Fotos para Eventos',
+  title: 'FlashFest | Telão Interativo e Fotos em Tempo Real para Eventos',
   description: 'Transforme os convidados nos fotógrafos do seu evento. Escaneie o QR Code, tire a foto e veja no telão da festa em tempo real. A alternativa moderna à cabine de fotos.',
-  keywords: ['telão interativo', 'fotos casamento', 'cabine de fotos alternativa', 'qr code fotos festa', 'slideshow eventos ao vivo'],
+  keywords: [
+    'telão interativo',
+    'fotos casamento',
+    'cabine de fotos alternativa',
+    'qr code fotos festa',
+    'slideshow eventos ao vivo',
+    'mural digital festa',
+    'câmera descartável virtual'
+  ],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'FlashFest | O Telão Interativo do seu Evento',
     description: 'Os convidados escaneiam o QR Code e as fotos aparecem instantaneamente no telão da festa.',
@@ -18,11 +29,21 @@ export const metadata: Metadata = {
     siteName: 'FlashFest',
     locale: 'pt_BR',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'FlashFest - O Telão Interativo do seu Evento',
+      },
+    ],
   },
-  robots: {
-    index: true,
-    follow: true,
-  }
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FlashFest | O Telão Interativo do seu Evento',
+    description: 'Os convidados escaneiam o QR Code e as fotos aparecem instantaneamente no telão da festa.',
+    images: ['/og-image.png'],
+  },
 };
 
 export default async function LandingPage() {
@@ -43,18 +64,89 @@ export default async function LandingPage() {
     { nome: 'VIP+', preco: '199', fotos: '10.000', dias: '30', ideal: 'Grandes eventos corporativos', videos: true }
   ];
 
+  // Dados estruturados Schema.org completos para Rich Snippets no Google
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'FlashFest',
-    applicationCategory: 'MultimediaApplication',
-    operatingSystem: 'Any',
-    offers: {
-      '@type': 'Offer',
-      price: '49.00',
-      priceCurrency: 'BRL',
-    },
-    description: 'Plataforma de telão interativo e compartilhamento de fotos em tempo real para casamentos e eventos corporativos.',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://flashfest.com.br/#organization',
+        name: 'FlashFest',
+        url: 'https://flashfest.com.br',
+        logo: 'https://flashfest.com.br/icon.png',
+        description: 'Plataforma líder em telão interativo e compartilhamento de fotos em tempo real para casamentos e eventos sociais.',
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://flashfest.com.br/#website',
+        url: 'https://flashfest.com.br',
+        name: 'FlashFest',
+        publisher: { '@id': 'https://flashfest.com.br/#organization' },
+        inLanguage: 'pt-BR',
+      },
+      {
+        '@type': 'SoftwareApplication',
+        '@id': 'https://flashfest.com.br/#software',
+        name: 'FlashFest',
+        applicationCategory: 'MultimediaApplication',
+        operatingSystem: 'All',
+        url: 'https://flashfest.com.br',
+        offers: {
+          '@type': 'AggregateOffer',
+          priceCurrency: 'BRL',
+          lowPrice: '0',
+          highPrice: '199',
+          offerCount: '5',
+        },
+        description: 'Plataforma de telão interativo, mural digital e compartilhamento de fotos em tempo real para festas, casamentos e eventos corporativos.',
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': 'https://flashfest.com.br/#faq',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'Os convidados precisam baixar algum aplicativo?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'De jeito nenhum! Toda a experiência acontece diretamente no navegador padrão do celular (Safari ou Chrome). Basta apontar a câmera para o QR Code e a tela de fotos se abre instantaneamente. Zero fricção.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'E se a internet do salão de festas for ruim?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Internet do salão está lenta? Não tem problema. O FlashFest possui compressão inteligente no próprio celular do convidado em milissegundos antes do envio, funcionando perfeitamente até no 3G mais fraco da festa.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Qualquer pessoa pode ver as fotos do meu evento?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'A privacidade da sua festa é prioridade. Durante o evento, apenas quem estiver presencialmente e escanear o QR Code interage com o telão. Para o pós-festa, o sistema gera um link seguro da Galeria Pública para você compartilhar no WhatsApp apenas com quem desejar.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Como funciona o telão na prática?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'No seu painel, você terá um botão "Abrir Telão". Basta conectá-lo via cabo HDMI da TV ou Projetor em tela cheia e o sistema atualizará as fotos sozinho em tempo real.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Como funciona a moderação de fotos? Eu preciso aprovar tudo que vai para o telão?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'A moderação é 100% opcional. Você pode escolher o Modo Automático (fotos e vídeos vão direto para o telão) ou o Modo Manual (mídias aguardam aprovação no celular do anfitrião). Independente da escolha, você sempre pode excluir fotos indesejadas pelo painel.',
+            },
+          },
+        ],
+      },
+    ],
   };
 
   return (
@@ -160,7 +252,13 @@ export default async function LandingPage() {
             </div>
             <div className="w-full md:w-auto flex justify-center relative z-10">
               <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-3xl border border-white/10 shadow-[0_0_50px_-15px_rgba(52,211,153,0.2)] transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-500 hover:border-emerald-500/30 hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(52,211,153,0.4)]">
-                <img src="/demo-qr.png" alt="QR Code Test Drive" className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl bg-white p-2" />
+                <img 
+                  src="/demo-qr.png" 
+                  alt="QR Code para test drive interativo do FlashFest" 
+                  width={192} 
+                  height={192} 
+                  className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl bg-white p-2" 
+                />
               </div>
             </div>
           </SpotlightCard>

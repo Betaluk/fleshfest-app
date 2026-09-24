@@ -1,4 +1,13 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Termos de Uso',
+  description: 'Termos de uso e condições gerais da plataforma FlashFest para telão interativo e compartilhamento de fotos em eventos.',
+  alternates: {
+    canonical: '/termos',
+  },
+};
 
 export default function TermosPage() {
   return (
