@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { auth, signIn } from '@/auth';
 import PlanosCarousel from '@/components/PlanosCarousel';
+import SpotlightCard from '@/components/SpotlightCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -148,9 +149,7 @@ export default async function LandingPage() {
 
         {/* DEMO INTERATIVA (O Truque de Conversão) */}
         <section className="max-w-5xl mx-auto px-6 py-16 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 md:p-14 flex flex-col md:flex-row items-center gap-10 shadow-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-colors duration-500">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-
+          <SpotlightCard className="bg-zinc-900/30 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 md:p-14 flex flex-col md:flex-row items-center gap-10 shadow-2xl relative group hover:border-emerald-500/30 transition-colors duration-500">
             <div className="flex-1 space-y-6 relative z-10 text-center md:text-left">
               <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight font-[family-name:var(--font-jakarta)]">Faça o test drive agora mesmo.</h2>
               <p className="text-lg text-zinc-400 font-light">Não acredite nas nossas palavras. Pegue o seu celular, aponte a câmera para o QR Code ao lado e veja a mágica acontecer na palma da sua mão.</p>
@@ -164,7 +163,7 @@ export default async function LandingPage() {
                 <img src="/demo-qr.png" alt="QR Code Test Drive" className="w-48 h-48 rounded-2xl bg-white p-2" />
               </div>
             </div>
-          </div>
+          </SpotlightCard>
         </section>
 
         {/* BENTO GRID DE FUNCIONALIDADES - Transformado em 2x2 focado em Conversão */}
@@ -174,41 +173,41 @@ export default async function LandingPage() {
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 tracking-tight font-[family-name:var(--font-jakarta)]">Tudo que você precisa, <span className="text-zinc-600">zero complicação.</span></h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="text-emerald-500/20 text-6xl">📸</span>
               </div>
               <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📸</div>
               <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">A Vibe da Câmera Descartável</h3>
               <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Seus convidados aplicam filtros exclusivos (Vintage, P&B, Sépia) e deixam mensagens carinhosas de felicitações gravadas na própria foto antes de ela ir para o telão.</p>
-            </div>
+            </SpotlightCard>
             
-            <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="text-emerald-500/20 text-6xl">📺</span>
               </div>
               <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-300">📺</div>
               <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Telão & Vídeos Curtos</h3>
               <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Um slideshow cinematográfico que se atualiza em tempo real enquanto os convidados tiram fotos ou gravam clipes de 15s na pista de dança. Com a sua logo flutuando perfeitamente.</p>
-            </div>
+            </SpotlightCard>
 
-            <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <span className="text-emerald-500/20 text-7xl blur-sm">🛡️</span>
               </div>
               <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🛡️</div>
               <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Moderação Total</h3>
               <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Assuma o controle. O anfitrião tem um painel direto no celular para aprovar ou ocultar qualquer foto e vídeo antes que apareça no telão.</p>
-            </div>
+            </SpotlightCard>
             
-            <div className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative overflow-hidden">
+            <SpotlightCard className="group bg-zinc-900/30 backdrop-blur-xl border border-white/10 p-10 rounded-[2rem] hover:border-emerald-500/40 hover:bg-zinc-900/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.15)] hover:-translate-y-1 relative">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <span className="text-emerald-500/20 text-7xl blur-sm">🎨</span>
               </div>
               <div className="text-4xl mb-6 relative z-10 group-hover:scale-110 origin-left transition-transform duration-500">🎨</div>
               <h3 className="text-2xl font-bold text-white mb-3 relative z-10 font-[family-name:var(--font-jakarta)]">Enxoval de Marketing Premium</h3>
               <p className="text-zinc-400 leading-relaxed relative z-10 font-light">Não entregamos apenas um QR Code genérico. Você recebe templates editáveis no Canva (plaquinhas de mesa, totens e banners) para combinar perfeitamente com a decoração e identidade visual do seu evento.</p>
-            </div>
+            </SpotlightCard>
           </div>
         </section>
 
@@ -227,17 +226,18 @@ export default async function LandingPage() {
           <PlanosCarousel planos={planos} isLogado={isLogado} loginAction={fazerLogin} />
 
           {/* BANNER B2B PARA CERIMONIALISTAS */}
-          <div className="mt-16 bg-zinc-900/40 backdrop-blur-xl border border-emerald-500/20 rounded-[2rem] p-8 md:p-10 max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none group-hover:from-emerald-500/10 transition-colors duration-500"></div>
-            <div className="relative z-10 text-center md:text-left">
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">É Cerimonialista ou Produtor?</h3>
-              <p className="text-zinc-400 font-light text-lg">Fale conosco para pacotes de volume e revenda o FlashFest nos seus orçamentos com margem de lucro.</p>
-            </div>
-            <div className="relative z-10 shrink-0">
-              <a href="mailto:contato@flashfest.com.br" className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-bold transition-all duration-300 whitespace-nowrap inline-block border border-white/10 hover:border-white/20 shadow-lg">
-                Falar com a Equipe
-              </a>
-            </div>
+          <div className="mt-16 max-w-5xl mx-auto">
+            <SpotlightCard className="bg-zinc-900/40 backdrop-blur-xl border border-emerald-500/20 rounded-[2rem] p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative group">
+              <div className="relative z-10 text-center md:text-left">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 font-[family-name:var(--font-jakarta)]">É Cerimonialista ou Produtor?</h3>
+                <p className="text-zinc-400 font-light text-lg">Fale conosco para pacotes de volume e revenda o FlashFest nos seus orçamentos com margem de lucro.</p>
+              </div>
+              <div className="relative z-10 shrink-0">
+                <a href="mailto:contato@flashfest.com.br" className="px-8 py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-bold transition-all duration-300 whitespace-nowrap inline-block border border-white/10 hover:border-white/20 shadow-lg hover:scale-105 active:scale-95">
+                  Falar com a Equipe
+                </a>
+              </div>
+            </SpotlightCard>
           </div>
         </section>
 

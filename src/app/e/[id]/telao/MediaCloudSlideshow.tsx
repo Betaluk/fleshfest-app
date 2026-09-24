@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { Maximize2, Pause, Play } from 'lucide-react';
 
 // Função para gerar posições e animações aleatórias para o fundo
 const generateRandomCloudStyle = () => {
@@ -46,39 +47,13 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
   const router = useRouter();
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [newArrivalId, setNewArrivalId] = useState<string | null>(null);
+  const [isPausado, setIsPausado] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   const seenIdsRef = useRef<Set<string>>(new Set());
   const cloudStylesRef = useRef<Record<string, ReturnType<typeof generateRandomCloudStyle>>>({});
 
-  useEffect(() => {
-    setIsMounted(true);
-    let hasNew = false;
-    let latestNewId: string | null = null;
-
-    fotos.forEach(foto => {
-      if (!cloudStylesRef.current[foto.id]) {
-        cloudStylesRef.current[foto.id] = generateRandomCloudStyle();
-      }
-      if (!seenIdsRef.current.has(foto.id)) {
-        seenIdsRef.current.add(foto.id);
-        if (seenIdsRef.current.size > fotos.length) {
-          hasNew = true;
-          latestNewId = foto.id;
-        }
-      }
-    });
-
-    if (seenIdsRef.current.size === fotos.length && !focusedId && fotos.length > 0) {
-      setFocusedId(fotos[0].id);
-      seenIdsRef.current = new Set(fotos.map(f => f.id));
-    } else if (hasNew && latestNewId) {
-      setNewArrivalId(latestNewId);
-      setFocusedId(latestNewId);
-    }
-  }, [fotos, focusedId]);
-
-  const avancarFoco = () => {
+  const avancarFoco = useCallback(() => {
     if (fotos.length <= 1) return;
 
     let proximoFoco;
@@ -88,15 +63,64 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
     } while (proximoFoco === focusedId && fotos.length > 1);
 
     setFocusedId(proximoFoco);
-  };
+  }, [fotos, focusedId]);
 
+  // Detecção precisa de novas chegadas em tempo real
   useEffect(() => {
-    if (fotos.length <= 1) return;
+    setIsMounted(true);
+    const isFirstRun = seenIdsRef.current.size === 0;
+    let hasNew = false;
+    let latestNewId: string | null = null;
+
+    fotos.forEach(foto => {
+      if (!cloudStylesRef.current[foto.id]) {
+        cloudStylesRef.current[foto.id] = generateRandomCloudStyle();
+      }
+      if (!seenIdsRef.current.has(foto.id)) {
+        seenIdsRef.current.add(foto.id);
+        if (!isFirstRun) {
+          hasNew = true;
+          latestNewId = foto.id;
+        }
+      }
+    });
+
+    if (isFirstRun && fotos.length > 0 && !focusedId) {
+      setFocusedId(fotos[0].id);
+    } else if (hasNew && latestNewId) {
+      setNewArrivalId(latestNewId);
+      setFocusedId(latestNewId);
+    }
+  }, [fotos, focusedId]);
+
+  // Atalhos de teclado para o Apresentador / DJ
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setIsPausado((prev) => !prev);
+      } else if (e.code === 'ArrowRight') {
+        avancarFoco();
+      } else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [avancarFoco]);
+
+  // Temporizador dinâmico de exibição no telão
+  useEffect(() => {
+    if (fotos.length <= 1 || isPausado) return;
 
     let timer: NodeJS.Timeout;
     const fotoAtual = fotos.find(f => f.id === focusedId);
 
-    const holdTime = newArrivalId === focusedId ? 7000 : 6000;
+    const holdTime = newArrivalId === focusedId ? 7500 : 6000;
 
     if (fotoAtual?.tipoMedia !== 'video') {
       timer = setTimeout(() => {
@@ -111,8 +135,9 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
     }
 
     return () => clearTimeout(timer);
-  }, [focusedId, fotos, newArrivalId]);
+  }, [focusedId, fotos, newArrivalId, isPausado, avancarFoco]);
 
+  // Revalidação em segundo plano sem recarregar a janela
   useEffect(() => {
     const refreshInterval = setInterval(() => {
       if (!newArrivalId) {
@@ -237,6 +262,78 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
         })}
       </AnimatePresence>
 
+      {/* TOAST DE CELEBRAÇÃO FLUTUANTE DE NOVA FOTO */}
+      <AnimatePresence>
+        {newArrivalId && (() => {
+          const fotoRecente = fotos.find(f => f.id === newArrivalId);
+          if (!fotoRecente) return null;
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: -40, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+              className="fixed top-8 left-8 z-50 flex items-center gap-4 bg-zinc-950/90 backdrop-blur-2xl border border-emerald-500/50 px-6 py-4 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.35)] pointer-events-none"
+            >
+              <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-2xl shadow-inner">
+                📸
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+              </div>
+              <div>
+                <p className="text-emerald-400 font-bold text-xs uppercase tracking-widest flex items-center gap-1.5">
+                  Nova lembrança no telão!
+                </p>
+                <p className="text-white text-base font-extrabold tracking-tight">
+                  {fotoRecente.nomeConvidado ? `Enviada por ${fotoRecente.nomeConvidado}` : 'Foto recém-chegada!'}
+                </p>
+                {fotoRecente.mensagem && (
+                  <p className="text-zinc-300 text-xs italic line-clamp-1 max-w-sm mt-0.5">
+                    &ldquo;{fotoRecente.mensagem}&rdquo;
+                  </p>
+                )}
+              </div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
+
+      {/* BADGE DE PAUSA */}
+      {isPausado && (
+        <div className="fixed top-8 right-8 z-50 bg-amber-500/20 backdrop-blur-xl border border-amber-500/40 text-amber-300 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          Telão Pausado (Pressione Espaço para retomar)
+        </div>
+      )}
+
+      {/* CONTROLES DO APRESENTADOR (Canto Inferior Esquerdo) */}
+      <div className="absolute bottom-6 left-6 flex items-center gap-3 z-30 opacity-40 hover:opacity-100 transition-opacity">
+        <button
+          onClick={() => setIsPausado((prev) => !prev)}
+          className="p-3 bg-black/60 hover:bg-black/90 backdrop-blur-md rounded-2xl text-white border border-white/10 transition cursor-pointer hover:scale-105 active:scale-95"
+          title={isPausado ? "Retomar (Espaço)" : "Pausar (Espaço)"}
+        >
+          {isPausado ? <Play size={18} /> : <Pause size={18} />}
+        </button>
+
+        <button
+          onClick={() => {
+            if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+              document.exitFullscreen().catch(() => {});
+            }
+          }}
+          className="p-3 bg-black/60 hover:bg-black/90 backdrop-blur-md rounded-2xl text-white border border-white/10 transition cursor-pointer hover:scale-105 active:scale-95"
+          title="Tela Cheia (F)"
+        >
+          <Maximize2 size={18} />
+        </button>
+      </div>
+
+      {/* QR CODE FLUTUANTE (Canto Inferior Direito) */}
       <div className="absolute bottom-8 right-8 bg-black/30 backdrop-blur-xl p-4 rounded-2xl flex flex-col items-center border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] z-50 transition-transform hover:scale-105">
         <div className="bg-white p-2 rounded-xl mb-2 shadow-inner">
           <QRCodeSVG value={urlCamera} size={100} />
