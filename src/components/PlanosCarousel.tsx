@@ -12,15 +12,61 @@ export interface PlanoItem {
   ideal: string;
   videos?: boolean;
   destaque?: boolean;
+  badge?: string;
 }
 
 interface PlanosCarouselProps {
   planos: PlanoItem[];
   isLogado: boolean;
   loginAction: () => Promise<void>;
+  theme?: 'emerald' | 'amber' | 'purple' | 'rose';
 }
 
-export default function PlanosCarousel({ planos, isLogado, loginAction }: PlanosCarouselProps) {
+const themeConfig = {
+  emerald: {
+    navBtnHover: 'hover:bg-emerald-500 hover:text-zinc-950 hover:border-emerald-400',
+    destaqueCard: 'border-2 border-emerald-500/70 shadow-[0_0_50px_-10px_rgba(52,211,153,0.35)]',
+    badge: 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950',
+    tagGratis: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+    checkIcon: 'text-emerald-500',
+    btnDestaque: 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 shadow-[0_0_20px_rgba(52,211,153,0.3)] hover:shadow-[0_0_25px_rgba(52,211,153,0.5)]',
+    btnGratis: 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30',
+    dotActive: 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.8)]',
+  },
+  amber: {
+    navBtnHover: 'hover:bg-amber-400 hover:text-zinc-950 hover:border-amber-300',
+    destaqueCard: 'border-2 border-amber-500/70 shadow-[0_0_50px_-10px_rgba(251,191,36,0.35)]',
+    badge: 'bg-gradient-to-r from-amber-400 to-amber-500 text-zinc-950',
+    tagGratis: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
+    checkIcon: 'text-amber-400',
+    btnDestaque: 'bg-gradient-to-r from-amber-400 to-amber-500 text-zinc-950 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)]',
+    btnGratis: 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30',
+    dotActive: 'bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.8)]',
+  },
+  purple: {
+    navBtnHover: 'hover:bg-purple-500 hover:text-white hover:border-purple-400',
+    destaqueCard: 'border-2 border-purple-500/70 shadow-[0_0_50px_-10px_rgba(168,85,247,0.35)]',
+    badge: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',
+    tagGratis: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
+    checkIcon: 'text-purple-400',
+    btnDestaque: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.5)]',
+    btnGratis: 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30',
+    dotActive: 'bg-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.8)]',
+  },
+  rose: {
+    navBtnHover: 'hover:bg-rose-500 hover:text-white hover:border-rose-400',
+    destaqueCard: 'border-2 border-rose-500/70 shadow-[0_0_50px_-10px_rgba(244,63,94,0.35)]',
+    badge: 'bg-gradient-to-r from-rose-500 to-pink-500 text-white',
+    tagGratis: 'bg-rose-500/10 border-rose-500/20 text-rose-300',
+    checkIcon: 'text-rose-400',
+    btnDestaque: 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:shadow-[0_0_25px_rgba(244,63,94,0.5)]',
+    btnGratis: 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30',
+    dotActive: 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.8)]',
+  },
+};
+
+export default function PlanosCarousel({ planos, isLogado, loginAction, theme = 'emerald' }: PlanosCarouselProps) {
+  const currentTheme = themeConfig[theme] || themeConfig.emerald;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -100,7 +146,7 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
         aria-label="Plano anterior"
         className={`hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-2xl ${
           canScrollLeft
-            ? 'bg-zinc-900/90 border-white/20 text-white hover:bg-emerald-500 hover:text-zinc-950 hover:border-emerald-400 hover:scale-110 active:scale-95'
+            ? `bg-zinc-900/90 border-white/20 text-white ${currentTheme.navBtnHover} hover:scale-110 active:scale-95`
             : 'bg-zinc-900/40 border-white/5 text-zinc-600 cursor-not-allowed opacity-30'
         }`}
       >
@@ -114,7 +160,7 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
         aria-label="Próximo plano"
         className={`hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-2xl ${
           canScrollRight
-            ? 'bg-zinc-900/90 border-white/20 text-white hover:bg-emerald-500 hover:text-zinc-950 hover:border-emerald-400 hover:scale-110 active:scale-95'
+            ? `bg-zinc-900/90 border-white/20 text-white ${currentTheme.navBtnHover} hover:scale-110 active:scale-95`
             : 'bg-zinc-900/40 border-white/5 text-zinc-600 cursor-not-allowed opacity-30'
         }`}
       >
@@ -127,7 +173,7 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
         className="flex overflow-x-auto snap-x snap-mandatory gap-6 pt-10 pb-12 px-4 md:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden items-stretch"
         style={{ scrollBehavior: 'smooth' }}
       >
-        {planos.map((plano, index) => {
+        {planos.map((plano) => {
           const isGratis = plano.preco === '0';
 
           return (
@@ -135,19 +181,19 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
               key={plano.nome}
               className={`snap-center shrink-0 w-[86vw] max-w-[340px] sm:max-w-none sm:w-[320px] md:w-[350px] lg:w-[360px] flex flex-col p-6 sm:p-8 rounded-3xl sm:rounded-[2rem] transition-all duration-500 ${
                 plano.destaque
-                  ? 'bg-zinc-900/90 backdrop-blur-2xl border-2 border-emerald-500/70 shadow-[0_0_50px_-10px_rgba(52,211,153,0.35)] relative transform md:-translate-y-3 hover:-translate-y-5'
+                  ? `bg-zinc-900/90 backdrop-blur-2xl ${currentTheme.destaqueCard} relative transform md:-translate-y-3 hover:-translate-y-5`
                   : 'bg-zinc-900/40 backdrop-blur-xl border border-white/10 hover:bg-zinc-900/60 hover:border-white/20 hover:-translate-y-2'
               }`}
             >
               {plano.destaque && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 text-[11px] sm:text-xs font-extrabold px-3.5 sm:px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg flex items-center gap-1.5 whitespace-nowrap">
+                <div className={`absolute -top-3.5 left-1/2 -translate-x-1/2 ${currentTheme.badge} text-[11px] sm:text-xs font-extrabold px-3.5 sm:px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg flex items-center gap-1.5 whitespace-nowrap`}>
                   <Sparkles className="w-3.5 h-3.5" />
-                  Mais Escolhido
+                  {plano.badge || 'Mais Escolhido'}
                 </div>
               )}
 
               {isGratis && (
-                <div className="inline-block self-start mb-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                <div className={`inline-block self-start mb-2 px-3 py-1 rounded-full ${currentTheme.tagGratis} text-xs font-semibold`}>
                   Sem Cartão de Crédito
                 </div>
               )}
@@ -167,14 +213,14 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
 
                 <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-zinc-300 font-light">
                   <div className="flex items-center gap-3">
-                    <span className="text-emerald-500 font-bold">✓</span>
+                    <span className={`${currentTheme.checkIcon} font-bold`}>✓</span>
                     <span>
                       Até <strong>{plano.fotos} fotos</strong>
                     </span>
                   </div>
                   {plano.videos ? (
                     <div className="flex items-center gap-3">
-                      <span className="text-emerald-500 font-bold">✓</span>
+                      <span className={`${currentTheme.checkIcon} font-bold`}>✓</span>
                       <span>
                         Suporte a <strong>Vídeos Curtos (15s)</strong>
                       </span>
@@ -186,17 +232,17 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
                     </div>
                   )}
                   <div className="flex items-center gap-3">
-                    <span className="text-emerald-500 font-bold">✓</span>
+                    <span className={`${currentTheme.checkIcon} font-bold`}>✓</span>
                     <span>
                       <strong>{plano.dias} {plano.dias === '1' ? 'dia (24h)' : 'dias'}</strong> para baixar memórias
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-emerald-500 font-bold">✓</span>
+                    <span className={`${currentTheme.checkIcon} font-bold`}>✓</span>
                     <span>Telão, Filtros e QR Code inclusos</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-emerald-500 font-bold">✓</span>
+                    <span className={`${currentTheme.checkIcon} font-bold`}>✓</span>
                     <span className="text-zinc-400 font-normal">{plano.ideal}</span>
                   </div>
                 </div>
@@ -208,9 +254,9 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
                     href="/dashboard"
                     className={`block w-full py-3.5 sm:py-4 px-4 rounded-xl font-bold text-sm sm:text-base text-center transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-md ${
                       plano.destaque
-                        ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 shadow-[0_0_20px_rgba(52,211,153,0.3)] hover:shadow-[0_0_25px_rgba(52,211,153,0.5)]'
+                        ? currentTheme.btnDestaque
                         : isGratis
-                        ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30'
+                        ? currentTheme.btnGratis
                         : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
                     }`}
                   >
@@ -222,10 +268,10 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
                       type="submit"
                       className={`w-full py-3.5 sm:py-4 px-4 rounded-xl font-bold text-sm sm:text-base text-center transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-md cursor-pointer ${
                         plano.destaque
-                          ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-zinc-950 shadow-[0_0_20px_rgba(52,211,153,0.3)] hover:shadow-[0_0_25px_rgba(52,211,153,0.5)]'
-                        : isGratis
-                        ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30'
-                        : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
+                          ? currentTheme.btnDestaque
+                          : isGratis
+                          ? currentTheme.btnGratis
+                          : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
                       }`}
                     >
                       {isGratis ? 'Testar Gratuitamente' : 'Começar Agora'}
@@ -249,7 +295,7 @@ export default function PlanosCarousel({ planos, isLogado, loginAction }: Planos
               aria-label={`Ir para ${plano.nome}`}
               className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                 activeIndex === idx
-                  ? 'w-8 bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.8)]'
+                  ? `w-8 ${currentTheme.dotActive}`
                   : 'w-2.5 bg-white/20 hover:bg-white/40'
               }`}
             />
