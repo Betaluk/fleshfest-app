@@ -314,6 +314,7 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
           onClick={() => setIsPausado((prev) => !prev)}
           className="p-3 bg-black/60 hover:bg-black/90 backdrop-blur-md rounded-2xl text-white border border-white/10 transition cursor-pointer hover:scale-105 active:scale-95"
           title={isPausado ? "Retomar (Espaço)" : "Pausar (Espaço)"}
+          aria-label={isPausado ? "Retomar apresentação" : "Pausar apresentação"}
         >
           {isPausado ? <Play size={18} /> : <Pause size={18} />}
         </button>
@@ -328,6 +329,7 @@ export default function MediaCloudSlideshow({ fotos, urlCamera }: { fotos: any[]
           }}
           className="p-3 bg-black/60 hover:bg-black/90 backdrop-blur-md rounded-2xl text-white border border-white/10 transition cursor-pointer hover:scale-105 active:scale-95"
           title="Tela Cheia (F)"
+          aria-label="Alternar tela cheia"
         >
           <Maximize2 size={18} />
         </button>
